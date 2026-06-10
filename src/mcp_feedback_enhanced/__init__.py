@@ -18,7 +18,7 @@ Forked from MCP Feedback Enhanced (https://github.com/Minidoracat/mcp-feedback-e
 - 重構的模組化架構
 """
 
-__version__ = "2.6.6"
+__version__ = "2.6.7"
 __author__ = "Minidoracat"
 __email__ = "minidora0702@gmail.com"
 
