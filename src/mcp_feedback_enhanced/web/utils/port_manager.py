@@ -146,16 +146,21 @@ class PortManager:
     @staticmethod
     def find_free_port_enhanced(
         preferred_port: int = 8765,
-        auto_cleanup: bool = True,
+        auto_cleanup: bool = False,
         host: str = "127.0.0.1",
         max_attempts: int = 100,
     ) -> int:
         """
-        增強的端口查找功能
+        增強的端口查找功能，支援多實例並行
+
+        策略：
+        1. 優先嘗試偏好端口
+        2. 偏好端口被占用時，直接查找下一個可用端口（不殺死現有進程）
+        3. 只有在 auto_cleanup=True 且端口確實被阻死時，才嘗試清理
 
         Args:
             preferred_port: 偏好端口號
-            auto_cleanup: 是否自動清理占用端口的進程
+            auto_cleanup: 是否自動清理占用端口的進程（默認 False）
             host: 主機地址
             max_attempts: 最大嘗試次數
 
@@ -169,42 +174,45 @@ class PortManager:
         if PortManager.is_port_available(host, preferred_port):
             debug_log(f"偏好端口 {preferred_port} 可用")
             return preferred_port
+        # 偏好端口被占用，記錄信息
+        process_info = PortManager.find_process_using_port(preferred_port)
+        if process_info:
+            debug_log(
+                f"偏好端口 {preferred_port} 被進程 {process_info['name']} "
+                f"(PID: {process_info['pid']}) 占用，尋找替代端口"
+            )
+        else:
+            debug_log(f"偏好端口 {preferred_port} 不可用，尋找替代端口")
 
-        # 如果偏好端口被占用且啟用自動清理
-        if auto_cleanup:
-            debug_log(f"偏好端口 {preferred_port} 被占用，嘗試清理占用進程")
-            process_info = PortManager.find_process_using_port(preferred_port)
-
-            if process_info:
-                debug_log(
-                    f"端口 {preferred_port} 被進程 {process_info['name']} (PID: {process_info['pid']}) 占用"
-                )
-
-                # 詢問用戶是否清理（在實際使用中可能需要配置選項）
-                if PortManager._should_cleanup_process(process_info):
-                    if PortManager.kill_process_on_port(preferred_port):
-                        # 等待一下讓端口釋放
-                        time.sleep(1)
-                        if PortManager.is_port_available(host, preferred_port):
-                            debug_log(f"成功清理端口 {preferred_port}，現在可用")
-                            return preferred_port
+        # 如果啟用自動清理，且確認可以清理該進程
+        if auto_cleanup and process_info:
+            if PortManager._should_cleanup_process(process_info):
+                debug_log(f"嘗試清理端口 {preferred_port} 的占用進程")
+                if PortManager.kill_process_on_port(preferred_port):
+                    time.sleep(1)
+                    if PortManager.is_port_available(host, preferred_port):
+                        debug_log(f"成功清理端口 {preferred_port}，現在可用")
+                        return preferred_port
 
         # 如果偏好端口仍不可用，尋找其他端口
         debug_log(f"偏好端口 {preferred_port} 不可用，尋找其他可用端口")
 
+        # 向上查找可用端口
         for i in range(max_attempts):
             port = preferred_port + i + 1
+            if port > 65535:
+                break
             if PortManager.is_port_available(host, port):
-                debug_log(f"找到可用端口: {port}")
+                debug_log(f"找到可用替代端口: {port}（偏好端口 {preferred_port} 被占用）")
                 return port
 
         # 如果向上查找失敗，嘗試向下查找
         for i in range(1, min(preferred_port - 1024, max_attempts)):
             port = preferred_port - i
-            if port < 1024:  # 避免使用系統保留端口
+            if port < 1024:
                 break
             if PortManager.is_port_available(host, port):
-                debug_log(f"找到可用端口: {port}")
+                debug_log(f"找到可用替代端口: {port}（偏好端口 {preferred_port} 被占用）")
                 return port
 
         raise RuntimeError(
@@ -216,6 +224,9 @@ class PortManager:
     def _should_cleanup_process(process_info: dict[str, Any]) -> bool:
         """
         判斷是否應該清理指定進程
+        
+        注意：為了支援多實例並行，默認不自動清理同類 MCP 進程。
+        只有在用戶明確啟用 MCP_AUTO_CLEANUP 時才可能清理。
 
         Args:
             process_info: 進程信息字典
@@ -227,18 +238,26 @@ class PortManager:
         cmdline = process_info.get("cmdline", "").lower()
         process_name = process_info.get("name", "").lower()
 
-        # 如果是自己的進程，允許清理
+        # 如果是同類 MCP 進程，不自動清理（支援多實例並行）
         if any(
             keyword in cmdline
             for keyword in ["mcp-feedback-enhanced", "mcp_feedback_enhanced"]
         ):
-            return True
-
-        # 如果是 Python 進程且命令行包含相關關鍵字
+            debug_log(
+                f"檢測到同類 MCP 進程 (PID: {process_info['pid']})，"
+                f"跳過自動清理以支援多實例並行"
+            )
+            return False
+            
+        # 如果是其他 Python/uvicorn/fastapi 進程，也不自動清理
         if "python" in process_name and any(
             keyword in cmdline for keyword in ["uvicorn", "fastapi"]
         ):
-            return True
+            debug_log(
+                f"進程 {process_info['name']} (PID: {process_info['pid']}) "
+                f"是 Python Web 服務進程，跳過自動清理"
+            )
+            return False
 
         # 其他情況下，為了安全起見，不自動清理
         debug_log(

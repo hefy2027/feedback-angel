@@ -71,8 +71,18 @@ class WebUIManager:
         else:
             debug_log(f"未設定 MCP_WEB_PORT 環境變數，使用預設端口 {preferred_port}")
 
-        # 使用增強的端口管理，測試模式下禁用自動清理避免權限問題
-        auto_cleanup = os.environ.get("MCP_TEST_MODE", "").lower() != "true"
+        # 端口自動清理策略：
+        # - 默認禁用自動清理，避免多實例並行時互相殺死
+        # - 可通過 MCP_AUTO_CLEANUP=true 環境變數手動啟用
+        # - 測試模式下始終禁用
+        auto_cleanup_env = os.getenv("MCP_AUTO_CLEANUP", "").lower()
+        if os.environ.get("MCP_TEST_MODE", "").lower() == "true":
+            auto_cleanup = False
+        elif auto_cleanup_env in ("true", "1", "yes", "on"):
+            auto_cleanup = True
+        else:
+            auto_cleanup = False
+            debug_log("多實例模式：禁用端口自動清理，各實例使用獨立端口")
 
         if port is not None:
             # 如果明確指定了端口，使用指定的端口
@@ -143,7 +153,8 @@ class WebUIManager:
         self._init_basic_components()
 
         debug_log(f"WebUIManager 基本初始化完成，將在 {self.host}:{self.port} 啟動")
-        debug_log("回饋模式: web")
+        debug_log(f"回饋模式: web | PID: {os.getpid()}")
+        debug_log(f"多實例並行支援: 已啟用（auto_cleanup={auto_cleanup}）")
 
     def _init_basic_components(self):
         """同步初始化基本組件"""
