@@ -71,18 +71,8 @@ class WebUIManager:
         else:
             debug_log(f"未設定 MCP_WEB_PORT 環境變數，使用預設端口 {preferred_port}")
 
-        # 端口自動清理策略：
-        # - 默認禁用自動清理，避免多實例並行時互相殺死
-        # - 可通過 MCP_AUTO_CLEANUP=true 環境變數手動啟用
-        # - 測試模式下始終禁用
-        auto_cleanup_env = os.getenv("MCP_AUTO_CLEANUP", "").lower()
-        if os.environ.get("MCP_TEST_MODE", "").lower() == "true":
-            auto_cleanup = False
-        elif auto_cleanup_env in ("true", "1", "yes", "on"):
-            auto_cleanup = True
-        else:
-            auto_cleanup = False
-            debug_log("多實例模式：禁用端口自動清理，各實例使用獨立端口")
+        # 使用增強的端口管理，測試模式下禁用自動清理避免權限問題
+        auto_cleanup = os.environ.get("MCP_TEST_MODE", "").lower() != "true"
 
         if port is not None:
             # 如果明確指定了端口，使用指定的端口
@@ -143,7 +133,6 @@ class WebUIManager:
 
         self.server_thread: threading.Thread | None = None
         self.server_process = None
-        self.desktop_app_instance: Any = None  # 桌面應用實例引用
 
         # 初始化標記，用於追蹤異步初始化狀態
         self._initialization_complete = False
@@ -153,8 +142,7 @@ class WebUIManager:
         self._init_basic_components()
 
         debug_log(f"WebUIManager 基本初始化完成，將在 {self.host}:{self.port} 啟動")
-        debug_log(f"回饋模式: web | PID: {os.getpid()}")
-        debug_log(f"多實例並行支援: 已啟用（auto_cleanup={auto_cleanup}）")
+        debug_log("回饋模式: web")
 
     def _init_basic_components(self):
         """同步初始化基本組件"""
@@ -645,15 +633,10 @@ class WebUIManager:
         """智能開啟瀏覽器 - 檢測是否已有活躍標籤頁
 
         Returns:
-            bool: True 表示檢測到活躍標籤頁或桌面模式，False 表示開啟了新視窗
+            bool: True 表示檢測到活躍標籤頁，False 表示開啟了新視窗
         """
 
         try:
-            # 檢查是否為桌面模式
-            if os.environ.get("MCP_DESKTOP_MODE", "").lower() == "true":
-                debug_log("檢測到桌面模式，跳過瀏覽器開啟")
-                return True
-
             # 檢查是否有活躍標籤頁
             has_active_tabs = await self._check_active_tabs()
 
@@ -677,84 +660,6 @@ class WebUIManager:
             debug_log(f"智能瀏覽器開啟失敗，回退到普通開啟：{e}")
             self.open_browser(url)
             return False
-
-    async def launch_desktop_app(self, url: str) -> bool:
-        """
-        啟動桌面應用程式
-
-        Args:
-            url: Web 服務 URL
-
-        Returns:
-            bool: True 表示成功啟動桌面應用程式
-        """
-        try:
-            # 嘗試導入桌面應用程式模組
-            def import_desktop_app():
-                # 首先嘗試從發佈包位置導入
-                try:
-                    from mcp_feedback_enhanced.desktop_app import (
-                        launch_desktop_app as desktop_func,
-                    )
-
-                    debug_log("使用發佈包中的桌面應用程式模組")
-                    return desktop_func
-                except ImportError:
-                    debug_log("發佈包中未找到桌面應用程式模組，嘗試開發環境...")
-
-                # 回退到開發環境路徑
-                import sys
-
-                project_root = os.path.dirname(
-                    os.path.dirname(os.path.dirname(__file__))
-                )
-                desktop_module_path = os.path.join(project_root, "src-tauri", "python")
-                if desktop_module_path not in sys.path:
-                    sys.path.insert(0, desktop_module_path)
-                try:
-                    from mcp_feedback_enhanced_desktop import (  # type: ignore
-                        launch_desktop_app as dev_func,
-                    )
-
-                    debug_log("使用開發環境桌面應用程式模組")
-                    return dev_func
-                except ImportError:
-                    debug_log("無法從開發環境路徑導入桌面應用程式模組")
-                    debug_log("這可能是 PyPI 安裝的版本，桌面應用功能不可用")
-                    raise
-
-            launch_desktop_app_func = import_desktop_app()
-
-            # 啟動桌面應用程式
-            desktop_app = await launch_desktop_app_func()
-            # 保存桌面應用實例引用，以便後續控制
-            self.desktop_app_instance = desktop_app
-            debug_log("桌面應用程式啟動成功")
-            return True
-
-        except ImportError as e:
-            debug_log(f"無法導入桌面應用程式模組: {e}")
-            debug_log("回退到瀏覽器模式...")
-            self.open_browser(url)
-            return False
-        except Exception as e:
-            debug_log(f"桌面應用程式啟動失敗: {e}")
-            debug_log("回退到瀏覽器模式...")
-            self.open_browser(url)
-            return False
-
-    def close_desktop_app(self):
-        """關閉桌面應用程式"""
-        if self.desktop_app_instance:
-            try:
-                debug_log("正在關閉桌面應用程式...")
-                self.desktop_app_instance.stop()
-                self.desktop_app_instance = None
-                debug_log("桌面應用程式已關閉")
-            except Exception as e:
-                debug_log(f"關閉桌面應用程式失敗: {e}")
-        else:
-            debug_log("沒有活躍的桌面應用程式實例")
 
     async def _safe_close_websocket(self, websocket):
         """安全關閉 WebSocket 連接，避免事件循環衝突 - 僅在連接已轉移後調用"""
@@ -1145,19 +1050,11 @@ async def launch_web_feedback_ui(
     if manager.server_thread is None or not manager.server_thread.is_alive():
         manager.start_server()
 
-    # 檢查是否為桌面模式
-    desktop_mode = os.environ.get("MCP_DESKTOP_MODE", "").lower() == "true"
-
     # 使用根路徑 URL
     feedback_url = manager.get_server_url()  # 直接使用根路徑
 
-    if desktop_mode:
-        # 桌面模式：啟動桌面應用程式
-        debug_log("檢測到桌面模式，啟動桌面應用程式...")
-        has_active_tabs = await manager.launch_desktop_app(feedback_url)
-    else:
-        # Web 模式：智能開啟瀏覽器
-        has_active_tabs = await manager.smart_open_browser(feedback_url)
+    # 智能開啟瀏覽器
+    has_active_tabs = await manager.smart_open_browser(feedback_url)
 
     debug_log(f"[DEBUG] 服務器地址: {feedback_url}")
 

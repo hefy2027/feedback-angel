@@ -1,1 +1,2 @@
-
+- 🖼️ **Image File Storage Mode**: Support storing uploaded images to local disk via `MCP_IMAGE_DIR` environment variable
+- 📦 **Project Renamed**: Package renamed from `mcp-feedback-enhanced` to `feedback-angel`

@@ -1,7 +1,8 @@
-# Release v2.6.7 - Latest Release
+# Release v2.6.6 - 2026-05-19 - Extended Timeout & Project Rename
 
 ## 🌟 Key Highlights
-
+- 🖼️ **Image File Storage Mode**: Support storing uploaded images to local disk via `MCP_IMAGE_DIR` environment variable
+- 📦 **Project Renamed**: Package renamed from `mcp-feedback-enhanced` to `feedback-angel`
 
 ## 🌐 Detailed Release Notes
 
@@ -23,7 +24,7 @@
 uvx feedback-angel@latest
 
 # This specific version / 此特定版本
-uvx feedback-angel@v2.6.7
+uvx feedback-angel@v2.6.6
 ```
 
 ## 🔗 Links

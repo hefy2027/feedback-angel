@@ -10,21 +10,13 @@
 
 ## 🎯 Core Concept
 
-This is an [MCP server](https://modelcontextprotocol.io/) that establishes **feedback-oriented development workflows**, providing **Web UI and Desktop Application** dual interface options, perfectly adapting to local, **SSH Remote environments**, and **WSL (Windows Subsystem for Linux) environments**. By guiding AI to confirm with users rather than making speculative operations, it can consolidate multiple tool calls into a single feedback-oriented request, dramatically reducing platform costs and improving development efficiency.
-
-**🌐 Dual Interface Architecture Advantages:**
-- 🖥️ **Desktop Application**: Native cross-platform desktop experience, supporting Windows, macOS, Linux
-- 🌐 **Web UI**: No GUI dependencies required, suitable for remote and WSL environments
-- 🔧 **Flexible Deployment**: Choose the most suitable interface mode based on environment requirements
-- 📦 **Unified Functionality**: Both interfaces provide exactly the same functional experience
-
-**🖥️ Desktop Application:** v2.5.0 introduces cross-platform desktop application support based on Tauri framework, supporting Windows, macOS, and Linux platforms with native desktop experience.
+This is an [MCP server](https://modelcontextprotocol.io/) that establishes **feedback-oriented development workflows**, providing a **Web UI** interface, perfectly adapting to local, **SSH Remote environments**, and **WSL (Windows Subsystem for Linux) environments**. By guiding AI to confirm with users rather than making speculative operations, it can consolidate multiple tool calls into a single feedback-oriented request, dramatically reducing platform costs and improving development efficiency.
 
 **Supported Platforms:** [Cursor](https://www.cursor.com) | [Cline](https://cline.bot) | [Windsurf](https://windsurf.com) | [Augment](https://www.augmentcode.com) | [Trae](https://www.trae.ai)
 
 ### 🔄 Workflow
 1. **AI Call** → `feedback-angel` tool
-2. **Interface Launch** → Auto-open desktop application or browser interface (based on configuration)
+2. **Interface Launch** → Auto-open browser interface
 3. **Smart Interaction** → Prompt selection, text input, image upload, auto-submit
 4. **Real-time Feedback** → WebSocket connection delivers information to AI instantly
 5. **Session Tracking** → Auto-record session history and statistics
@@ -32,11 +24,9 @@ This is an [MCP server](https://modelcontextprotocol.io/) that establishes **fee
 
 ## 🌟 Key Features
 
-### 🖥️ Dual Interface Support
-- **Desktop Application**: Cross-platform native application based on Tauri, supporting Windows, macOS, Linux
-- **Web UI Interface**: Lightweight browser interface suitable for remote and WSL environments
+### 🌐 Web UI Interface
+- **Lightweight Browser Interface**: Suitable for local, remote and WSL environments
 - **Automatic Environment Detection**: Intelligently recognizes SSH Remote, WSL and other special environments
-- **Unified Feature Experience**: Both interfaces provide exactly the same functionality
 
 ### 📝 Smart Workflow
 - **Prompt Management**: CRUD operations for common prompts, usage statistics, intelligent sorting
@@ -60,7 +50,7 @@ This is an [MCP server](https://modelcontextprotocol.io/) that establishes **fee
 
 ## 🌐 Interface Preview
 
-### Web UI Interface (v2.5.0 - Desktop Application Support)
+### Web UI Interface
 
 <div align="center">
   <img src="docs/en/images/web1.png" width="400" alt="Web UI Main Interface - Prompt Management & Auto Submit" />
@@ -75,15 +65,7 @@ This is an [MCP server](https://modelcontextprotocol.io/) that establishes **fee
 
 </details>
 
-*Web UI Interface - Supports desktop application and Web interface, providing prompt management, auto-submit, session tracking and other smart features*
-
-### Desktop Application Interface (v2.5.0 New Feature)
-
-<div align="center">
-  <img src="docs/en/images/desktop1.png" width="600" alt="Desktop Application - Native Cross-platform Desktop Experience" />
-</div>
-
-*Desktop Application - Native cross-platform desktop application based on Tauri framework, supporting Windows, macOS, Linux with exactly the same functionality as Web UI*
+*Web UI Interface - Providing prompt management, auto-submit, session tracking and other smart features*
 
 **Shortcut Support**
 - `Ctrl+Enter`（Windows/Linux）/ `Cmd+Enter`（macOS）：Submit feedback (both main keyboard and numeric keypad supported)
@@ -133,29 +115,7 @@ pip install uv
 }
 ```
 
-**Desktop Application Configuration** (v2.5.0 new feature - using native desktop application):
-```json
-{
-  "mcpServers": {
-    "feedback-angel": {
-      "command": "uvx",
-      "args": ["feedback-angel@latest"],
-      "timeout": 600,
-      "env": {
-        "MCP_DESKTOP_MODE": "true",
-        "MCP_WEB_HOST": "127.0.0.1",
-        "MCP_WEB_PORT": "8765",
-        "MCP_DEBUG": "false"
-      },
-      "autoApprove": ["interactive_feedback"]
-    }
-  }
-}
-```
-
-**Configuration File Examples**:
-- Desktop Mode: [examples/mcp-config-desktop.json](examples/mcp-config-desktop.json)
-- Web Mode: [examples/mcp-config-web.json](examples/mcp-config-web.json)
+**Configuration File Example**: [examples/mcp-config-web.json](examples/mcp-config-web.json)
 
 ### 3. Prompt Engineering Setup
 For optimal results, add the following rules to your AI assistant:
@@ -174,7 +134,6 @@ follow feedback-angel instructions
 | `MCP_DEBUG` | Debug mode | `true`/`false` | `false` |
 | `MCP_WEB_HOST` | Web UI host binding | IP address or hostname | `127.0.0.1` |
 | `MCP_WEB_PORT` | Web UI port | `1024-65535` | `8765` |
-| `MCP_DESKTOP_MODE` | Desktop application mode | `true`/`false` | `false` |
 | `MCP_LANGUAGE` | Force UI language | `zh-TW`/`zh-CN`/`en` | Auto-detect |
 | `MCP_IMAGE_DIR` | Image file storage directory (enables file mode) | File path | Not set (base64 mode) |
 | `MCP_IMAGE_MODE` | How AI receives image references (file mode only) | `filepath`/`url` | `filepath` |
@@ -213,7 +172,6 @@ uvx feedback-angel@latest version       # Check version
 
 # Interface testing
 uvx feedback-angel@latest test --web    # Test Web UI (auto continuous running)
-uvx feedback-angel@latest test --desktop # Test desktop application (v2.5.0 new feature)
 
 # Debug mode
 MCP_DEBUG=true uvx feedback-angel@latest test
@@ -236,18 +194,10 @@ uv sync
 # Functional testing
 make test-func                                           # Standard functional testing
 make test-web                                            # Web UI testing (continuous running)
-make test-desktop-func                                   # Desktop application functional testing
 
 # Or use direct commands
 uv run python -m mcp_feedback_enhanced test              # Standard functional testing
 uvx --no-cache --with-editable . feedback-angel test --web   # Web UI testing (continuous running)
-uvx --no-cache --with-editable . feedback-angel test --desktop # Desktop application testing
-
-# Desktop application build (v2.5.0 new feature)
-make build-desktop                                       # Build desktop application (debug mode)
-make build-desktop-release                               # Build desktop application (release mode)
-make test-desktop                                        # Test desktop application
-make clean-desktop                                       # Clean desktop build artifacts
 
 # Unit testing
 make test                                                # Run all unit tests
@@ -323,29 +273,9 @@ A: Please confirm MCP tool status shows green light. **Solution**: Repeatedly to
 A: **Solution**: Completely close and restart VS Code or Cursor, reopen the project.
 
 ### 🔧 General Issues
-**Q: How to use desktop application?**
-A: v2.5.0 introduces cross-platform desktop application support. Set `"MCP_DESKTOP_MODE": "true"` in MCP configuration to enable:
-```json
-{
-  "mcpServers": {
-    "feedback-angel": {
-      "command": "uvx",
-      "args": ["feedback-angel@latest"],
-      "timeout": 600,
-      "env": {
-        "MCP_DESKTOP_MODE": "true",
-        "MCP_WEB_PORT": "8765"
-      },
-      "autoApprove": ["interactive_feedback"]
-    }
-  }
-}
-```
-**Configuration File Example**: [examples/mcp-config-desktop.json](examples/mcp-config-desktop.json)
-
 **Q: How to use legacy PyQt6 GUI interface?**
 A: v2.4.0 completely removed PyQt6 GUI dependencies. To use legacy GUI, specify v2.3.0 or earlier: `uvx feedback-angel@2.3.0`
-**Note**: Legacy versions don't include new features (prompt management, auto-submit, session management, desktop application, etc.).
+**Note**: Legacy versions don't include new features (prompt management, auto-submit, session management, etc.).
 
 **Q: "Unexpected token 'D'" error appears**
 A: Debug output interference. Set `MCP_DEBUG=false` or remove the environment variable.
