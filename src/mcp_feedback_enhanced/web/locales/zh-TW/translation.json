@@ -659,5 +659,12 @@
         "toggleAutoSubmit": "切換自動提交",
         "toggleNotification": "切換通知",
         "toggleAudioNotification": "切換音效通知"
+    },
+    "multiSession": {
+        "pending": "待回覆",
+        "noPending": "沒有待回覆的會話",
+        "sessionCount": "共 {count} 個待回覆",
+        "switchTo": "切換到此會話",
+        "submitted": "已提交回饋"
     }
 }

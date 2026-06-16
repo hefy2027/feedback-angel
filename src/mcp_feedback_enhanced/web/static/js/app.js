@@ -49,6 +49,9 @@
         // 自动提交管理器
         this.autoSubmitManager = null;
 
+        // 多会话管理器
+        this.multiSessionManager = null;
+
         // 应用程序状态
         this.isInitialized = false;
         this.pendingSubmission = null;
@@ -280,7 +283,20 @@
                             self.webSocketManager.updateSessionTimeoutSettings(timeoutSettings);
                         }
 
-                        // 18. 创建 WebSocket 连接
+                        // 18. 初始化多会话管理器
+                        if (window.MCPFeedback.MultiSessionManager) {
+                            self.multiSessionManager = new window.MCPFeedback.MultiSessionManager({
+                                onSessionSelect: function(sessionId, sessionInfo) {
+                                    self.switchToSession(sessionId, sessionInfo);
+                                },
+                                onSessionsChange: function(sessions) {
+                                    self.updatePendingCount(sessions.length);
+                                }
+                            });
+                            self.multiSessionManager.init('#pendingSessionsList');
+                        }
+
+                        // 19. 创建 WebSocket 连接
                         self.webSocketManager.connect();
 
                         resolve();
@@ -695,10 +711,39 @@
                 break;
             case 'notification':
                 console.log('📢 收到通知:', data);
-                // 处理 FEEDBACK_SUBMITTED 通知
                 if (data.code === 'session.feedbackSubmitted' || data.code === 'FEEDBACK_SUBMITTED' || data.code === 201) {
                     console.log('✅ 回馈提交成功通知');
                     this.handleFeedbackReceived(data);
+                }
+                break;
+            case 'connection_established':
+                console.log('🔗 连接已建立');
+                if (data.waiting_sessions && this.multiSessionManager) {
+                    data.waiting_sessions.forEach(function(sessionInfo) {
+                        this.multiSessionManager.addSession(sessionInfo);
+                    }.bind(this));
+                }
+                break;
+            case 'session_added':
+                console.log('📋 新会话到达:', data.session_info);
+                if (this.multiSessionManager && data.session_info) {
+                    this.multiSessionManager.addSession(data.session_info);
+                    if (this.audioManager) {
+                        this.audioManager.playNotification();
+                    }
+                    if (this.notificationManager) {
+                        this.notificationManager.notifyNewSession(
+                            data.session_info.session_id,
+                            data.session_info.project_directory || '未知项目'
+                        );
+                    }
+                }
+                break;
+            case 'session_removed':
+            case 'session_completed':
+                console.log('📋 会话移除:', data.session_id);
+                if (this.multiSessionManager && data.session_id) {
+                    this.multiSessionManager.removeSession(data.session_id);
                 }
                 break;
         }
@@ -767,6 +812,56 @@
         this.refreshSessionList();
 
         console.log('反馈已提交，页面保持打开状态');
+    };
+
+    /**
+     * 切换到指定会话
+     */
+    FeedbackApp.prototype.switchToSession = function(sessionId, sessionInfo) {
+        console.log('🔄 切换到会话:', sessionId);
+
+        this.currentSessionId = sessionId;
+
+        if (sessionInfo) {
+            // 更新 AI 摘要
+            var summaryElements = document.querySelectorAll('[data-dynamic-content="aiSummary"]');
+            summaryElements.forEach(function(el) {
+                if (el.dataset.markdownRendered === 'true' && window.MCPFeedback && window.MCPFeedback.UIManager) {
+                    el.innerHTML = window.MCPFeedback.UIManager.prototype.renderMarkdownSafely
+                        ? window.MCPFeedback.UIManager.prototype.renderMarkdownSafely(sessionInfo.summary)
+                        : sessionInfo.summary;
+                } else {
+                    el.textContent = sessionInfo.summary;
+                }
+            });
+
+            // 更新项目目录
+            var projectEl = document.querySelector('.project-path');
+            if (projectEl) {
+                projectEl.textContent = sessionInfo.project_directory;
+            }
+        }
+
+        this.clearFeedback();
+    };
+
+    /**
+     * 更新待回复会话数量
+     */
+    FeedbackApp.prototype.updatePendingCount = function(count) {
+        var countEl = document.getElementById('pendingSessionsCount');
+        if (countEl) {
+            countEl.textContent = count;
+        }
+
+        var container = document.getElementById('multiSessionContainer');
+        if (container) {
+            if (count <= 1) {
+                container.classList.add('single-session');
+            } else {
+                container.classList.remove('single-session');
+            }
+        }
     };
 
     /**
@@ -1200,6 +1295,12 @@
                 images: imagesToSend,
                 settings: feedbackData.settings
             };
+            // 多会话模式：指定目标 session_id
+            if (this.multiSessionManager && this.multiSessionManager.getSelectedSessionId()) {
+                message.session_id = this.multiSessionManager.getSelectedSessionId();
+            } else if (this.currentSessionId) {
+                message.session_id = this.currentSessionId;
+            }
             if (feedbackData.system_prompt) {
                 message.system_prompt = feedbackData.system_prompt;
             }

@@ -654,5 +654,12 @@
         "toggleAutoSubmit": "Toggle auto submit",
         "toggleNotification": "Toggle notification",
         "toggleAudioNotification": "Toggle audio notification"
+    },
+    "multiSession": {
+        "pending": "Pending",
+        "noPending": "No pending sessions",
+        "sessionCount": "{count} pending",
+        "switchTo": "Switch to this session",
+        "submitted": "Feedback submitted"
     }
 }

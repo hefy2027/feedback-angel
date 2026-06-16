@@ -12,6 +12,7 @@
 
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="stylesheet" href="/static/css/session-management.css">
+    <link rel="stylesheet" href="/static/css/multi-session.css">
     <link rel="stylesheet" href="/static/css/prompt-management.css">
     <link rel="stylesheet" href="/static/css/audio-management.css">
     <link rel="stylesheet" href="/static/css/notification-settings.css">
@@ -597,6 +598,17 @@
 
             <!-- 工作区分页 - 主要分页 -->
             <div id="tab-combined" class="tab-content active">
+                <!-- 多会话待回复列表（仅在多个待回复会话时显示） -->
+                <div id="multiSessionContainer" class="multi-session-container single-session">
+                    <div class="pending-sessions-panel" id="pendingSessionsPanel">
+                        <div class="pending-sessions-header">
+                            <span data-i18n="multiSession.pending">待回复</span>
+                            <span class="pending-sessions-count" id="pendingSessionsCount">0</span>
+                        </div>
+                        <div id="pendingSessionsList"></div>
+                    </div>
+                    <div class="session-detail-panel" id="sessionDetailPanel">
+
                 <div class="combined-content">
                     <!-- AI 摘要区域 -->
                     <div class="combined-section">
@@ -655,6 +667,9 @@
                         {% include 'components/image-upload.html' %}
                     </div>
                 </div>
+
+                    </div><!-- .session-detail-panel -->
+                </div><!-- #multiSessionContainer -->
             </div>
 
             <!-- ===== 会话管理分页 ===== -->
@@ -1242,6 +1257,7 @@
     <script src="/static/js/modules/session/session-data-manager.js?v=2025010510"></script>
     <script src="/static/js/modules/session/session-ui-renderer.js?v=2025010510"></script>
     <script src="/static/js/modules/session/session-details-modal.js?v=2025010510"></script>
+    <script src="/static/js/modules/multi-session-manager.js?v=2025010510"></script>
 
     <!-- 提示词管理模块 -->
     <script src="/static/js/modules/prompt/prompt-manager.js?v=2025010510"></script>

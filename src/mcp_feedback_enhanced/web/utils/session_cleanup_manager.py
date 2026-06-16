@@ -271,11 +271,7 @@ class SessionCleanupManager:
         session_priorities = []
         for session_id, session in sessions.items():
             # 跳过当前活跃会话（如果激活保护）
-            if (
-                self.policy.preserve_active_session
-                and self.web_ui_manager.current_session
-                and session.session_id == self.web_ui_manager.current_session.session_id
-            ):
+            if self.policy.preserve_active_session and session.status == SessionStatus.WAITING:
                 continue
 
             # 计算优先级分数（分数越高越优先清理）
@@ -335,13 +331,6 @@ class SessionCleanupManager:
                     del self.web_ui_manager.sessions[session_id]
                     cleaned_count += 1
 
-                    # 如果清理的是当前活跃会话，清空当前会话
-                    if (
-                        self.web_ui_manager.current_session
-                        and self.web_ui_manager.current_session.session_id == session_id
-                    ):
-                        self.web_ui_manager.current_session = None
-
             except Exception as e:
                 debug_log(f"清理过期会话 {session_id} 失败: {e}")
 
@@ -352,12 +341,7 @@ class SessionCleanupManager:
         idle_sessions = []
 
         for session_id, session in self.web_ui_manager.sessions.items():
-            # 跳过当前活跃会话（如果激活保护）
-            if (
-                self.policy.preserve_active_session
-                and self.web_ui_manager.current_session
-                and session.session_id == self.web_ui_manager.current_session.session_id
-            ):
+            if self.policy.preserve_active_session and session.status == SessionStatus.WAITING:
                 continue
 
             # 检查是否空闲时间过长
@@ -497,12 +481,7 @@ class SessionCleanupManager:
         sessions_to_clean = []
 
         for session_id, session in self.web_ui_manager.sessions.items():
-            # 是否排除当前活跃会话
-            if (
-                exclude_current
-                and self.web_ui_manager.current_session
-                and session.session_id == self.web_ui_manager.current_session.session_id
-            ):
+            if exclude_current and session.status == SessionStatus.WAITING:
                 continue
             sessions_to_clean.append(session_id)
 

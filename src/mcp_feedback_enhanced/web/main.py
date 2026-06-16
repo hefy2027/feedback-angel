@@ -33,7 +33,7 @@ from .utils.port_manager import PortManager
 
 
 class WebUIManager:
-    """Web UI 管理器 - 重构为单一活跃会话模式"""
+    """Web UI 管理器 - 支持多会话并发"""
 
     def __init__(self, host: str = "127.0.0.1", port: int | None = None):
         # 确定偏好主机：环境变量 > 参数 > 默认值 127.0.0.1
@@ -110,15 +110,14 @@ class WebUIManager:
         # 设置内存监控
         self._setup_memory_monitoring()
 
-        # 重构：使用单一活跃会话而非会话字典
-        self.current_session: WebFeedbackSession | None = None
-        self.sessions: dict[str, WebFeedbackSession] = {}  # 保留用于向后兼容
+        # 多会话并发支持：所有会话共存于字典中
+        self.sessions: dict[str, WebFeedbackSession] = {}
+
+        # 浏览器全局 WebSocket 连接（与会话无关）
+        self._browser_websocket = None
 
         # 全局标签页状态管理 - 跨会话保持
         self.global_active_tabs: dict[str, dict] = {}
-
-        # 会话更新通知标记
-        self._pending_session_update = False
 
         # 会话清理统计
         self.cleanup_stats: dict[str, Any] = {
@@ -259,11 +258,9 @@ class WebUIManager:
 
                 # 根据警告级别触发不同的清理策略
                 if alert.level == "critical":
-                    # 危险级别：清理过期会话
                     cleaned = self.cleanup_expired_sessions()
                     debug_log(f"内存危险警告触发，清理了 {cleaned} 个过期会话")
                 elif alert.level == "emergency":
-                    # 紧急级别：强制清理会话
                     cleaned = self.cleanup_sessions_by_memory_pressure(force=True)
                     debug_log(f"内存紧急警告触发，强制清理了 {cleaned} 个会话")
 
@@ -326,84 +323,27 @@ class WebUIManager:
             raise RuntimeError(f"Templates directory not found: {web_templates_path}")
 
     def create_session(self, project_directory: str, summary: str) -> str:
-        """创建新的回馈会话 - 重构为单一活跃会话模式，保留标签页状态"""
-        # 保存旧会话的引用和 WebSocket 连接
-        old_session = self.current_session
-        old_websocket = None
-        if old_session and old_session.websocket:
-            old_websocket = old_session.websocket
-            debug_log("保存旧会话的 WebSocket 连接以发送更新通知")
-
-        # 创建新会话
+        """创建新的回馈会话 — 多会话模式，不覆盖已有会话"""
         session_id = str(uuid.uuid4())
         session = WebFeedbackSession(session_id, project_directory, summary)
 
-        # 如果有旧会话，处理状态转换和清理
-        if old_session:
-            # 文档模式下清理旧会话的图片文档
-            from ..utils.image_storage import ImageStorageManager
-
-            storage = ImageStorageManager.get_instance()
-            if storage.is_file_mode():
-                cleaned = storage.cleanup_session_images(old_session.session_id)
-                if cleaned > 0:
-                    debug_log(
-                        f"已清理旧会话 {old_session.session_id} 的 {cleaned} 个图片文档"
-                    )
-
-            debug_log(
-                f"处理旧会话 {old_session.session_id} 的状态转换，当前状态: {old_session.status.value}"
-            )
-
-            # 保存标签页状态到全局
-            if hasattr(old_session, "active_tabs"):
-                self._merge_tabs_to_global(old_session.active_tabs)
-
-            # 如果旧会话是已提交状态，进入下一步（已完成）
-            if old_session.status == SessionStatus.FEEDBACK_SUBMITTED:
-                debug_log(
-                    f"旧会话 {old_session.session_id} 进入下一步：已提交 → 已完成"
-                )
-                success = old_session.next_step("反馈已处理，会话完成")
-                if success:
-                    debug_log(f"✅ 旧会话 {old_session.session_id} 成功进入已完成状态")
-                else:
-                    debug_log(f"❌ 旧会话 {old_session.session_id} 无法进入下一步")
-            else:
-                debug_log(
-                    f"旧会话 {old_session.session_id} 状态为 {old_session.status.value}，无需转换"
-                )
-
-            # 确保旧会话仍在字典中（用于API获取）
-            if old_session.session_id in self.sessions:
-                debug_log(f"旧会话 {old_session.session_id} 仍在会话字典中")
-            else:
-                debug_log(f"⚠️ 旧会话 {old_session.session_id} 不在会话字典中，重新添加")
-                self.sessions[old_session.session_id] = old_session
-
-            # 同步清理会话资源（但保留 WebSocket 连接）
-            old_session._cleanup_sync()
-
-        # 将全局标签页状态继承到新会话
+        # 继承全局标签页状态
         session.active_tabs = self.global_active_tabs.copy()
 
-        # 设置为当前活跃会话
-        self.current_session = session
-        # 同时保存到字典中以保持向后兼容
+        # 添加到会话字典（与已有会话共存）
         self.sessions[session_id] = session
 
-        debug_log(f"创建新的活跃会话: {session_id}")
-        debug_log(f"继承 {len(session.active_tabs)} 个活跃标签页")
+        waiting_count = self.get_waiting_count()
+        debug_log(f"创建新会话: {session_id}，当前待回复会话数: {waiting_count}")
 
-        # 处理WebSocket连接转移
-        if old_websocket:
-            # 直接转移连接到新会话，消息发送由 smart_open_browser 统一处理
-            session.websocket = old_websocket
-            debug_log("已将旧 WebSocket 连接转移到新会话")
-        else:
-            # 没有旧连接，标记需要发送会话更新通知（当新 WebSocket 连接创建时）
-            self._pending_session_update = True
-            debug_log("没有旧 WebSocket 连接，设置待更新标记")
+        # 通知浏览器新会话到达
+        if self._browser_websocket:
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    asyncio.ensure_future(self._notify_new_session(session))
+            except Exception as e:
+                debug_log(f"通知浏览器新会话失败: {e}")
 
         return session_id
 
@@ -412,8 +352,53 @@ class WebUIManager:
         return self.sessions.get(session_id)
 
     def get_current_session(self) -> WebFeedbackSession | None:
-        """获取当前活跃会话"""
-        return self.current_session
+        """获取当前活跃会话 — 兼容旧代码，返回最近创建的等待中会话"""
+        waiting = self.get_waiting_sessions()
+        return waiting[-1] if waiting else None
+
+    def get_waiting_sessions(self) -> list[WebFeedbackSession]:
+        """获取所有等待中的会话，按创建时间排序"""
+        return sorted(
+            [s for s in self.sessions.values() if s.status == SessionStatus.WAITING],
+            key=lambda s: s.created_at,
+        )
+
+    def get_waiting_count(self) -> int:
+        """获取等待中的会话数量"""
+        return sum(1 for s in self.sessions.values() if s.status == SessionStatus.WAITING)
+
+    async def _notify_new_session(self, session: WebFeedbackSession):
+        """通知浏览器新会话到达"""
+        if not self._browser_websocket:
+            return
+        try:
+            await self._browser_websocket.send_json({
+                "type": "session_added",
+                "session_info": {
+                    "session_id": session.session_id,
+                    "project_directory": session.project_directory,
+                    "summary": session.summary,
+                    "status": session.status.value,
+                    "created_at": int(session.created_at * 1000),
+                },
+            })
+            debug_log(f"已通知浏览器新会话: {session.session_id}")
+        except Exception as e:
+            debug_log(f"通知浏览器新会话失败: {e}")
+
+    async def _notify_session_removed(self, session_id: str, reason: str):
+        """通知浏览器会话已移除"""
+        if not self._browser_websocket:
+            return
+        try:
+            await self._browser_websocket.send_json({
+                "type": "session_removed",
+                "session_id": session_id,
+                "reason": reason,
+            })
+            debug_log(f"已通知浏览器移除会话: {session_id}, 原因: {reason}")
+        except Exception as e:
+            debug_log(f"通知浏览器移除会话失败: {e}")
 
     def remove_session(self, session_id: str):
         """移除回馈会话"""
@@ -421,26 +406,7 @@ class WebUIManager:
             session = self.sessions[session_id]
             session.cleanup()
             del self.sessions[session_id]
-
-            # 如果移除的是当前活跃会话，清空当前会话
-            if self.current_session and self.current_session.session_id == session_id:
-                self.current_session = None
-                debug_log("清空当前活跃会话")
-
             debug_log(f"移除回馈会话: {session_id}")
-
-    def clear_current_session(self):
-        """清空当前活跃会话"""
-        if self.current_session:
-            session_id = self.current_session.session_id
-            self.current_session.cleanup()
-            self.current_session = None
-
-            # 同时从字典中移除
-            if session_id in self.sessions:
-                del self.sessions[session_id]
-
-            debug_log("已清空当前活跃会话")
 
     def _merge_tabs_to_global(self, session_tabs: dict):
         """将会话的标签页状态合并到全局状态"""
@@ -477,14 +443,14 @@ class WebUIManager:
         return len(valid_tabs)
 
     async def broadcast_to_active_tabs(self, message: dict):
-        """向所有活跃标签页广播消息"""
-        if not self.current_session or not self.current_session.websocket:
+        """向浏览器广播消息"""
+        if not self._browser_websocket:
             debug_log("没有活跃的 WebSocket 连接，无法广播消息")
             return
 
         try:
-            await self.current_session.websocket.send_json(message)
-            debug_log(f"已广播消息到活跃标签页: {message.get('type', 'unknown')}")
+            await self._browser_websocket.send_json(message)
+            debug_log(f"已广播消息到浏览器: {message.get('type', 'unknown')}")
         except Exception as e:
             debug_log(f"广播消息失败: {e}")
 
@@ -630,157 +596,22 @@ class WebUIManager:
             debug_log(f"无法打开浏览器: {e}")
 
     async def smart_open_browser(self, url: str) -> bool:
-        """智能打开浏览器 - 检测是否已有活跃标签页
+        """智能打开浏览器 — 检测浏览器是否已连接
 
         Returns:
-            bool: True 表示检测到活跃标签页，False 表示打开了新窗口
+            bool: True 表示浏览器已连接，False 表示打开了新窗口
         """
-
-        try:
-            # 检查是否有活跃标签页
-            has_active_tabs = await self._check_active_tabs()
-
-            if has_active_tabs:
-                debug_log("检测到活跃标签页，发送刷新通知")
-                debug_log(f"向现有标签页发送刷新通知：{url}")
-
-                # 向现有标签页发送刷新通知
-                refresh_success = await self.notify_existing_tab_to_refresh()
-
-                debug_log(f"刷新通知发送结果: {refresh_success}")
-                debug_log("检测到活跃标签页，不打开新浏览器窗口")
-                return True
-
-            # 没有活跃标签页，打开新浏览器窗口
-            debug_log("没有检测到活跃标签页，打开新浏览器窗口")
-            self.open_browser(url)
-            return False
-
-        except Exception as e:
-            debug_log(f"智能浏览器打开失败，回退到普通打开：{e}")
-            self.open_browser(url)
-            return False
-
-    async def _safe_close_websocket(self, websocket):
-        """安全关闭 WebSocket 连接，避免事件循环冲突 - 仅在连接已转移后调用"""
-        if not websocket:
-            return
-
-        # 注意：此方法现在主要用于清理，因为连接已经转移到新会话
-        # 只有在确认连接没有被新会话使用时才关闭
-        try:
-            # 检查连接状态
-            if (
-                hasattr(websocket, "client_state")
-                and websocket.client_state.DISCONNECTED
-            ):
-                debug_log("WebSocket 已断开，跳过关闭操作")
-                return
-
-            # 由于连接已转移到新会话，这里不再主动关闭
-            # 让新会话管理这个连接的生命周期
-            debug_log("WebSocket 连接已转移到新会话，跳过关闭操作")
-
-        except Exception as e:
-            debug_log(f"检查 WebSocket 连接状态时发生错误: {e}")
-
-    async def notify_existing_tab_to_refresh(self) -> bool:
-        """通知现有标签页刷新显示新会话内容
-
-        Returns:
-            bool: True 表示成功发送，False 表示失败
-        """
-        try:
-            if not self.current_session or not self.current_session.websocket:
-                debug_log("没有活跃的WebSocket连接，无法发送刷新通知")
-                return False
-
-            # 构建刷新通知消息
-            refresh_message = {
-                "type": "session_updated",
-                "action": "new_session_created",
-                "messageCode": "session.created",
-                "session_info": {
-                    "session_id": self.current_session.session_id,
-                    "project_directory": self.current_session.project_directory,
-                    "summary": self.current_session.summary,
-                    "status": self.current_session.status.value,
-                },
-            }
-
-            # 发送刷新通知
-            await self.current_session.websocket.send_json(refresh_message)
-            debug_log(f"已向现有标签页发送刷新通知: {self.current_session.session_id}")
-
-            # 简单等待一下让消息发送完成
-            await asyncio.sleep(0.2)
-            debug_log("刷新通知发送完成")
-            return True
-
-        except Exception as e:
-            debug_log(f"发送刷新通知失败: {e}")
-            return False
-
-    async def _check_active_tabs(self) -> bool:
-        """检查是否有活跃标签页 - 使用分层检测机制"""
-        try:
-            # 快速检测层：检查 WebSocket 对象是否存在
-            if not self.current_session or not self.current_session.websocket:
-                debug_log("快速检测：没有当前会话或 WebSocket 连接")
-                return False
-
-            # 检查心跳（如果有心跳记录）
-            last_heartbeat = getattr(self.current_session, "last_heartbeat", None)
-            if last_heartbeat:
-                heartbeat_age = time.time() - last_heartbeat
-                if heartbeat_age > 10:  # 超过 10 秒没有心跳
-                    debug_log(f"快速检测：心跳超时 ({heartbeat_age:.1f}秒)")
-                    # 可能连接已死，需要进一步检测
-                else:
-                    debug_log(f"快速检测：心跳正常 ({heartbeat_age:.1f}秒前)")
-                    return True  # 心跳正常，认为连接活跃
-
-            # 准确检测层：实际测试连接是否活着
+        if self._browser_websocket:
             try:
-                # 检查 WebSocket 连接状态
-                websocket = self.current_session.websocket
-
-                # 检查连接是否已关闭
-                if hasattr(websocket, "client_state"):
-                    try:
-                        # 尝试从 starlette 导入（FastAPI 基于 Starlette）
-                        import starlette.websockets  # type: ignore[import-not-found]
-
-                        if hasattr(starlette.websockets, "WebSocketState"):
-                            WebSocketState = starlette.websockets.WebSocketState
-                            if websocket.client_state != WebSocketState.CONNECTED:
-                                debug_log(
-                                    f"准确检测：WebSocket 状态不是 CONNECTED，而是 {websocket.client_state}"
-                                )
-                                # 清理死连接
-                                self.current_session.websocket = None
-                                return False
-                    except ImportError:
-                        # 如果导入失败，使用替代方法
-                        debug_log("无法导入 WebSocketState，使用替代方法检测连接")
-                        # 跳过状态检查，直接测试连接
-
-                # 如果连接看起来是活的，尝试发送 ping（非阻塞）
-                # 注意：FastAPI WebSocket 没有内置的 ping 方法，这里使用自定义消息
-                await websocket.send_json({"type": "ping", "timestamp": time.time()})
-                debug_log("准确检测：成功发送 ping 消息，连接是活跃的")
+                await self._browser_websocket.send_json({"type": "ping", "timestamp": time.time()})
+                debug_log("浏览器已连接，不打开新窗口")
                 return True
+            except Exception:
+                self._browser_websocket = None
 
-            except Exception as e:
-                debug_log(f"准确检测：连接测试失败 - {e}")
-                # 连接已死，清理它
-                if self.current_session:
-                    self.current_session.websocket = None
-                return False
-
-        except Exception as e:
-            debug_log(f"检查活跃连接时发生错误：{e}")
-            return False
+        debug_log("打开新浏览器窗口")
+        self.open_browser(url)
+        return False
 
     def get_server_url(self) -> str:
         """获取服务器 URL"""
@@ -806,14 +637,6 @@ class WebUIManager:
                     session._cleanup_sync_enhanced(CleanupReason.EXPIRED)
                     del self.sessions[session_id]
                     cleaned_count += 1
-
-                    # 如果清理的是当前活跃会话，清空当前会话
-                    if (
-                        self.current_session
-                        and self.current_session.session_id == session_id
-                    ):
-                        self.current_session = None
-                        debug_log("清空过期的当前活跃会话")
 
             except Exception as e:
                 error_id = ErrorHandler.log_error_with_context(
@@ -852,12 +675,8 @@ class WebUIManager:
         # 根据优先级选择要清理的会话
         # 优先级：已完成 > 已提交反馈 > 错误状态 > 空闲时间最长
         for session_id, session in self.sessions.items():
-            # 跳过当前活跃会话（除非强制清理）
-            if (
-                not force
-                and self.current_session
-                and session.session_id == self.current_session.session_id
-            ):
+            # 跳过等待中的会话（除非强制清理）
+            if not force and session.status == SessionStatus.WAITING:
                 continue
 
             # 优先清理已完成或错误状态的会话
@@ -890,14 +709,6 @@ class WebUIManager:
                 session._cleanup_sync_enhanced(CleanupReason.MEMORY_PRESSURE)
                 del self.sessions[session_id]
                 cleaned_count += 1
-
-                # 如果清理的是当前活跃会话，清空当前会话
-                if (
-                    self.current_session
-                    and self.current_session.session_id == session_id
-                ):
-                    self.current_session = None
-                    debug_log("因内存压力清空当前活跃会话")
 
             except Exception as e:
                 error_id = ErrorHandler.log_error_with_context(
@@ -939,9 +750,7 @@ class WebUIManager:
         stats.update(
             {
                 "active_sessions": len(self.sessions),
-                "current_session_id": self.current_session.session_id
-                if self.current_session
-                else None,
+                "waiting_sessions": self.get_waiting_count(),
                 "expired_sessions": sum(
                     1 for s in self.sessions.values() if s.is_expired()
                 ),
@@ -986,7 +795,7 @@ class WebUIManager:
                 debug_log(f"停止服务时清理会话失败: {e}")
 
         self.sessions.clear()
-        self.current_session = None
+        self._browser_websocket = None
 
         # 更新统计
         cleanup_duration = time.time() - cleanup_start_time
@@ -1027,7 +836,9 @@ async def launch_web_feedback_ui(
     project_directory: str, summary: str, timeout: int = 86400
 ) -> dict:
     """
-    启动 Web 回馈接口并等待用户回馈 - 重构为使用根路径
+    启动 Web 回馈接口并等待用户回馈 — 多会话模式
+
+    每次调用创建独立的 session，多个调用可以并发等待。
 
     Args:
         project_directory: 项目目录路径
@@ -1039,9 +850,8 @@ async def launch_web_feedback_ui(
     """
     manager = get_web_ui_manager()
 
-    # 创建新会话（每次AI调用都应该创建新会话）
-    manager.create_session(project_directory, summary)
-    session = manager.get_current_session()
+    session_id = manager.create_session(project_directory, summary)
+    session = manager.get_session(session_id)
 
     if not session:
         raise RuntimeError("无法创建回馈会话")
@@ -1050,34 +860,31 @@ async def launch_web_feedback_ui(
     if manager.server_thread is None or not manager.server_thread.is_alive():
         manager.start_server()
 
-    # 使用根路径 URL
-    feedback_url = manager.get_server_url()  # 直接使用根路径
+    feedback_url = manager.get_server_url()
+    await manager.smart_open_browser(feedback_url)
 
-    # 智能打开浏览器
-    has_active_tabs = await manager.smart_open_browser(feedback_url)
-
-    debug_log(f"[DEBUG] 服务器地址: {feedback_url}")
-
-    # 如果检测到活跃标签页，消息已在 smart_open_browser 中发送，无需额外处理
-    if has_active_tabs:
-        debug_log("检测到活跃标签页，会话更新通知已发送")
+    debug_log(f"[DEBUG] 服务器地址: {feedback_url}, 会话: {session_id}")
 
     try:
-        # 等待用户回馈，传递 timeout 参数
         result = await session.wait_for_feedback(timeout)
-        debug_log("收到用户回馈")
+        debug_log(f"会话 {session_id} 收到用户回馈")
         return result
     except TimeoutError:
-        debug_log("会话超时")
-        # 资源已在 wait_for_feedback 中清理，这里只需要记录和重新抛出
+        debug_log(f"会话 {session_id} 超时")
         raise
     except Exception as e:
-        debug_log(f"会话发生错误: {e}")
+        debug_log(f"会话 {session_id} 发生错误: {e}")
         raise
     finally:
-        # 注意：不再自动清理会话和停止服务器，保持持久性
-        # 会话将保持活跃状态，等待下次 MCP 调用
-        debug_log("会话保持活跃状态，等待下次 MCP 调用")
+        # 通知浏览器此会话已结束
+        try:
+            await manager._notify_session_removed(session_id, "completed")
+        except Exception:
+            pass
+        # 从会话字典中移除
+        if session_id in manager.sessions:
+            del manager.sessions[session_id]
+        debug_log(f"会话 {session_id} 已清理")
 
 
 def stop_web_ui():
