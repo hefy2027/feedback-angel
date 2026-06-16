@@ -1,65 +1,65 @@
 # 部署指南
 
-## 🚀 部署架構概覽
+## 🚀 部署架构概览
 
-MCP Feedback Enhanced 支援多種部署環境，具備智能環境檢測和自適應配置能力。
+MCP Feedback Enhanced 支持多种部署环境，具备智能环境检测和自适应配置能力。
 
-### 部署拓撲圖
+### 部署拓扑图
 
 ```mermaid
 graph TB
-    subgraph "本地開發環境"
-        LOCAL[本地機器]
-        LOCAL_BROWSER[本地瀏覽器]
+    subgraph "本地开发环境"
+        LOCAL[本地机器]
+        LOCAL_BROWSER[本地浏览器]
         LOCAL --> LOCAL_BROWSER
     end
 
-    subgraph "SSH 遠程環境"
-        REMOTE[遠程服務器]
+    subgraph "SSH 远程环境"
+        REMOTE[远程服务器]
         SSH_TUNNEL[SSH 隧道]
-        LOCAL_CLIENT[本地客戶端]
+        LOCAL_CLIENT[本地客户端]
         REMOTE --> SSH_TUNNEL
         SSH_TUNNEL --> LOCAL_CLIENT
     end
 
-    subgraph "WSL 環境"
-        WSL[WSL 子系統]
-        WIN_BROWSER[Windows 瀏覽器]
+    subgraph "WSL 环境"
+        WSL[WSL 子系统]
+        WIN_BROWSER[Windows 浏览器]
         WSL --> WIN_BROWSER
     end
 
     subgraph "容器化部署"
         DOCKER[Docker 容器]
-        PORT_MAP[埠映射]
-        HOST[宿主機]
+        PORT_MAP[端口映射]
+        HOST[宿主机]
         DOCKER --> PORT_MAP
         PORT_MAP --> HOST
     end
 ```
 
-## 🛠️ 安裝和配置
+## 🛠️ 安装和配置
 
-### 系統要求
+### 系统要求
 
 #### 最低要求
 - **Python**: 3.11 或更高版本
-- **內存**: 512MB 可用內存
-- **磁盤**: 100MB 可用空間
-- **網路**: 可訪問的網路連接
-- **瀏覽器**: 支援 Web Audio API 的現代瀏覽器（v2.4.3 音效功能）
+- **内存**: 512MB 可用内存
+- **磁盘**: 100MB 可用空间
+- **网络**: 可访问的网络连接
+- **浏览器**: 支持 Web Audio API 的现代浏览器（v2.4.3 音效功能）
 
-#### 推薦配置
+#### 推荐配置
 - **Python**: 3.12+
-- **內存**: 1GB+ 可用內存
-- **磁盤**: 500MB+ 可用空間（包含音效文件存儲）
-- **CPU**: 2 核心或更多
-- **瀏覽器**: Chrome 90+, Firefox 88+, Safari 14+（完整功能支援）
+- **内存**: 1GB+ 可用内存
+- **磁盘**: 500MB+ 可用空间（包含音效文档存储）
+- **CPU**: 2 内核或更多
+- **浏览器**: Chrome 90+, Firefox 88+, Safari 14+（完整功能支持）
 
-### 安裝方式
+### 安装方式
 
-#### 1. 使用 uvx（推薦）
+#### 1. 使用 uvx（推荐）
 ```bash
-# 直接運行
+# 直接运行
 uvx mcp-feedback-enhanced@latest web
 
 # 指定版本
@@ -68,106 +68,106 @@ uvx mcp-feedback-enhanced@2.4.3 web
 
 #### 2. 使用 pip
 ```bash
-# 安裝
+# 安装
 pip install mcp-feedback-enhanced
 
-# 運行
+# 运行
 mcp-feedback-enhanced web
 ```
 
-#### 3. 從源碼安裝
+#### 3. 从源码安装
 ```bash
-# 克隆倉庫
+# 克隆仓库
 git clone https://github.com/hefy2027/feedback-angel.git
 cd mcp-feedback-enhanced
 
-# 使用 uv 安裝
+# 使用 uv 安装
 uv sync
 
-# 運行
+# 运行
 uv run python -m mcp_feedback_enhanced web
 ```
 
-## 🌍 環境配置
+## 🌍 环境配置
 
-### 環境檢測機制
+### 环境检测机制
 
 ```mermaid
 flowchart TD
-    START[啟動檢測] --> SSH{SSH 環境?}
+    START[启动检测] --> SSH{SSH 环境?}
     SSH -->|是| SSH_CONFIG[SSH 配置]
-    SSH -->|否| WSL{WSL 環境?}
+    SSH -->|否| WSL{WSL 环境?}
     WSL -->|是| WSL_CONFIG[WSL 配置]
     WSL -->|否| LOCAL_CONFIG[本地配置]
 
-    SSH_CONFIG --> TUNNEL[建立 SSH 隧道]
-    WSL_CONFIG --> WSL_BROWSER[WSL 瀏覽器開啟]
-    LOCAL_CONFIG --> LOCAL_BROWSER[本地瀏覽器開啟]
+    SSH_CONFIG --> TUNNEL[创建 SSH 隧道]
+    WSL_CONFIG --> WSL_BROWSER[WSL 浏览器打开]
+    LOCAL_CONFIG --> LOCAL_BROWSER[本地浏览器打开]
 
     TUNNEL --> SUCCESS[部署成功]
     WSL_BROWSER --> SUCCESS
     LOCAL_BROWSER --> SUCCESS
 ```
 
-### 1. 本地環境部署
+### 1. 本地环境部署
 
-**特點**:
-- 直接在本地機器運行
-- 自動開啟本地瀏覽器
-- 最簡單的部署方式
+**特点**:
+- 直接在本地机器运行
+- 自动打开本地浏览器
+- 最简单的部署方式
 
 **配置**:
 ```bash
-# 運行命令
+# 运行命令
 mcp-feedback-enhanced web
 
-# 自動檢測並開啟瀏覽器
-# 默認地址: http://localhost:8000
+# 自动检测并打开浏览器
+# 默认地址: http://localhost:8000
 ```
 
-### 2. SSH 遠程環境部署
+### 2. SSH 远程环境部署
 
-**特點**:
-- 在遠程服務器運行服務
-- 自動建立 SSH 隧道
-- 本地瀏覽器訪問遠程服務
+**特点**:
+- 在远程服务器运行服务
+- 自动创建 SSH 隧道
+- 本地浏览器访问远程服务
 
-**配置步驟**:
+**配置步骤**:
 
-1. **在遠程服務器安裝**:
+1. **在远程服务器安装**:
 ```bash
-# SSH 連接到遠程服務器
+# SSH 连接到远程服务器
 ssh user@remote-server
 
-# 安裝服務
+# 安装服务
 pip install mcp-feedback-enhanced
 ```
 
-2. **運行服務**:
+2. **运行服务**:
 ```bash
-# 在遠程服務器運行
+# 在远程服务器运行
 mcp-feedback-enhanced web --host 0.0.0.0 --port 8000
 ```
 
-3. **建立 SSH 隧道**（自動或手動）:
+3. **创建 SSH 隧道**（自动或手动）:
 ```bash
-# 手動建立隧道（如果自動檢測失敗）
+# 手动创建隧道（如果自动检测失败）
 ssh -L 8000:localhost:8000 user@remote-server
 ```
 
-### 3. WSL 環境部署
+### 3. WSL 环境部署
 
-**特點**:
-- 在 WSL 子系統中運行
-- 自動開啟 Windows 瀏覽器
-- 跨系統無縫集成
+**特点**:
+- 在 WSL 子系统中运行
+- 自动打开 Windows 浏览器
+- 跨系统无缝集成
 
 **配置**:
 ```bash
-# 在 WSL 中運行
+# 在 WSL 中运行
 mcp-feedback-enhanced web
 
-# 自動檢測 WSL 環境並開啟 Windows 瀏覽器
+# 自动检测 WSL 环境并打开 Windows 浏览器
 ```
 
 ### 4. 容器化部署
@@ -188,7 +188,7 @@ CMD ["mcp-feedback-enhanced", "web", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
 ```bash
-# 構建和運行
+# 构建和运行
 docker build -t mcp-feedback-enhanced .
 docker run -p 8000:8000 mcp-feedback-enhanced
 ```
@@ -210,28 +210,28 @@ services:
     restart: unless-stopped
 ```
 
-## ⚙️ 配置選項
+## ⚙️ 配置选项
 
-### 命令行參數
+### 命令行参数
 
 ```bash
 mcp-feedback-enhanced web [OPTIONS]
 ```
 
-| 參數 | 類型 | 預設值 | 描述 |
+| 参数 | 类型 | 默认值 | 描述 |
 |------|------|--------|------|
-| `--host` | `str` | `localhost` | 綁定的主機地址 |
-| `--port` | `int` | `8000` | 服務埠號 |
-| `--debug` | `bool` | `False` | 啟用調試模式 |
-| `--no-browser` | `bool` | `False` | 不自動開啟瀏覽器 |
-| `--timeout` | `int` | `600` | 預設會話超時時間（秒） |
-| `--audio-enabled` | `bool` | `True` | 啟用音效通知（v2.4.3 新增） |
-| `--session-retention` | `int` | `72` | 會話歷史保存時間（小時，v2.4.3 新增） |
+| `--host` | `str` | `localhost` | 绑定的主机地址 |
+| `--port` | `int` | `8000` | 服务端口号 |
+| `--debug` | `bool` | `False` | 激活调试模式 |
+| `--no-browser` | `bool` | `False` | 不自动打开浏览器 |
+| `--timeout` | `int` | `600` | 缺省会话超时时间（秒） |
+| `--audio-enabled` | `bool` | `True` | 激活音效通知（v2.4.3 添加） |
+| `--session-retention` | `int` | `72` | 会话历史保存时间（小时，v2.4.3 添加） |
 
-### 環境變數
+### 环境变量
 
 ```bash
-# 設置環境變數
+# 设置环境变量
 export MCP_FEEDBACK_HOST=0.0.0.0
 export MCP_FEEDBACK_PORT=9000
 export MCP_FEEDBACK_DEBUG=true
@@ -240,7 +240,7 @@ export MCP_FEEDBACK_AUDIO_ENABLED=true
 export MCP_FEEDBACK_SESSION_RETENTION=72
 ```
 
-### 配置文件
+### 配置文档
 ```json
 // config.json
 {
@@ -272,23 +272,23 @@ export MCP_FEEDBACK_SESSION_RETENTION=72
 }
 ```
 
-## 🆕 v2.4.3 版本部署考慮
+## 🆕 v2.4.3 版本部署考虑
 
-### 音效通知系統部署
+### 音效通知系统部署
 
-#### 瀏覽器相容性檢查
+#### 浏览器兼容性检查
 ```javascript
-// 檢查 Web Audio API 支援
+// 检查 Web Audio API 支持
 function checkAudioSupport() {
     if (typeof Audio === 'undefined') {
-        console.warn('Web Audio API 不支援，音效功能將被停用');
+        console.warn('Web Audio API 不支持，音效功能将被停用');
         return false;
     }
     return true;
 }
 ```
 
-#### 音效文件存儲配置
+#### 音效文档存储配置
 ```json
 {
     "audio_storage": {
@@ -300,28 +300,28 @@ function checkAudioSupport() {
 }
 ```
 
-#### 自動播放政策處理
+#### 自动播放政策处理
 ```bash
-# 部署時需要考慮瀏覽器自動播放限制
-# Chrome: 需要用戶交互後才能播放音效
-# Firefox: 預設允許音效播放
-# Safari: 需要用戶手勢觸發
+# 部署时需要考虑浏览器自动播放限制
+# Chrome: 需要用户交互后才能播放音效
+# Firefox: 缺省允许音效播放
+# Safari: 需要用户手势触发
 ```
 
-### 會話管理重構部署
+### 会话管理重构部署
 
-#### localStorage 容量規劃
+#### localStorage 容量规划
 ```javascript
-// 估算存儲需求
+// 估算存储需求
 const estimatedStorage = {
     sessions_per_day: 50,
     average_session_size_kb: 5,
     retention_days: 3,
-    total_size_mb: (50 * 5 * 3) / 1024  // 約 0.73 MB
+    total_size_mb: (50 * 5 * 3) / 1024  // 约 0.73 MB
 };
 ```
 
-#### 隱私設定配置
+#### 隐私设置配置
 ```json
 {
     "privacy_defaults": {
@@ -333,18 +333,18 @@ const estimatedStorage = {
 }
 ```
 
-### 智能記憶功能部署
+### 智能记忆功能部署
 
-#### ResizeObserver 支援檢查
+#### ResizeObserver 支持检查
 ```javascript
-// 檢查 ResizeObserver 支援
+// 检查 ResizeObserver 支持
 if (typeof ResizeObserver === 'undefined') {
-    console.warn('ResizeObserver 不支援，高度記憶功能將使用 fallback');
-    // 使用 window.resize 事件作為 fallback
+    console.warn('ResizeObserver 不支持，高度记忆功能将使用 fallback');
+    // 使用 window.resize 事件作为 fallback
 }
 ```
 
-#### 設定存儲優化
+#### 设置存储优化
 ```json
 {
     "memory_settings": {
@@ -355,16 +355,16 @@ if (typeof ResizeObserver === 'undefined') {
 }
 ```
 
-## 🔧 運維管理
+## 🔧 运维管理
 
-### 服務監控
+### 服务监控
 
-#### 健康檢查端點
+#### 健康检查端点
 ```bash
-# 檢查服務狀態
+# 检查服务状态
 curl http://localhost:8000/health
 
-# 響應示例
+# 响应示例
 {
     "status": "healthy",
     "version": "2.4.3",
@@ -383,9 +383,9 @@ curl http://localhost:8000/health
 }
 ```
 
-#### 日誌監控
+#### 日志监控
 ```python
-# 日誌配置
+# 日志配置
 import logging
 
 logging.basicConfig(
@@ -398,17 +398,17 @@ logging.basicConfig(
 )
 ```
 
-### 性能調優
+### 性能调优
 
-#### 內存優化
+#### 内存优化
 ```python
-# 會話清理配置
-SESSION_CLEANUP_INTERVAL = 300  # 5分鐘
-SESSION_TIMEOUT = 600  # 10分鐘
+# 会话清理配置
+SESSION_CLEANUP_INTERVAL = 300  # 5分钟
+SESSION_TIMEOUT = 600  # 10分钟
 MAX_CONCURRENT_SESSIONS = 10
 ```
 
-#### 網路優化
+#### 网络优化
 ```python
 # WebSocket 配置
 WEBSOCKET_PING_INTERVAL = 30
@@ -418,80 +418,80 @@ MAX_WEBSOCKET_CONNECTIONS = 50
 
 ### 故障排除
 
-#### 常見問題
+#### 常见问题
 
-**v2.4.3 新增問題**：
+**v2.4.3 添加问题**：
 
-1. **音效無法播放**
+1. **音效无法播放**
 ```bash
-# 檢查瀏覽器自動播放政策
-# 解決方案：用戶需要先與頁面交互
-console.log('請點擊頁面任意位置以啟用音效功能');
+# 检查浏览器自动播放政策
+# 解决方案：用户需要先与页面交互
+console.log('请点击页面任意位置以激活音效功能');
 
-# 檢查音效文件格式
-# 支援格式：MP3, WAV, OGG
-# 最大文件大小：2MB
+# 检查音效文档格式
+# 支持格式：MP3, WAV, OGG
+# 最大文档大小：2MB
 ```
 
-2. **會話歷史丟失**
+2. **会话历史丢失**
 ```bash
-# 檢查 localStorage 容量
-# 解決方案：清理過期數據或增加保存期限
+# 检查 localStorage 容量
+# 解决方案：清理过期数据或增加保存期限
 localStorage.getItem('sessionHistory');
 
-# 檢查隱私設定
-# 確認用戶訊息記錄等級設定正確
+# 检查隐私设置
+# 确认用户消息记录等级设置正确
 ```
 
-3. **輸入框高度不記憶**
+3. **输入框高度不记忆**
 ```bash
-# 檢查 ResizeObserver 支援
+# 检查 ResizeObserver 支持
 if (typeof ResizeObserver === 'undefined') {
-    console.warn('瀏覽器不支援 ResizeObserver');
+    console.warn('浏览器不支持 ResizeObserver');
 }
 
-# 檢查設定存儲
+# 检查设置存储
 localStorage.getItem('combinedFeedbackTextHeight');
 ```
 
-4. **埠被佔用**
+4. **端口被占用**
 ```bash
-# 檢查埠使用情況
+# 检查端口使用情况
 netstat -tulpn | grep 8000
 
-# 解決方案：使用不同埠
+# 解决方案：使用不同端口
 mcp-feedback-enhanced web --port 8001
 ```
 
-2. **瀏覽器無法開啟**
+2. **浏览器无法打开**
 ```bash
-# 手動開啟瀏覽器
+# 手动打开浏览器
 mcp-feedback-enhanced web --no-browser
-# 然後手動訪問 http://localhost:8000
+# 然后手动访问 http://localhost:8000
 ```
 
-3. **SSH 隧道失敗**
+3. **SSH 隧道失败**
 ```bash
-# 手動建立隧道
+# 手动创建隧道
 ssh -L 8000:localhost:8000 user@remote-server
 
-# 或使用不同埠
+# 或使用不同端口
 ssh -L 8001:localhost:8000 user@remote-server
 ```
 
-#### 調試模式
+#### 调试模式
 ```bash
-# 啟用詳細日誌
+# 激活详细日志
 mcp-feedback-enhanced web --debug
 
-# 查看詳細錯誤信息
+# 查看详细错误信息
 export PYTHONPATH=.
 python -m mcp_feedback_enhanced.debug
 ```
 
 ### 安全配置
 
-#### 生產環境安全
+#### 生产环境安全
 ```python
 # 限制 CORS
 app.add_middleware(
@@ -502,7 +502,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 添加安全標頭
+# 添加安全标头
 @app.middleware("http")
 async def add_security_headers(request, call_next):
     response = await call_next(request)
@@ -512,7 +512,7 @@ async def add_security_headers(request, call_next):
     return response
 ```
 
-#### 防火牆配置
+#### 防火墙配置
 ```bash
 # Ubuntu/Debian
 sudo ufw allow 8000/tcp
@@ -522,37 +522,37 @@ sudo firewall-cmd --permanent --add-port=8000/tcp
 sudo firewall-cmd --reload
 ```
 
-## 📊 監控和指標
+## 📊 监控和指针
 
-### 系統指標
+### 系统指针
 - CPU 使用率
-- 內存使用量
-- 網路連接數
-- 活躍會話數
+- 内存使用量
+- 网络连接数
+- 活跃会话数
 
-### 業務指標
-- 會話創建率
-- 回饋提交率
-- 平均回應時間
-- 錯誤率
+### 业务指针
+- 会话创建率
+- 回馈提交率
+- 平均回应时间
+- 错误率
 
-### v2.4.3 新增指標
+### v2.4.3 添加指针
 - 音效播放成功率
-- 會話歷史存儲使用量
-- 自訂音效上傳數量
-- 輸入框高度調整頻率
+- 会话历史存储使用量
+- 自订音效上传数量
+- 输入框高度调整频率
 - localStorage 使用量
 
-### 監控工具集成
+### 监控工具集成
 ```python
-# Prometheus 指標
+# Prometheus 指针
 from prometheus_client import Counter, Histogram, Gauge
 
 session_counter = Counter('mcp_sessions_total', 'Total sessions created')
 response_time = Histogram('mcp_response_time_seconds', 'Response time')
 active_sessions = Gauge('mcp_active_sessions', 'Active sessions')
 
-# v2.4.3 新增指標
+# v2.4.3 添加指针
 audio_plays = Counter('mcp_audio_plays_total', 'Total audio notifications played')
 audio_errors = Counter('mcp_audio_errors_total', 'Total audio playback errors')
 session_history_size = Gauge('mcp_session_history_size_bytes', 'Session history storage size')
@@ -562,43 +562,43 @@ height_adjustments = Counter('mcp_height_adjustments_total', 'Total textarea hei
 
 ---
 
-## 🔄 版本升級指南
+## 🔄 版本升级指南
 
-### 從 v2.4.2 升級到 v2.4.3
+### 从 v2.4.2 升级到 v2.4.3
 
-#### 1. 備份現有數據
+#### 1. 备份现有数据
 ```bash
-# 備份用戶設定
+# 备份用户设置
 cp ~/.mcp-feedback/settings.json ~/.mcp-feedback/settings.json.backup
 
-# 備份提示詞數據
+# 备份提示词数据
 cp ~/.mcp-feedback/prompts.json ~/.mcp-feedback/prompts.json.backup
 ```
 
-#### 2. 升級軟體
+#### 2. 升级软件
 ```bash
-# 使用 uvx 升級
+# 使用 uvx 升级
 uvx mcp-feedback-enhanced@2.4.3 web
 
-# 或使用 pip 升級
+# 或使用 pip 升级
 pip install --upgrade mcp-feedback-enhanced==2.4.3
 ```
 
-#### 3. 驗證新功能
+#### 3. 验证新功能
 ```bash
-# 檢查音效功能
+# 检查音效功能
 curl http://localhost:8000/health | jq '.features.audio_notifications'
 
-# 檢查會話歷史功能
+# 检查会话历史功能
 curl http://localhost:8000/health | jq '.features.session_history'
 
-# 檢查智能記憶功能
+# 检查智能记忆功能
 curl http://localhost:8000/health | jq '.features.smart_memory'
 ```
 
-#### 4. 配置遷移
+#### 4. 配置迁移
 ```json
-// 新增的配置項目會自動使用預設值
+// 添加的配置项目会自动使用默认值
 {
     "audio": {
         "enabled": true,
@@ -615,28 +615,28 @@ curl http://localhost:8000/health | jq '.features.smart_memory'
 }
 ```
 
-### 回滾指南
+### 回滚指南
 
-如果需要回滾到 v2.4.2：
+如果需要回滚到 v2.4.2：
 
 ```bash
-# 停止服務
+# 停止服务
 pkill -f mcp-feedback-enhanced
 
-# 安裝舊版本
+# 安装旧版本
 pip install mcp-feedback-enhanced==2.4.2
 
-# 恢復備份設定
+# 恢复备份设置
 cp ~/.mcp-feedback/settings.json.backup ~/.mcp-feedback/settings.json
 
-# 重新啟動服務
+# 重新启动服务
 mcp-feedback-enhanced web
 ```
 
 ---
 
 **版本**: 2.4.3
-**最後更新**: 2025年6月14日
-**維護者**: Minidoracat
-**新功能**: 音效通知系統、會話管理重構、智能記憶功能、一鍵複製
-**完成**: 架構文檔體系已更新完成，包含 v2.4.3 版本的完整技術文檔和部署指南。
+**最后更新**: 2025年6月14日
+**维护者**: Minidoracat
+**新功能**: 音效通知系统、会话管理重构、智能记忆功能、一键拷贝
+**完成**: 架构文档体系已更新完成，包含 v2.4.3 版本的完整技术文档和部署指南。

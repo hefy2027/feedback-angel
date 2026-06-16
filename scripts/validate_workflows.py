@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-GitHub Actions 工作流程驗證腳本
+GitHub Actions 工作流程验证脚本
 
-此腳本驗證 GitHub Actions 工作流程文件的語法和配置正確性。
+此脚本验证 GitHub Actions 工作流程文档的语法和配置正确性。
 """
 
 import sys
@@ -12,67 +12,67 @@ import yaml
 
 
 def validate_yaml_syntax(file_path: Path) -> bool:
-    """驗證 YAML 文件語法"""
+    """验证 YAML 文档语法"""
     try:
         with open(file_path, encoding="utf-8") as f:
             yaml.safe_load(f)
-        print(f"✅ {file_path.name}: YAML 語法正確")
+        print(f"✅ {file_path.name}: YAML 语法正确")
         return True
     except yaml.YAMLError as e:
-        print(f"❌ {file_path.name}: YAML 語法錯誤 - {e}")
+        print(f"❌ {file_path.name}: YAML 语法错误 - {e}")
         return False
     except Exception as e:
-        print(f"❌ {file_path.name}: 讀取文件失敗 - {e}")
+        print(f"❌ {file_path.name}: 读取文档失败 - {e}")
         return False
 
 
 def validate_workflow_structure(file_path: Path) -> bool:
-    """驗證工作流程結構"""
+    """验证工作流程结构"""
     try:
         with open(file_path, encoding="utf-8") as f:
             workflow = yaml.safe_load(f)
 
         if workflow is None:
-            print(f"❌ {file_path.name}: 文件為空或解析失敗")
+            print(f"❌ {file_path.name}: 文档为空或解析失败")
             return False
 
         required_fields = ["name", "jobs"]
         for field in required_fields:
             if field not in workflow:
                 print(f"❌ {file_path.name}: 缺少必需字段 '{field}'")
-                print(f"   實際字段: {list(workflow.keys())}")
+                print(f"   实际字段: {list(workflow.keys())}")
                 return False
 
         if "on" not in workflow and True not in workflow:
-            print(f"❌ {file_path.name}: 缺少觸發條件 'on'")
-            print(f"   實際字段: {list(workflow.keys())}")
+            print(f"❌ {file_path.name}: 缺少触发条件 'on'")
+            print(f"   实际字段: {list(workflow.keys())}")
             return False
 
         if not isinstance(workflow["jobs"], dict):
-            print(f"❌ {file_path.name}: 'jobs' 必須是字典")
+            print(f"❌ {file_path.name}: 'jobs' 必须是字典")
             return False
 
         if not workflow["jobs"]:
-            print(f"❌ {file_path.name}: 'jobs' 不能為空")
+            print(f"❌ {file_path.name}: 'jobs' 不能为空")
             return False
 
-        print(f"✅ {file_path.name}: 工作流程結構正確")
+        print(f"✅ {file_path.name}: 工作流程结构正确")
         return True
 
     except Exception as e:
-        print(f"❌ {file_path.name}: 結構驗證失敗 - {e}")
+        print(f"❌ {file_path.name}: 结构验证失败 - {e}")
         return False
 
 
 def validate_publish_workflow(file_path: Path) -> bool:
-    """驗證發佈工作流程的特定配置"""
+    """验证发布工作流程的特定配置"""
     try:
         with open(file_path, encoding="utf-8") as f:
             workflow = yaml.safe_load(f)
 
         on_section = workflow.get("on") or workflow.get(True)
         if not on_section:
-            print(f"❌ {file_path.name}: 找不到觸發條件")
+            print(f"❌ {file_path.name}: 找不到触发条件")
             return False
 
         workflow_dispatch = on_section.get("workflow_dispatch", {})
@@ -83,27 +83,27 @@ def validate_publish_workflow(file_path: Path) -> bool:
 
         if not required_inputs.issubset(actual_inputs):
             missing = required_inputs - actual_inputs
-            print(f"❌ {file_path.name}: 缺少輸入參數: {missing}")
-            print(f"   實際輸入參數: {actual_inputs}")
+            print(f"❌ {file_path.name}: 缺少输入参数: {missing}")
+            print(f"   实际输入参数: {actual_inputs}")
             return False
 
-        print(f"✅ {file_path.name}: 發佈工作流程配置正確")
+        print(f"✅ {file_path.name}: 发布工作流程配置正确")
         return True
 
     except Exception as e:
-        print(f"❌ {file_path.name}: 發佈工作流程驗證失敗 - {e}")
+        print(f"❌ {file_path.name}: 发布工作流程验证失败 - {e}")
         return False
 
 
 def main():
-    """主函數"""
-    print("🔍 驗證 GitHub Actions 工作流程...")
+    """主函数"""
+    print("🔍 验证 GitHub Actions 工作流程...")
     print()
 
     workflows_dir = Path(__file__).parent.parent / ".github" / "workflows"
 
     if not workflows_dir.exists():
-        print(f"❌ 工作流程目錄不存在: {workflows_dir}")
+        print(f"❌ 工作流程目录不存在: {workflows_dir}")
         sys.exit(1)
 
     workflow_files = list(workflows_dir.glob("*.yml")) + list(
@@ -111,16 +111,16 @@ def main():
     )
 
     if not workflow_files:
-        print(f"❌ 在 {workflows_dir} 中沒有找到工作流程文件")
+        print(f"❌ 在 {workflows_dir} 中没有找到工作流程文档")
         sys.exit(1)
 
-    print(f"📁 找到 {len(workflow_files)} 個工作流程文件")
+    print(f"📁 找到 {len(workflow_files)} 个工作流程文档")
     print()
 
     all_valid = True
 
     for workflow_file in sorted(workflow_files):
-        print(f"🔍 驗證 {workflow_file.name}...")
+        print(f"🔍 验证 {workflow_file.name}...")
 
         if not validate_yaml_syntax(workflow_file):
             all_valid = False
@@ -137,10 +137,10 @@ def main():
         print()
 
     if all_valid:
-        print("🎉 所有工作流程文件驗證通過！")
+        print("🎉 所有工作流程文档验证通过！")
     else:
-        print("❌ 部分工作流程文件驗證失敗")
-        print("請修復上述問題後重新運行驗證")
+        print("❌ 部分工作流程文档验证失败")
+        print("请修复上述问题后重新运行验证")
         sys.exit(1)
 
 

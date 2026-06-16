@@ -1,22 +1,22 @@
 /**
- * MCP Feedback Enhanced - 瀏覽器通知設定樣式
+ * MCP Feedback Enhanced - 浏览器通知设置样式
  * ========================================
  */
 
-/* 權限狀態顯示 */
+/* 权限状态显示 */
 .permission-status {
     font-size: 12px;
     margin-top: 8px;
-    display: block;  /* 使用 block 讓內容自然流動 */
+    display: block;  /* 使用 block 让内容自然流动 */
 }
 
 .permission-status span {
-    display: inline-block;  /* 確保內容在同一行 */
-    white-space: nowrap;  /* 防止文字換行 */
-    line-height: 1.2;  /* 適當的行高 */
+    display: inline-block;  /* 确保内容在同一行 */
+    white-space: nowrap;  /* 防止文本换行 */
+    line-height: 1.2;  /* 适当的行高 */
 }
 
-/* 權限狀態樣式 */
+/* 权限状态样式 */
 .status-granted {
     color: #059669;
 }
@@ -33,7 +33,7 @@
     color: #d97706;
 }
 
-/* 觸發情境選項 */
+/* 触发情境选项 */
 .notification-trigger {
     margin-top: 12px;
     padding-top: 12px;
@@ -72,7 +72,7 @@
     line-height: 1.4;
 }
 
-/* 測試按鈕區塊 */
+/* 测试按钮区块 */
 .notification-actions {
     margin-top: 16px;
 }
@@ -92,19 +92,19 @@
     background-color: var(--primary-hover, #0066b3);
 }
 
-/* 通知設定專用的 setting-info 調整 */
+/* 通知设置专用的 setting-info 调整 */
 #notificationSettings .setting-info {
-    max-width: calc(100% - 100px);  /* 為開關預留空間 */
+    max-width: calc(100% - 100px);  /* 为开关预留空间 */
 }
 
-/* 響應式設計 */
+/* 响应式设计 */
 @media (max-width: 768px) {
     .permission-status {
         font-size: 11px;
     }
     
     #notificationSettings .setting-info {
-        max-width: calc(100% - 80px);  /* 小螢幕上調整空間 */
+        max-width: calc(100% - 80px);  /* 小屏幕上调整空间 */
     }
     
     .radio-option {
@@ -116,7 +116,7 @@
     }
 }
 
-/* 深色模式支援 */
+/* 深色模式支持 */
 @media (prefers-color-scheme: dark) {
     .status-granted {
         color: #34d399;

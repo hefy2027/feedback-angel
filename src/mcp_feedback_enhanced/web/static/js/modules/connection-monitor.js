@@ -1,24 +1,24 @@
 /**
- * MCP Feedback Enhanced - 連線監控模組
+ * MCP Feedback Enhanced - 连接监控模块
  * ===================================
  * 
- * 處理 WebSocket 連線狀態監控、品質檢測和診斷功能
+ * 处理 WebSocket 连接状态监控、品质检测和诊断功能
  */
 
 (function() {
     'use strict';
 
-    // 確保命名空間和依賴存在
+    // 确保命名空间和依赖存在
     window.MCPFeedback = window.MCPFeedback || {};
     const Utils = window.MCPFeedback.Utils;
 
     /**
-     * 連線監控器建構函數
+     * 连接监控器建构函数
      */
     function ConnectionMonitor(options) {
         options = options || {};
         
-        // 監控狀態
+        // 监控状态
         this.isMonitoring = false;
         this.connectionStartTime = null;
         this.lastPingTime = null;
@@ -27,7 +27,7 @@
         this.reconnectCount = 0;
         this.messageCount = 0;
         
-        // 連線品質指標
+        // 连接品质指针
         this.currentLatency = 0;
         this.averageLatency = 0;
         this.connectionQuality = 'unknown'; // excellent, good, fair, poor, unknown
@@ -41,7 +41,7 @@
         this.messageCountDisplay = null;
         this.signalBars = null;
         
-        // 回調函數
+        // 回调函数
         this.onStatusChange = options.onStatusChange || null;
         this.onQualityChange = options.onQualityChange || null;
         
@@ -54,7 +54,7 @@
      * 初始化 UI 元素
      */
     ConnectionMonitor.prototype.initializeUI = function() {
-        // 獲取 UI 元素引用
+        // 获取 UI 元素引用
         this.statusIcon = Utils.safeQuerySelector('.status-icon');
         this.statusText = Utils.safeQuerySelector('.status-text');
         this.latencyDisplay = Utils.safeQuerySelector('.latency-indicator');
@@ -64,12 +64,12 @@
         this.latencyDisplayFooter = Utils.safeQuerySelector('#latencyDisplay');
         this.signalBars = document.querySelectorAll('.signal-bar');
         
-        // 初始化顯示
+        // 初始化显示
         this.updateDisplay();
     };
 
     /**
-     * 開始監控
+     * 开始监控
      */
     ConnectionMonitor.prototype.startMonitoring = function() {
         if (this.isMonitoring) return;
@@ -80,37 +80,37 @@
         this.messageCount = 0;
         this.latencyHistory = [];
         
-        console.log('🔍 開始連線監控');
+        console.log('🔍 开始连接监控');
         this.updateDisplay();
     };
 
     /**
-     * 停止監控
+     * 停止监控
      */
     ConnectionMonitor.prototype.stopMonitoring = function() {
         this.isMonitoring = false;
         this.connectionStartTime = null;
         this.lastPingTime = null;
         
-        console.log('🔍 停止連線監控');
+        console.log('🔍 停止连接监控');
         this.updateDisplay();
     };
 
     /**
-     * 更新連線狀態
+     * 更新连接状态
      */
     ConnectionMonitor.prototype.updateConnectionStatus = function(status, message) {
-        console.log('🔍 連線狀態更新:', status, message);
+        console.log('🔍 连接状态更新:', status, message);
 
-        // 更新狀態顯示
+        // 更新状态显示
         if (this.statusText) {
-            // 使用 i18n 翻譯或提供的訊息
+            // 使用 i18n 翻译或提供的消息
             const displayText = message || (window.MCPFeedback && window.MCPFeedback.Utils && window.MCPFeedback.Utils.Status ?
                 window.MCPFeedback.Utils.Status.getConnectionStatusText(status) : status);
             this.statusText.textContent = displayText;
         }
 
-        // 更新狀態圖示
+        // 更新状态图标
         if (this.statusIcon) {
             this.statusIcon.className = 'status-icon';
 
@@ -127,13 +127,13 @@
             }
         }
 
-        // 更新連線指示器樣式
+        // 更新连接指示器样式
         const indicator = Utils.safeQuerySelector('.connection-indicator');
         if (indicator) {
             indicator.className = 'connection-indicator ' + status;
         }
         
-        // 更新精簡的頂部狀態指示器（現在是緊湊版）
+        // 更新精简的顶部状态指示器（现在是紧凑版）
         const minimalIndicator = document.getElementById('connectionStatusMinimal');
         if (minimalIndicator) {
             minimalIndicator.className = 'connection-status-compact ' + status;
@@ -163,7 +163,7 @@
             }
         }
         
-        // 處理特殊狀態
+        // 处理特殊状态
         switch (status) {
             case 'connected':
                 if (!this.isMonitoring) {
@@ -181,21 +181,21 @@
         
         this.updateDisplay();
         
-        // 調用回調
+        // 调用回调
         if (this.onStatusChange) {
             this.onStatusChange(status, message);
         }
     };
 
     /**
-     * 記錄 ping 時間
+     * 记录 ping 时间
      */
     ConnectionMonitor.prototype.recordPing = function() {
         this.lastPingTime = Date.now();
     };
 
     /**
-     * 記錄 pong 時間並計算延遲
+     * 记录 pong 时间并计算延迟
      */
     ConnectionMonitor.prototype.recordPong = function() {
         if (!this.lastPingTime) return;
@@ -206,24 +206,24 @@
         this.currentLatency = latency;
         this.latencyHistory.push(latency);
         
-        // 保持歷史記錄在限制範圍內
+        // 保持历史记录在限制范围内
         if (this.latencyHistory.length > this.maxLatencyHistory) {
             this.latencyHistory.shift();
         }
         
-        // 計算平均延遲
+        // 计算平均延迟
         this.averageLatency = this.latencyHistory.reduce((sum, lat) => sum + lat, 0) / this.latencyHistory.length;
         
-        // 更新連線品質
+        // 更新连接品质
         this.updateConnectionQuality();
         
-        console.log('🔍 延遲測量:', latency + 'ms', '平均:', Math.round(this.averageLatency) + 'ms');
+        console.log('🔍 延迟测量:', latency + 'ms', '平均:', Math.round(this.averageLatency) + 'ms');
         
         this.updateDisplay();
     };
 
     /**
-     * 記錄訊息
+     * 记录消息
      */
     ConnectionMonitor.prototype.recordMessage = function() {
         this.messageCount++;
@@ -231,7 +231,7 @@
     };
 
     /**
-     * 更新連線品質
+     * 更新连接品质
      */
     ConnectionMonitor.prototype.updateConnectionQuality = function() {
         const avgLatency = this.averageLatency;
@@ -258,7 +258,7 @@
     };
 
     /**
-     * 更新信號強度顯示
+     * 更新信号强度显示
      */
     ConnectionMonitor.prototype.updateSignalStrength = function() {
         if (!this.signalBars || this.signalBars.length === 0) return;
@@ -291,12 +291,12 @@
     };
 
     /**
-     * 更新顯示
+     * 更新显示
      */
     ConnectionMonitor.prototype.updateDisplay = function() {
-        // 更新延遲顯示
+        // 更新延迟显示
         if (this.latencyDisplay) {
-            const latencyLabel = window.i18nManager ? window.i18nManager.t('connectionMonitor.latency') : '延遲';
+            const latencyLabel = window.i18nManager ? window.i18nManager.t('connectionMonitor.latency') : '延迟';
             if (this.currentLatency > 0) {
                 this.latencyDisplay.textContent = latencyLabel + ': ' + this.currentLatency + 'ms';
             } else {
@@ -312,13 +312,13 @@
             }
         }
         
-        // 更新統計面板中的延遲顯示
+        // 更新统计面板中的延迟显示
         const statsLatency = document.getElementById('statsLatency');
         if (statsLatency) {
             statsLatency.textContent = this.currentLatency > 0 ? this.currentLatency + 'ms' : '--ms';
         }
         
-        // 更新連線時間
+        // 更新连接时间
         let connectionTimeStr = '--:--';
         if (this.connectionStartTime) {
             const duration = Math.floor((Date.now() - this.connectionStartTime) / 1000);
@@ -328,41 +328,41 @@
         }
         
         if (this.connectionTimeDisplay) {
-            const connectionTimeLabel = window.i18nManager ? window.i18nManager.t('connectionMonitor.connectionTime') : '連線時間';
+            const connectionTimeLabel = window.i18nManager ? window.i18nManager.t('connectionMonitor.connectionTime') : '连接时间';
             this.connectionTimeDisplay.textContent = connectionTimeLabel + ': ' + connectionTimeStr;
         }
         
-        // 更新統計面板中的連線時間
+        // 更新统计面板中的连接时间
         const statsConnectionTime = document.getElementById('statsConnectionTime');
         if (statsConnectionTime) {
             statsConnectionTime.textContent = connectionTimeStr;
         }
         
-        // 更新重連次數
+        // 更新重连次数
         if (this.reconnectCountDisplay) {
-            const reconnectLabel = window.i18nManager ? window.i18nManager.t('connectionMonitor.reconnectCount') : '重連';
+            const reconnectLabel = window.i18nManager ? window.i18nManager.t('connectionMonitor.reconnectCount') : '重连';
             const timesLabel = window.i18nManager ? window.i18nManager.t('connectionMonitor.times') : '次';
             this.reconnectCountDisplay.textContent = reconnectLabel + ': ' + this.reconnectCount + ' ' + timesLabel;
         }
         
-        // 更新統計面板中的重連次數
+        // 更新统计面板中的重连次数
         const statsReconnectCount = document.getElementById('statsReconnectCount');
         if (statsReconnectCount) {
             statsReconnectCount.textContent = this.reconnectCount.toString();
         }
         
-        // 更新訊息計數
+        // 更新消息计数
         if (this.messageCountDisplay) {
             this.messageCountDisplay.textContent = this.messageCount;
         }
         
-        // 更新統計面板中的訊息計數
+        // 更新统计面板中的消息计数
         const statsMessageCount = document.getElementById('statsMessageCount');
         if (statsMessageCount) {
             statsMessageCount.textContent = this.messageCount.toString();
         }
         
-        // 更新統計面板中的會話數和狀態
+        // 更新统计面板中的会话数和状态
         const sessionCount = document.getElementById('sessionCount');
         const statsSessionCount = document.getElementById('statsSessionCount');
         if (sessionCount && statsSessionCount) {
@@ -377,7 +377,7 @@
     };
 
     /**
-     * 獲取連線統計資訊
+     * 获取连接统计信息
      */
     ConnectionMonitor.prototype.getConnectionStats = function() {
         return {
@@ -388,12 +388,12 @@
             connectionQuality: this.connectionQuality,
             reconnectCount: this.reconnectCount,
             messageCount: this.messageCount,
-            latencyHistory: this.latencyHistory.slice() // 複製陣列
+            latencyHistory: this.latencyHistory.slice() // 拷贝数组
         };
     };
 
     /**
-     * 重置統計
+     * 重置统计
      */
     ConnectionMonitor.prototype.resetStats = function() {
         this.reconnectCount = 0;
@@ -406,11 +406,11 @@
         this.updateDisplay();
         this.updateSignalStrength();
         
-        console.log('🔍 連線統計已重置');
+        console.log('🔍 连接统计已重置');
     };
 
     /**
-     * 清理資源
+     * 清理资源
      */
     ConnectionMonitor.prototype.cleanup = function() {
         this.stopMonitoring();
@@ -427,9 +427,9 @@
         console.log('🔍 ConnectionMonitor 清理完成');
     };
 
-    // 將 ConnectionMonitor 加入命名空間
+    // 将 ConnectionMonitor 加入命名空间
     window.MCPFeedback.ConnectionMonitor = ConnectionMonitor;
 
-    console.log('✅ ConnectionMonitor 模組載入完成');
+    console.log('✅ ConnectionMonitor 模块加载完成');
 
 })();

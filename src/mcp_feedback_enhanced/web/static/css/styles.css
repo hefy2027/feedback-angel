@@ -1,11 +1,11 @@
 /**
- * Web UI 樣式
+ * Web UI 样式
  * ===========
  * 
- * 補充樣式和動畫效果
+ * 补充样式和动画效果
  */
 
-/* 連接狀態指示器 */
+/* 连接状态指示器 */
 .connection-indicator {
     display: inline-block;
     padding: 4px 8px;
@@ -27,7 +27,7 @@
     border: 1px solid #f44336;
 }
 
-/* 載入動畫 */
+/* 加载动画 */
 .loading {
     display: inline-block;
     width: 16px;
@@ -42,7 +42,7 @@
     to { transform: rotate(360deg); }
 }
 
-/* 淡入動畫 */
+/* 淡入动画 */
 .fade-in {
     animation: fadeIn 0.3s ease-in-out;
 }
@@ -52,7 +52,7 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 滑入動畫 */
+/* 滑入动画 */
 .slide-in {
     animation: slideIn 0.3s ease-out;
 }
@@ -62,7 +62,7 @@
     to { transform: translateX(0); opacity: 1; }
 }
 
-/* 脈衝動畫 */
+/* 脉冲动画 */
 .pulse {
     animation: pulse 2s infinite;
 }
@@ -98,7 +98,7 @@
     z-index: 1000;
 }
 
-/* ===== 可折疊統計面板 ===== */
+/* ===== 可折叠统计面板 ===== */
 .stats-panel-floating {
     position: fixed;
     bottom: 0;
@@ -112,12 +112,12 @@
     will-change: transform;
 }
 
-/* 收起狀態 */
+/* 收起状态 */
 .stats-panel-floating.collapsed {
     transform: translateY(calc(100% - 40px));
 }
 
-/* 統計面板頭部 */
+/* 统计面板头部 */
 .stats-panel-header {
     display: flex;
     justify-content: space-between;
@@ -146,7 +146,7 @@
     transform: rotate(180deg);
 }
 
-/* 統計面板內容 */
+/* 统计面板内容 */
 .stats-panel-content {
     padding: 16px 20px;
     display: grid;
@@ -156,7 +156,7 @@
     margin: 0 auto;
 }
 
-/* 統計項目 */
+/* 统计项目 */
 .stats-item-detailed {
     display: flex;
     flex-direction: column;
@@ -182,7 +182,7 @@
 }
 
 
-/* 動畫效能優化 */
+/* 动画性能优化 */
 @media (prefers-reduced-motion: reduce) {
     .stats-panel-floating {
         transition: none;
@@ -193,7 +193,7 @@
     }
 }
 
-/* 響應式設計 */
+/* 响应式设计 */
 @media (max-width: 768px) {
     .stats-panel-content {
         grid-template-columns: 1fr;
@@ -210,7 +210,7 @@
     opacity: 1;
 }
 
-/* 滾動條美化 */
+/* 滚动条美化 */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -230,13 +230,13 @@
     background: #606060;
 }
 
-/* 選擇文字顏色 */
+/* 选择文本颜色 */
 ::selection {
     background: rgba(0, 122, 204, 0.3);
     color: var(--text-primary);
 }
 
-/* 無障礙改進 */
+/* 无障碍改进 */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -249,7 +249,7 @@
     border: 0;
 }
 
-/* 焦點可見性 */
+/* 焦点可见性 */
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
@@ -258,7 +258,7 @@ select:focus-visible {
     outline-offset: 2px;
 }
 
-/* 禁用狀態 */
+/* 禁用状态 */
 button:disabled,
 input:disabled,
 textarea:disabled,
@@ -267,13 +267,13 @@ select:disabled {
     cursor: not-allowed;
 }
 
-/* 響應式圖片 */
+/* 响应式图片 */
 img {
     max-width: 100%;
     height: auto;
 }
 
-/* 表格樣式 */
+/* 表格样式 */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -296,7 +296,7 @@ tr:hover {
     background: rgba(255, 255, 255, 0.02);
 }
 
-/* 代碼區塊 */
+/* 代码区块 */
 code {
     background: var(--bg-tertiary);
     padding: 2px 6px;
@@ -350,7 +350,7 @@ pre code {
     color: #ffcdd2;
 }
 
-/* 進度條 */
+/* 进度条 */
 .progress {
     width: 100%;
     height: 8px;
@@ -365,7 +365,7 @@ pre code {
     transition: width 0.3s ease;
 }
 
-/* 分隔線 */
+/* 分隔线 */
 .divider {
     height: 1px;
     background: var(--border-color);
@@ -418,7 +418,7 @@ pre code {
     color: var(--text-secondary);
 }
 
-/* 統計數字 */
+/* 统计数字 */
 .stat {
     text-align: center;
     padding: 20px;
@@ -437,11 +437,11 @@ pre code {
     margin-top: 4px;
 }
 
-/* ===== Feedback.html 專用樣式 ===== */
+/* ===== Feedback.html 专用样式 ===== */
 
-/* CSS 變數定義 */
+/* CSS 变量定义 */
 :root {
-    /* 深色主題顏色變數 */
+    /* 深色主题颜色变量 */
     --bg-primary: #1e1e1e;
     --bg-secondary: #2d2d30;
     --bg-tertiary: #252526;
@@ -457,14 +457,14 @@ pre code {
     --info-color: #2196f3;
 }
 
-/* 基礎重置 */
+/* 基础重置 */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* 主體樣式 */
+/* 主体样式 */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: var(--bg-primary);
@@ -475,7 +475,7 @@ body {
     flex-direction: column;
 }
 
-/* 容器樣式 */
+/* 容器样式 */
 .container {
     width: 100%;
     margin: 0 auto;
@@ -487,7 +487,7 @@ body {
     flex-direction: column;
 }
 
-/* 頭部樣式 */
+/* 头部样式 */
 .header {
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
@@ -521,7 +521,7 @@ body {
     font-size: 14px;
 }
 
-/* 倒數計時器樣式 */
+/* 倒数计时器样式 */
 .countdown-display {
     display: flex;
     align-items: center;
@@ -559,7 +559,7 @@ body {
 
 
 
-/* 語言選擇器 */
+/* 语言选择器 */
 .language-selector {
     display: flex;
     align-items: center;
@@ -575,7 +575,7 @@ body {
     font-size: 14px;
 }
 
-/* 設定項目樣式 */
+/* 设置项目样式 */
 .setting-item {
     display: flex;
     align-items: center;
@@ -605,7 +605,7 @@ body {
     line-height: 1.4;
 }
 
-/* 設定卡片樣式 */
+/* 设置卡片样式 */
 .settings-card {
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
@@ -669,7 +669,7 @@ body {
     font-weight: 500;
 }
 
-/* 圖片大小限制選擇器樣式 */
+/* 图片大小限制选择器样式 */
 .image-size-limit-selector {
     display: flex;
     align-items: center;
@@ -698,13 +698,13 @@ body {
     box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
 }
 
-/* Base64 切換器容器樣式 */
+/* Base64 切换器容器样式 */
 .base64-toggle-container {
     display: flex;
     align-items: center;
 }
 
-/* 現代化切換開關樣式 */
+/* 现代化切换开关样式 */
 .toggle-switch {
     position: relative;
     display: inline-block;
@@ -756,7 +756,7 @@ body {
     box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
 }
 
-/* 佈局模式選擇器 */
+/* 布局模式选择器 */
 .layout-mode-selector {
     display: flex;
     flex-direction: column;
@@ -819,7 +819,7 @@ body {
     background: rgba(0, 122, 204, 0.15);
 }
 
-/* 語言選擇器現代化樣式 - 保留用於兼容性 */
+/* 语言选择器现代化样式 - 保留用于兼容性 */
 .language-selector-modern {
     display: flex;
     align-items: center;
@@ -870,7 +870,7 @@ body {
     color: white;
 }
 
-/* 語言選擇器下拉選單樣式 */
+/* 语言选择器下拉列表样式 */
 .language-selector-dropdown {
     display: flex;
     align-items: center;
@@ -899,7 +899,7 @@ body {
     border-color: var(--accent-color);
 }
 
-/* 表單元素樣式 */
+/* 表单元素样式 */
 .input-group {
     margin-bottom: 20px;
     width: 100%;
@@ -941,7 +941,7 @@ body {
     min-height: 80px;
 }
 
-/* 新增：單行命令輸入框樣式 */
+/* 添加：单行命令输入框样式 */
 .command-input-line {
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: 14px;
@@ -954,7 +954,7 @@ body {
     border-color: var(--accent-color);
 }
 
-/* 命令輸出區域 */
+/* 命令输出区域 */
 .command-output {
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
@@ -969,23 +969,23 @@ body {
     height: 320px;
     width: 100%;
     box-sizing: border-box;
-    /* 添加 terminal 風格 */
+    /* 添加 terminal 风格 */
     background: #0f0f0f;
     border: 2px solid var(--border-color);
     color: #00ff00;
     text-shadow: 0 0 5px #00ff00;
-    /* 確保尺寸固定 */
+    /* 确保尺寸固定 */
     flex-shrink: 0;
     resize: none;
 }
 
-/* Terminal 提示符樣式 */
+/* Terminal 提示符样式 */
 .terminal-prompt {
     color: var(--accent-color);
     font-weight: bold;
 }
 
-/* 按鈕樣式 */
+/* 按钮样式 */
 .btn {
     padding: 10px 20px;
     border: none;
@@ -1029,7 +1029,7 @@ body {
     background: #45a049;
 }
 
-/* 底部操作按鈕 */
+/* 底部操作按钮 */
 .footer-actions {
     display: flex;
     justify-content: flex-end;
@@ -1041,7 +1041,7 @@ body {
     margin-top: auto;
 }
 
-/* 主內容區域 */
+/* 主内容区域 */
 .main-content {
     flex: 1;
     display: flex;
@@ -1049,7 +1049,7 @@ body {
     max-width: 100%;
     overflow: hidden;
     gap: 0;
-    min-height: 0; /* 允許內容自然收縮 */
+    min-height: 0; /* 允许内容自然收缩 */
 }
 
 .main-content-area {
@@ -1057,7 +1057,7 @@ body {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    min-height: 0; /* 允許內容自然收縮 */
+    min-height: 0; /* 允许内容自然收缩 */
     padding: 12px;
     overflow: hidden;
     transition: all 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
@@ -1066,14 +1066,14 @@ body {
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
 }
 
-/* 當會話面板收合時，主內容區域擴展 */
+/* 当会话面板收合时，主内容区域扩展 */
 .main-content.panel-collapsed .main-content-area {
     margin-left: 0;
     border-radius: 8px 0 0 0;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
 
-/* 分頁樣式 */
+/* 分页样式 */
 .tabs {
     border-bottom: 2px solid var(--border-color);
     margin-bottom: 12px;
@@ -1112,7 +1112,7 @@ body {
     display: none;
 }
 
-/* 分頁內容 */
+/* 分页内容 */
 .tab-content {
     display: none;
     flex: 1;
@@ -1124,7 +1124,7 @@ body {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    min-height: 0; /* 移除固定高度，使用 flex 自適應 */
+    min-height: 0; /* 移除固定高度，使用 flex 自适应 */
 }
 
 .tab-content.active {
@@ -1132,7 +1132,7 @@ body {
     flex-direction: column;
 }
 
-/* 分割器樣式（用於合併模式） */
+/* 分割器样式（用于合并模式） */
 .splitter-container {
     display: flex;
     flex-direction: column;
@@ -1161,7 +1161,7 @@ body {
     background: var(--accent-color);
 }
 
-/* 響應式設計 */
+/* 响应式设计 */
 @media (max-width: 768px) {
     .container {
         padding: 10px;
@@ -1176,13 +1176,13 @@ body {
         flex-wrap: wrap;
     }
 
-    /* 小屏幕下調整命令輸出區域高度 */
+    /* 小屏幕下调整命令输出区域高度 */
     .command-output {
         height: 250px;
     }
 }
 
-/* 更小屏幕的調整 */
+/* 更小屏幕的调整 */
 @media (max-width: 480px) {
     .command-output {
         height: 200px;
@@ -1190,9 +1190,9 @@ body {
     }
 }
 
-/* ===== 圖片上傳組件樣式 ===== */
+/* ===== 图片上传组件样式 ===== */
 
-/* 圖片上傳區域基礎樣式 */
+/* 图片上传区域基础样式 */
 .image-upload-area {
     border: 2px dashed var(--border-color);
     border-radius: 8px;
@@ -1210,7 +1210,7 @@ body {
     background: rgba(0, 122, 204, 0.05);
 }
 
-/* 拖放狀態樣式 */
+/* 拖放状态样式 */
 .image-upload-area.dragover {
     border-color: var(--accent-color) !important;
     background: rgba(0, 122, 204, 0.1) !important;
@@ -1218,7 +1218,7 @@ body {
     box-shadow: 0 4px 12px rgba(0, 122, 204, 0.2);
 }
 
-/* 上傳提示文字 */
+/* 上传提示文本 */
 .image-upload-area > div:first-child {
     color: var(--text-secondary);
     font-size: 14px;
@@ -1232,21 +1232,21 @@ body {
     font-size: 12px;
 }
 
-/* 禁用狀態 */
+/* 禁用状态 */
 .image-upload-area.disabled {
     opacity: 0.5;
     pointer-events: none;
     cursor: not-allowed;
 }
 
-/* 圖片預覽容器 */
+/* 图片预览容器 */
 .image-preview-container {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
     margin-top: 12px;
     justify-content: center;
-    /* 添加 padding 為刪除按鈕留出空間 */
+    /* 添加 padding 为删除按钮留出空间 */
     padding: 8px;
 }
 
@@ -1254,16 +1254,16 @@ body {
     display: none;
 }
 
-/* 圖片預覽項目 */
+/* 图片预览项目 */
 .image-preview-item {
     position: relative;
     display: inline-block;
     border-radius: 6px;
-    /* 移除 overflow: hidden 以確保刪除按鈕完全顯示 */
+    /* 移除 overflow: hidden 以确保删除按钮完全显示 */
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
     transition: all 0.3s ease;
-    /* 添加一些 margin 為刪除按鈕留出空間 */
+    /* 添加一些 margin 为删除按钮留出空间 */
     margin: 10px;
 }
 
@@ -1280,7 +1280,7 @@ body {
     border-radius: 6px;
 }
 
-/* 圖片刪除按鈕 */
+/* 图片删除按钮 */
 .image-remove-btn {
     position: absolute;
     top: -8px;
@@ -1316,7 +1316,7 @@ body {
     font-weight: 500;
 }
 
-/* 圖片設定下拉選單 */
+/* 图片设置下拉列表 */
 .image-setting-select {
     background: var(--bg-primary);
     color: var(--text-primary);
@@ -1333,7 +1333,7 @@ body {
     border-color: var(--accent-color);
 }
 
-/* 自定義複選框樣式 */
+/* 自定义复选框样式 */
 .image-setting-checkbox-container {
     display: flex;
     align-items: center;
@@ -1376,7 +1376,7 @@ body {
     outline-offset: 2px;
 }
 
-/* 圖片設定幫助文字 */
+/* 图片设置帮助文本 */
 .image-setting-help {
     color: var(--text-secondary);
     font-size: 11px;
@@ -1394,7 +1394,7 @@ body {
     border-left: 3px solid var(--accent-color);
 }
 
-/* 相容性提示樣式 */
+/* 兼容性提示样式 */
 .compatibility-hint {
     background: rgba(255, 152, 0, 0.1);
     border: 1px solid var(--warning-color);
@@ -1424,7 +1424,7 @@ body {
     background: #f57c00;
 }
 
-/* 自動刷新控制項樣式 */
+/* 自动刷新控制项样式 */
 .section-header-with-controls {
     display: flex;
     justify-content: space-between;
@@ -1432,7 +1432,7 @@ body {
     margin-bottom: 12px;
 }
 
-/* AI 工作摘要標題樣式 */
+/* AI 工作摘要标题样式 */
 h3.combined-section-title {
     font-size: 16px;
     font-weight: 600;
@@ -1442,7 +1442,7 @@ h3.combined-section-title {
 
 
 
-/* Combined 標籤頁提交按鈕樣式 */
+/* Combined 标签页提交按钮样式 */
 .combined-submit-btn {
     flex-shrink: 0;
     padding: 8px 16px;
@@ -1450,7 +1450,7 @@ h3.combined-section-title {
     white-space: nowrap;
 }
 
-/* 回饋標題容器樣式 */
+/* 回馈标题容器样式 */
 .feedback-title-container {
     display: flex;
     justify-content: space-between;
@@ -1471,7 +1471,7 @@ h3.combined-section-title {
     white-space: nowrap;
 }
 
-/* 響應式設計 - 小螢幕時垂直排列 */
+/* 响应式设计 - 小屏幕时垂直排列 */
 @media (max-width: 768px) {
     .feedback-title-container {
         flex-direction: column;
@@ -1485,7 +1485,7 @@ h3.combined-section-title {
     }
 }
 
-/* Placeholder 文本換行修復 - 全局樣式 */
+/* Placeholder 文本换行修复 - 全局样式 */
 textarea::placeholder,
 #combinedFeedbackText::placeholder {
     white-space: pre-line !important;
@@ -1495,7 +1495,7 @@ textarea::placeholder,
     opacity: 0.7 !important;
 }
 
-/* 跨瀏覽器兼容的 placeholder 樣式 */
+/* 跨浏览器兼容的 placeholder 样式 */
 textarea::-webkit-input-placeholder,
 #combinedFeedbackText::-webkit-input-placeholder {
     white-space: pre-line !important;
@@ -1523,9 +1523,9 @@ textarea:-ms-input-placeholder,
     opacity: 0.7 !important;
 }
 
-/* ===== 自動提交功能樣式 ===== */
+/* ===== 自动提交功能样式 ===== */
 
-/* 自動提交狀態按鈕 */
+/* 自动提交状态按钮 */
 .auto-submit-status-btn {
     padding: 6px 10px;
     font-size: 12px;
@@ -1569,7 +1569,7 @@ textarea:-ms-input-placeholder,
     font-size: 12px;
 }
 
-/* 自動提交設定控制項 */
+/* 自动提交设置控制项 */
 .setting-control {
     display: flex;
     align-items: center;
@@ -1619,7 +1619,7 @@ textarea:-ms-input-placeholder,
     margin-left: 4px;
 }
 
-/* 自動提交切換按鈕 */
+/* 自动提交切换按钮 */
 .toggle-btn {
     position: relative;
     width: 50px;
@@ -1660,7 +1660,7 @@ textarea:-ms-input-placeholder,
     box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.4);
 }
 
-/* 自動提交提示詞樣式 */
+/* 自动提交提示词样式 */
 .auto-submit-prompt {
     border-left: 4px solid var(--accent-color) !important;
     background: rgba(0, 122, 204, 0.05) !important;
@@ -1686,7 +1686,7 @@ textarea:-ms-input-placeholder,
     font-size: 12px;
 }
 
-/* 提示詞操作按鈕樣式 */
+/* 提示词操作按钮样式 */
 .prompt-action-btn {
     padding: 6px 12px;
     border: 1px solid var(--border-color);
@@ -1727,12 +1727,12 @@ textarea:-ms-input-placeholder,
     color: var(--error-color);
 }
 
-/* ===== Markdown 內容樣式 ===== */
+/* ===== Markdown 内容样式 ===== */
 
-/* AI 摘要區域的 Markdown 樣式 - 基於 marked.js 官方樣式 */
-/* 移除舊的衝突樣式，使用下方的 VSCode 風格樣式 */
+/* AI 摘要区域的 Markdown 样式 - 基于 marked.js 官方样式 */
+/* 移除旧的冲突样式，使用下方的 VSCode 风格样式 */
 
-/* Markdown 強調樣式 */
+/* Markdown 强调样式 */
 #summaryContent strong, #combinedSummaryContent strong {
     font-weight: 600;
     color: var(--text-primary);
@@ -1743,7 +1743,7 @@ textarea:-ms-input-placeholder,
     color: var(--text-primary);
 }
 
-/* Markdown 刪除線樣式 */
+/* Markdown 删除线样式 */
 #summaryContent del, #summaryContent s,
 #combinedSummaryContent del, #combinedSummaryContent s {
     text-decoration: line-through;
@@ -1751,7 +1751,7 @@ textarea:-ms-input-placeholder,
     opacity: 0.7;
 }
 
-/* Markdown 程式碼樣式 - 基於 marked.js 官方樣式 */
+/* Markdown 代码样式 - 基于 marked.js 官方样式 */
 #summaryContent code, #combinedSummaryContent code {
     padding: 0.2em 0.4em !important;
     margin: 0 !important;
@@ -1785,9 +1785,9 @@ textarea:-ms-input-placeholder,
     overflow: auto !important;
 }
 
-/* 移除舊的列表樣式，使用下方的 VSCode 風格樣式 */
+/* 移除旧的列表样式，使用下方的 VSCode 风格样式 */
 
-/* Markdown 引用區塊樣式 */
+/* Markdown 引用区块样式 */
 #summaryContent blockquote, #combinedSummaryContent blockquote {
     border-left: 4px solid var(--accent-color);
     margin: 1em 0;
@@ -1797,7 +1797,7 @@ textarea:-ms-input-placeholder,
     font-style: italic;
 }
 
-/* Markdown 連結樣式 - 基於 marked.js 官方樣式 */
+/* Markdown 链接样式 - 基于 marked.js 官方样式 */
 #summaryContent a, #combinedSummaryContent a {
     color: #0366d6;
     text-decoration: none;
@@ -1807,7 +1807,7 @@ textarea:-ms-input-placeholder,
     text-decoration: underline;
 }
 
-/* Markdown 水平線樣式 - 基於 marked.js 官方樣式 */
+/* Markdown 水平线样式 - 基于 marked.js 官方样式 */
 #summaryContent hr, #combinedSummaryContent hr {
     border: none;
     border-top: 1px solid var(--border-color);
@@ -1815,17 +1815,17 @@ textarea:-ms-input-placeholder,
     height: 0;
 }
 
-/* 確保第一個元素沒有上邊距 */
+/* 确保第一个元素没有上边距 */
 #summaryContent > *:first-child, #combinedSummaryContent > *:first-child {
     margin-top: 0;
 }
 
-/* 確保最後一個元素沒有下邊距 */
+/* 确保最后一个元素没有下边距 */
 #summaryContent > *:last-child, #combinedSummaryContent > *:last-child {
     margin-bottom: 0;
 }
 
-/* Markdown 內容樣式 - VSCode 風格極緊湊樣式 */
+/* Markdown 内容样式 - VSCode 风格极紧凑样式 */
 #summaryContent, #combinedSummaryContent {
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol" !important;
     font-size: 14px !important;
@@ -1833,7 +1833,7 @@ textarea:-ms-input-placeholder,
     word-wrap: break-word !important;
 }
 
-/* 強制覆蓋所有子元素的行高和間距 */
+/* 强制覆盖所有子元素的行高和间距 */
 #summaryContent *, #combinedSummaryContent * {
     line-height: 1.1 !important;
 }
@@ -1847,7 +1847,7 @@ textarea:-ms-input-placeholder,
     padding: 0 !important;
 }
 
-/* 標題樣式 - VSCode 風格含底線 */
+/* 标题样式 - VSCode 风格含底线 */
 #summaryContent h1, #summaryContent h2, #summaryContent h3,
 #summaryContent h4, #summaryContent h5, #summaryContent h6,
 #combinedSummaryContent h1, #combinedSummaryContent h2, #combinedSummaryContent h3,
@@ -1891,7 +1891,7 @@ textarea:-ms-input-placeholder,
     font-size: 1em !important;
 }
 
-/* 列表樣式 - VSCode 風格極緊湊 */
+/* 列表样式 - VSCode 风格极紧凑 */
 #summaryContent ul, #combinedSummaryContent ul,
 #summaryContent ol, #combinedSummaryContent ol {
     margin: 0 !important;
@@ -1925,7 +1925,7 @@ textarea:-ms-input-placeholder,
     padding-bottom: 0 !important;
 }
 
-/* 強制段落後的列表緊密貼合 */
+/* 强制段落后的列表紧密贴合 */
 #summaryContent p + ul, #combinedSummaryContent p + ul,
 #summaryContent p + ol, #combinedSummaryContent p + ol,
 #summaryContent h1 + ul, #combinedSummaryContent h1 + ul,
@@ -1958,7 +1958,7 @@ textarea:-ms-input-placeholder,
     font-size: 13px !important;
 }
 
-/* Markdown 表格樣式 - 適應主題顏色 */
+/* Markdown 表格样式 - 适应主题颜色 */
 #summaryContent table, #combinedSummaryContent table {
     border-spacing: 0 !important;
     border-collapse: collapse !important;
@@ -2011,7 +2011,7 @@ textarea:-ms-input-placeholder,
     margin-bottom: 0 !important;
 }
 
-/* 會話超時倒數樣式 */
+/* 会话超时倒数样式 */
 .session-timeout-display {
     background: rgba(255, 193, 7, 0.1);
     border: 1px solid rgba(255, 193, 7, 0.3);
@@ -2034,7 +2034,7 @@ textarea:-ms-input-placeholder,
     animation: pulse 1s ease-in-out infinite;
 }
 
-/* 自動提交倒數樣式 */
+/* 自动提交倒数样式 */
 .auto-submit-display {
     background: rgba(76, 175, 80, 0.1);
     border: 1px solid rgba(76, 175, 80, 0.3);
@@ -2053,7 +2053,7 @@ textarea:-ms-input-placeholder,
     font-weight: 500;
 }
 
-/* 倒數控制按鈕 */
+/* 倒数控制按钮 */
 .countdown-control-btn {
     background: transparent;
     border: none;
@@ -2075,7 +2075,7 @@ textarea:-ms-input-placeholder,
     100% { opacity: 1; }
 }
 
-/* 自動執行命令設定樣式 */
+/* 自动运行命令设置样式 */
 .command-auto-settings {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);

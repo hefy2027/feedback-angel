@@ -1,42 +1,42 @@
 /**
- * MCP Feedback Enhanced - 提示詞管理模組
+ * MCP Feedback Enhanced - 提示词管理模块
  * =====================================
  * 
- * 處理常用提示詞的儲存、管理和操作
+ * 处理常用提示词的保存、管理和操作
  */
 
 (function() {
     'use strict';
 
-    // 確保命名空間和依賴存在
+    // 确保命名空间和依赖存在
     window.MCPFeedback = window.MCPFeedback || {};
     window.MCPFeedback.Prompt = window.MCPFeedback.Prompt || {};
     const Utils = window.MCPFeedback.Utils;
 
     /**
-     * 提示詞管理器建構函數
+     * 提示词管理器建构函数
      */
     function PromptManager(options) {
         options = options || {};
         
-        // 設定管理器引用
+        // 设置管理器引用
         this.settingsManager = options.settingsManager || null;
         
-        // 預設提示詞設定
+        // 缺省提示词设置
         this.defaultPromptSettings = {
             prompts: [],
             lastUsedPromptId: null,
             promptCounter: 0
         };
         
-        // 當前提示詞設定
+        // 当前提示词设置
         this.currentPromptSettings = Utils.deepClone(this.defaultPromptSettings);
         
-        // 回調函數列表
+        // 回调函数列表
         this.onPromptsChangeCallbacks = [];
         this.onLastUsedChangeCallbacks = [];
 
-        // 向後相容的單一回調
+        // 向后兼容的单一回调
         if (options.onPromptsChange) {
             this.onPromptsChangeCallbacks.push(options.onPromptsChange);
         }
@@ -48,20 +48,20 @@
     }
 
     /**
-     * 初始化提示詞管理器
+     * 初始化提示词管理器
      */
     PromptManager.prototype.init = function() {
         if (this.settingsManager) {
-            // 從設定管理器載入提示詞資料
+            // 从设置管理器加载提示词数据
             this.loadFromSettings();
         }
 
-        console.log('📋 PromptManager 初始化完成，提示詞數量:', this.currentPromptSettings.prompts.length);
+        console.log('📋 PromptManager 初始化完成，提示词数量:', this.currentPromptSettings.prompts.length);
         return this;
     };
 
     /**
-     * 添加提示詞變更回調
+     * 添加提示词变更回调
      */
     PromptManager.prototype.addPromptsChangeCallback = function(callback) {
         if (typeof callback === 'function') {
@@ -70,7 +70,7 @@
     };
 
     /**
-     * 添加最近使用變更回調
+     * 添加最近使用变更回调
      */
     PromptManager.prototype.addLastUsedChangeCallback = function(callback) {
         if (typeof callback === 'function') {
@@ -79,7 +79,7 @@
     };
 
     /**
-     * 觸發提示詞變更回調
+     * 触发提示词变更回调
      */
     PromptManager.prototype.triggerPromptsChangeCallbacks = function() {
         const prompts = this.currentPromptSettings.prompts;
@@ -87,61 +87,61 @@
             try {
                 callback(prompts);
             } catch (error) {
-                console.error('❌ 提示詞變更回調執行失敗:', error);
+                console.error('❌ 提示词变更回调运行失败:', error);
             }
         });
     };
 
     /**
-     * 觸發最近使用變更回調
+     * 触发最近使用变更回调
      */
     PromptManager.prototype.triggerLastUsedChangeCallbacks = function(prompt) {
         this.onLastUsedChangeCallbacks.forEach(function(callback) {
             try {
                 callback(prompt);
             } catch (error) {
-                console.error('❌ 最近使用變更回調執行失敗:', error);
+                console.error('❌ 最近使用变更回调运行失败:', error);
             }
         });
     };
 
     /**
-     * 從設定管理器載入提示詞資料
+     * 从设置管理器加载提示词数据
      */
     PromptManager.prototype.loadFromSettings = function() {
         if (!this.settingsManager) {
-            console.warn('⚠️ SettingsManager 未設定，無法載入提示詞資料');
+            console.warn('⚠️ SettingsManager 未设置，无法加载提示词数据');
             return;
         }
 
         const promptSettings = this.settingsManager.get('promptSettings');
         if (promptSettings) {
             this.currentPromptSettings = this.mergePromptSettings(this.defaultPromptSettings, promptSettings);
-            console.log('📥 從設定載入提示詞資料:', this.currentPromptSettings.prompts.length, '個提示詞');
+            console.log('📥 从设置加载提示词数据:', this.currentPromptSettings.prompts.length, '个提示词');
         }
     };
 
     /**
-     * 儲存提示詞資料到設定管理器
+     * 保存提示词数据到设置管理器
      */
     PromptManager.prototype.saveToSettings = function() {
         if (!this.settingsManager) {
-            console.warn('⚠️ SettingsManager 未設定，無法儲存提示詞資料');
+            console.warn('⚠️ SettingsManager 未设置，无法保存提示词数据');
             return false;
         }
 
         try {
             this.settingsManager.set('promptSettings', this.currentPromptSettings);
-            console.log('💾 提示詞資料已儲存');
+            console.log('💾 提示词数据已保存');
             return true;
         } catch (error) {
-            console.error('❌ 儲存提示詞資料失敗:', error);
+            console.error('❌ 保存提示词数据失败:', error);
             return false;
         }
     };
 
     /**
-     * 合併提示詞設定
+     * 合并提示词设置
      */
     PromptManager.prototype.mergePromptSettings = function(defaultSettings, userSettings) {
         const merged = Utils.deepClone(defaultSettings);
@@ -162,16 +162,16 @@
     };
 
     /**
-     * 新增提示詞
+     * 添加提示词
      */
     PromptManager.prototype.addPrompt = function(name, content) {
         if (!name || !content) {
-            throw new Error('提示詞名稱和內容不能為空');
+            throw new Error('提示词名称和内容不能为空');
         }
 
-        // 檢查名稱是否重複
+        // 检查名称是否重复
         if (this.getPromptByName(name)) {
-            throw new Error('提示詞名稱已存在');
+            throw new Error('提示词名称已存在');
         }
 
         const prompt = {
@@ -180,36 +180,36 @@
             content: content.trim(),
             createdAt: new Date().toISOString(),
             lastUsedAt: null,
-            isAutoSubmit: false  // 新增：自動提交標記
+            isAutoSubmit: false  // 添加：自动提交标记
         };
 
         this.currentPromptSettings.prompts.push(prompt);
         this.saveToSettings();
 
-        // 觸發回調
+        // 触发回调
         this.triggerPromptsChangeCallbacks();
 
-        console.log('➕ 新增提示詞:', prompt.name);
+        console.log('➕ 添加提示词:', prompt.name);
         return prompt;
     };
 
     /**
-     * 更新提示詞
+     * 更新提示词
      */
     PromptManager.prototype.updatePrompt = function(id, name, content) {
         if (!name || !content) {
-            throw new Error('提示詞名稱和內容不能為空');
+            throw new Error('提示词名称和内容不能为空');
         }
 
         const prompt = this.getPromptById(id);
         if (!prompt) {
-            throw new Error('找不到指定的提示詞');
+            throw new Error('找不到指定的提示词');
         }
 
-        // 檢查名稱是否與其他提示詞重複
+        // 检查名称是否与其他提示词重复
         const existingPrompt = this.getPromptByName(name);
         if (existingPrompt && existingPrompt.id !== id) {
-            throw new Error('提示詞名稱已存在');
+            throw new Error('提示词名称已存在');
         }
 
         prompt.name = name.trim();
@@ -217,46 +217,46 @@
 
         this.saveToSettings();
 
-        // 觸發回調
+        // 触发回调
         this.triggerPromptsChangeCallbacks();
 
-        console.log('✏️ 更新提示詞:', prompt.name);
+        console.log('✏️ 更新提示词:', prompt.name);
         return prompt;
     };
 
     /**
-     * 刪除提示詞
+     * 删除提示词
      */
     PromptManager.prototype.deletePrompt = function(id) {
         const index = this.currentPromptSettings.prompts.findIndex(p => p.id === id);
         if (index === -1) {
-            throw new Error('找不到指定的提示詞');
+            throw new Error('找不到指定的提示词');
         }
 
         const prompt = this.currentPromptSettings.prompts[index];
         this.currentPromptSettings.prompts.splice(index, 1);
 
-        // 如果刪除的是最近使用的提示詞，清除記錄
+        // 如果删除的是最近使用的提示词，清除记录
         if (this.currentPromptSettings.lastUsedPromptId === id) {
             this.currentPromptSettings.lastUsedPromptId = null;
         }
 
         this.saveToSettings();
 
-        // 觸發回調
+        // 触发回调
         this.triggerPromptsChangeCallbacks();
 
-        console.log('🗑️ 刪除提示詞:', prompt.name);
+        console.log('🗑️ 删除提示词:', prompt.name);
         return prompt;
     };
 
     /**
-     * 使用提示詞（更新最近使用記錄）
+     * 使用提示词（更新最近使用记录）
      */
     PromptManager.prototype.usePrompt = function(id) {
         const prompt = this.getPromptById(id);
         if (!prompt) {
-            throw new Error('找不到指定的提示詞');
+            throw new Error('找不到指定的提示词');
         }
 
         prompt.lastUsedAt = new Date().toISOString();
@@ -264,36 +264,36 @@
 
         this.saveToSettings();
 
-        // 觸發回調
+        // 触发回调
         this.triggerLastUsedChangeCallbacks(prompt);
 
-        console.log('🎯 使用提示詞:', prompt.name);
+        console.log('🎯 使用提示词:', prompt.name);
         return prompt;
     };
 
     /**
-     * 獲取所有提示詞
+     * 获取所有提示词
      */
     PromptManager.prototype.getAllPrompts = function() {
         return [...this.currentPromptSettings.prompts];
     };
 
     /**
-     * 根據 ID 獲取提示詞
+     * 根据 ID 获取提示词
      */
     PromptManager.prototype.getPromptById = function(id) {
         return this.currentPromptSettings.prompts.find(p => p.id === id) || null;
     };
 
     /**
-     * 根據名稱獲取提示詞
+     * 根据名称获取提示词
      */
     PromptManager.prototype.getPromptByName = function(name) {
         return this.currentPromptSettings.prompts.find(p => p.name === name) || null;
     };
 
     /**
-     * 獲取最近使用的提示詞
+     * 获取最近使用的提示词
      */
     PromptManager.prototype.getLastUsedPrompt = function() {
         if (!this.currentPromptSettings.lastUsedPromptId) {
@@ -303,16 +303,16 @@
     };
 
     /**
-     * 獲取按使用時間排序的提示詞列表（自動提交提示詞排在最前面）
+     * 获取按使用时间排序的提示词列表（自动提交提示词排在最前面）
      */
     PromptManager.prototype.getPromptsSortedByUsage = function() {
         const prompts = [...this.currentPromptSettings.prompts];
         return prompts.sort((a, b) => {
-            // 自動提交提示詞優先排序
+            // 自动提交提示词优先排序
             if (a.isAutoSubmit && !b.isAutoSubmit) return -1;
             if (!a.isAutoSubmit && b.isAutoSubmit) return 1;
 
-            // 其次按最近使用時間排序
+            // 其次按最近使用时间排序
             if (!a.lastUsedAt && !b.lastUsedAt) {
                 return new Date(b.createdAt) - new Date(a.createdAt);
             }
@@ -323,32 +323,32 @@
     };
 
     /**
-     * 設定提示詞為自動提交
+     * 设置提示词为自动提交
      */
     PromptManager.prototype.setAutoSubmitPrompt = function(id) {
-        // 先清除所有提示詞的自動提交標記
+        // 先清除所有提示词的自动提交标记
         this.currentPromptSettings.prompts.forEach(prompt => {
             prompt.isAutoSubmit = false;
         });
 
-        // 設定指定提示詞為自動提交
+        // 设置指定提示词为自动提交
         const prompt = this.getPromptById(id);
         if (!prompt) {
-            throw new Error('找不到指定的提示詞');
+            throw new Error('找不到指定的提示词');
         }
 
         prompt.isAutoSubmit = true;
         this.saveToSettings();
 
-        // 觸發回調
+        // 触发回调
         this.triggerPromptsChangeCallbacks();
 
-        console.log('✅ 設定自動提交提示詞:', prompt.name);
+        console.log('✅ 设置自动提交提示词:', prompt.name);
         return prompt;
     };
 
     /**
-     * 清除自動提交提示詞
+     * 清除自动提交提示词
      */
     PromptManager.prototype.clearAutoSubmitPrompt = function() {
         this.currentPromptSettings.prompts.forEach(prompt => {
@@ -357,21 +357,21 @@
 
         this.saveToSettings();
 
-        // 觸發回調
+        // 触发回调
         this.triggerPromptsChangeCallbacks();
 
-        console.log('🔄 已清除自動提交提示詞');
+        console.log('🔄 已清除自动提交提示词');
     };
 
     /**
-     * 獲取自動提交提示詞
+     * 获取自动提交提示词
      */
     PromptManager.prototype.getAutoSubmitPrompt = function() {
         return this.currentPromptSettings.prompts.find(prompt => prompt.isAutoSubmit) || null;
     };
 
     /**
-     * 生成提示詞 ID
+     * 生成提示词 ID
      */
     PromptManager.prototype.generatePromptId = function() {
         this.currentPromptSettings.promptCounter++;
@@ -379,20 +379,20 @@
     };
 
     /**
-     * 重置所有提示詞資料
+     * 重置所有提示词数据
      */
     PromptManager.prototype.resetAllPrompts = function() {
         this.currentPromptSettings = Utils.deepClone(this.defaultPromptSettings);
         this.saveToSettings();
 
-        // 觸發回調
+        // 触发回调
         this.triggerPromptsChangeCallbacks();
 
-        console.log('🔄 重置所有提示詞資料');
+        console.log('🔄 重置所有提示词数据');
     };
 
     /**
-     * 獲取提示詞統計資訊
+     * 获取提示词统计信息
      */
     PromptManager.prototype.getStatistics = function() {
         const prompts = this.currentPromptSettings.prompts;
@@ -406,9 +406,9 @@
         };
     };
 
-    // 將 PromptManager 加入命名空間
+    // 将 PromptManager 加入命名空间
     window.MCPFeedback.Prompt.PromptManager = PromptManager;
 
-    console.log('✅ PromptManager 模組載入完成');
+    console.log('✅ PromptManager 模块加载完成');
 
 })();

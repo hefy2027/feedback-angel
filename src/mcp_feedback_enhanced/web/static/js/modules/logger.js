@@ -1,30 +1,30 @@
 /**
- * MCP Feedback Enhanced - 日誌管理模組
+ * MCP Feedback Enhanced - 日志管理模块
  * ===================================
  * 
- * 統一的日誌管理系統，支援不同等級的日誌輸出
- * 生產環境可關閉詳細日誌以提升效能
+ * 统一的日志管理系统，支持不同等级的日志输出
+ * 生产环境可关闭详细日志以提升性能
  */
 
 (function() {
     'use strict';
 
-    // 確保命名空間存在
+    // 确保命名空间存在
     window.MCPFeedback = window.MCPFeedback || {};
 
     /**
-     * 日誌等級枚舉
+     * 日志等级枚举
      */
     const LogLevel = {
-        ERROR: 0,    // 錯誤：嚴重問題，必須記錄
-        WARN: 1,     // 警告：潛在問題，建議記錄
-        INFO: 2,     // 資訊：一般資訊，正常記錄
-        DEBUG: 3,    // 調試：詳細資訊，開發時記錄
-        TRACE: 4     // 追蹤：最詳細資訊，深度調試時記錄
+        ERROR: 0,    // 错误：严重问题，必须记录
+        WARN: 1,     // 警告：潜在问题，建议记录
+        INFO: 2,     // 信息：一般信息，正常记录
+        DEBUG: 3,    // 调试：详细信息，开发时记录
+        TRACE: 4     // 追踪：最详细信息，深度调试时记录
     };
 
     /**
-     * 日誌等級名稱映射
+     * 日志等级名称映射
      */
     const LogLevelNames = {
         [LogLevel.ERROR]: 'ERROR',
@@ -35,45 +35,45 @@
     };
 
     /**
-     * 日誌管理器
+     * 日志管理器
      */
     function Logger(options) {
         options = options || {};
         
-        // 當前日誌等級（預設為 INFO）
+        // 当前日志等级（缺省为 INFO）
         this.currentLevel = this.parseLogLevel(options.level) || LogLevel.INFO;
         
-        // 模組名稱
+        // 模块名称
         this.moduleName = options.moduleName || 'App';
         
-        // 是否啟用時間戳
+        // 是否激活时间戳
         this.enableTimestamp = options.enableTimestamp !== false;
         
-        // 是否啟用模組名稱
+        // 是否激活模块名称
         this.enableModuleName = options.enableModuleName !== false;
         
-        // 是否啟用顏色（僅在支援的環境中）
+        // 是否激活颜色（仅在支持的环境中）
         this.enableColors = options.enableColors !== false;
         
-        // 自訂輸出函數
+        // 自订输出函数
         this.customOutput = options.customOutput || null;
         
-        // 日誌緩衝區（用於收集日誌）
+        // 日志缓冲区（用于收集日志）
         this.logBuffer = [];
         this.maxBufferSize = options.maxBufferSize || 1000;
         
-        // 顏色映射
+        // 颜色映射
         this.colors = {
-            [LogLevel.ERROR]: '#f44336',   // 紅色
+            [LogLevel.ERROR]: '#f44336',   // 红色
             [LogLevel.WARN]: '#ff9800',    // 橙色
-            [LogLevel.INFO]: '#2196f3',    // 藍色
-            [LogLevel.DEBUG]: '#4caf50',   // 綠色
+            [LogLevel.INFO]: '#2196f3',    // 蓝色
+            [LogLevel.DEBUG]: '#4caf50',   // 绿色
             [LogLevel.TRACE]: '#9c27b0'    // 紫色
         };
     }
 
     /**
-     * 解析日誌等級
+     * 解析日志等级
      */
     Logger.prototype.parseLogLevel = function(level) {
         if (typeof level === 'number') {
@@ -93,57 +93,57 @@
     };
 
     /**
-     * 設置日誌等級
+     * 设置日志等级
      */
     Logger.prototype.setLevel = function(level) {
         const parsedLevel = this.parseLogLevel(level);
         if (parsedLevel !== null) {
             this.currentLevel = parsedLevel;
-            this.info('日誌等級已設置為:', LogLevelNames[this.currentLevel]);
+            this.info('日志等级已设置为:', LogLevelNames[this.currentLevel]);
         } else {
-            this.warn('無效的日誌等級:', level);
+            this.warn('无效的日志等级:', level);
         }
     };
 
     /**
-     * 獲取當前日誌等級
+     * 获取当前日志等级
      */
     Logger.prototype.getLevel = function() {
         return this.currentLevel;
     };
 
     /**
-     * 檢查是否應該記錄指定等級的日誌
+     * 检查是否应该记录指定等级的日志
      */
     Logger.prototype.shouldLog = function(level) {
         return level <= this.currentLevel;
     };
 
     /**
-     * 格式化日誌訊息
+     * 格式化日志消息
      */
     Logger.prototype.formatMessage = function(level, args) {
         const parts = [];
         
-        // 添加時間戳
+        // 添加时间戳
         if (this.enableTimestamp) {
             const now = new Date();
             const timestamp = now.toISOString().substr(11, 12); // HH:mm:ss.SSS
             parts.push(`[${timestamp}]`);
         }
         
-        // 添加等級
+        // 添加等级
         parts.push(`[${LogLevelNames[level]}]`);
         
-        // 添加模組名稱
+        // 添加模块名称
         if (this.enableModuleName) {
             parts.push(`[${this.moduleName}]`);
         }
         
-        // 組合前綴
+        // 组合前缀
         const prefix = parts.join(' ');
         
-        // 轉換參數為字符串
+        // 转换参数为字符串
         const messages = Array.from(args).map(arg => {
             if (typeof arg === 'object') {
                 try {
@@ -163,19 +163,19 @@
     };
 
     /**
-     * 輸出日誌
+     * 输出日志
      */
     Logger.prototype.output = function(level, formatted) {
-        // 添加到緩衝區
+        // 添加到缓冲区
         this.addToBuffer(level, formatted);
         
-        // 如果有自訂輸出函數，使用它
+        // 如果有自订输出函数，使用它
         if (this.customOutput) {
             this.customOutput(level, formatted);
             return;
         }
         
-        // 使用瀏覽器控制台
+        // 使用浏览器控制台
         const consoleMethods = {
             [LogLevel.ERROR]: 'error',
             [LogLevel.WARN]: 'warn',
@@ -186,7 +186,7 @@
         
         const method = consoleMethods[level] || 'log';
         
-        // 如果支援顏色且啟用
+        // 如果支持颜色且激活
         if (this.enableColors && console.log.toString().indexOf('native') === -1) {
             const color = this.colors[level];
             console[method](`%c${formatted.fullMessage}`, `color: ${color}`);
@@ -196,7 +196,7 @@
     };
 
     /**
-     * 添加到日誌緩衝區
+     * 添加到日志缓冲区
      */
     Logger.prototype.addToBuffer = function(level, formatted) {
         const logEntry = {
@@ -210,14 +210,14 @@
         
         this.logBuffer.push(logEntry);
         
-        // 限制緩衝區大小
+        // 限制缓冲区大小
         if (this.logBuffer.length > this.maxBufferSize) {
             this.logBuffer.shift();
         }
     };
 
     /**
-     * 通用日誌方法
+     * 通用日志方法
      */
     Logger.prototype.log = function(level) {
         if (!this.shouldLog(level)) {
@@ -230,56 +230,56 @@
     };
 
     /**
-     * 錯誤日誌
+     * 错误日志
      */
     Logger.prototype.error = function() {
         this.log.apply(this, [LogLevel.ERROR].concat(Array.prototype.slice.call(arguments)));
     };
 
     /**
-     * 警告日誌
+     * 警告日志
      */
     Logger.prototype.warn = function() {
         this.log.apply(this, [LogLevel.WARN].concat(Array.prototype.slice.call(arguments)));
     };
 
     /**
-     * 資訊日誌
+     * 信息日志
      */
     Logger.prototype.info = function() {
         this.log.apply(this, [LogLevel.INFO].concat(Array.prototype.slice.call(arguments)));
     };
 
     /**
-     * 調試日誌
+     * 调试日志
      */
     Logger.prototype.debug = function() {
         this.log.apply(this, [LogLevel.DEBUG].concat(Array.prototype.slice.call(arguments)));
     };
 
     /**
-     * 追蹤日誌
+     * 追踪日志
      */
     Logger.prototype.trace = function() {
         this.log.apply(this, [LogLevel.TRACE].concat(Array.prototype.slice.call(arguments)));
     };
 
     /**
-     * 獲取日誌緩衝區
+     * 获取日志缓冲区
      */
     Logger.prototype.getBuffer = function() {
         return this.logBuffer.slice(); // 返回副本
     };
 
     /**
-     * 清空日誌緩衝區
+     * 清空日志缓冲区
      */
     Logger.prototype.clearBuffer = function() {
         this.logBuffer = [];
     };
 
     /**
-     * 導出日誌
+     * 导出日志
      */
     Logger.prototype.exportLogs = function(options) {
         options = options || {};
@@ -297,22 +297,22 @@
         return filteredLogs;
     };
 
-    // 全域日誌管理器
+    // 全域日志管理器
     const globalLogger = new Logger({
         moduleName: 'Global',
         level: LogLevel.INFO
     });
 
-    // 從環境變數或 URL 參數檢測日誌等級
+    // 从环境变量或 URL 参数检测日志等级
     function detectLogLevel() {
-        // 檢查 URL 參數
+        // 检查 URL 参数
         const urlParams = new URLSearchParams(window.location.search);
         const urlLogLevel = urlParams.get('logLevel') || urlParams.get('log_level');
         if (urlLogLevel) {
             return urlLogLevel;
         }
 
-        // 檢查是否為開發環境
+        // 检查是否为开发环境
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             return LogLevel.DEBUG;
         }
@@ -320,7 +320,7 @@
         return LogLevel.INFO;
     }
 
-    // 從 API 載入日誌等級
+    // 从 API 加载日志等级
     function loadLogLevelFromAPI() {
         const lang = window.i18nManager ? window.i18nManager.getCurrentLanguage() : 'zh-TW';
         fetch('/api/log-level?lang=' + lang)
@@ -328,21 +328,21 @@
                 if (response.ok) {
                     return response.json();
                 }
-                throw new Error('載入日誌等級失敗: ' + response.status);
+                throw new Error('加载日志等级失败: ' + response.status);
             })
             .then(function(data) {
                 const apiLogLevel = data.logLevel;
                 if (apiLogLevel && Object.values(LogLevel).includes(apiLogLevel)) {
                     currentLogLevel = apiLogLevel;
-                    console.log('📋 從 API 載入日誌等級:', apiLogLevel);
+                    console.log('📋 从 API 加载日志等级:', apiLogLevel);
                 }
             })
             .catch(function(error) {
-                console.warn('⚠️ 載入日誌等級失敗，使用預設值:', error);
+                console.warn('⚠️ 加载日志等级失败，使用默认值:', error);
             });
     }
 
-    // 保存日誌等級到 API
+    // 保存日志等级到 API
     function saveLogLevelToAPI(logLevel) {
         const lang = window.i18nManager ? window.i18nManager.getCurrentLanguage() : 'zh-TW';
         fetch('/api/log-level?lang=' + lang, {
@@ -358,47 +358,47 @@
             if (response.ok) {
                 return response.json();
             }
-            throw new Error('保存日誌等級失敗: ' + response.status);
+            throw new Error('保存日志等级失败: ' + response.status);
         })
         .then(function(data) {
-            console.log('📋 日誌等級已保存:', data.logLevel);
-            // 處理訊息代碼
+            console.log('📋 日志等级已保存:', data.logLevel);
+            // 处理消息代码
             if (data.messageCode && window.i18nManager) {
                 const message = window.i18nManager.t(data.messageCode, data.params);
-                console.log('伺服器回應:', message);
+                console.log('服务器回应:', message);
             }
         })
         .catch(function(error) {
-            console.warn('⚠️ 保存日誌等級失敗:', error);
+            console.warn('⚠️ 保存日志等级失败:', error);
         });
     }
 
-    // 設置全域日誌等級
+    // 设置全域日志等级
     globalLogger.setLevel(detectLogLevel());
 
-    // 頁面載入後從 API 載入日誌等級
+    // 页面加载后从 API 加载日志等级
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', loadLogLevelFromAPI);
     } else {
         loadLogLevelFromAPI();
     }
 
-    // 匯出到全域命名空間
+    // 导出到全域命名空间
     window.MCPFeedback.Logger = Logger;
     window.MCPFeedback.LogLevel = LogLevel;
     window.MCPFeedback.logger = globalLogger;
 
-    // 匯出設定方法
+    // 导出设置方法
     window.MCPFeedback.setLogLevel = function(logLevel) {
         if (Object.values(LogLevel).includes(logLevel)) {
             globalLogger.setLevel(logLevel);
             saveLogLevelToAPI(logLevel);
-            console.log('📋 日誌等級已更新:', LogLevelNames[logLevel]);
+            console.log('📋 日志等级已更新:', LogLevelNames[logLevel]);
         } else {
-            console.warn('⚠️ 無效的日誌等級:', logLevel);
+            console.warn('⚠️ 无效的日志等级:', logLevel);
         }
     };
 
-    console.log('✅ Logger 模組載入完成，當前等級:', LogLevelNames[globalLogger.getLevel()]);
+    console.log('✅ Logger 模块加载完成，当前等级:', LogLevelNames[globalLogger.getLevel()]);
 
 })();

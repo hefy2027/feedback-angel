@@ -1,14 +1,14 @@
 /**
- * MCP Feedback Enhanced - 會話詳情彈窗模組
+ * MCP Feedback Enhanced - 会话详情弹窗模块
  * =======================================
  * 
- * 負責會話詳情彈窗的創建、顯示和管理
+ * 负责会话详情弹窗的创建、显示和管理
  */
 
 (function() {
     'use strict';
 
-    // 確保命名空間存在
+    // 确保命名空间存在
     window.MCPFeedback = window.MCPFeedback || {};
     window.MCPFeedback.Session = window.MCPFeedback.Session || {};
 
@@ -17,17 +17,17 @@
     const StatusUtils = window.MCPFeedback.Utils.Status;
 
     /**
-     * 會話詳情彈窗管理器
+     * 会话详情弹窗管理器
      */
     function SessionDetailsModal(options) {
         options = options || {};
 
-        // 彈窗選項
+        // 弹窗选项
         this.enableEscapeClose = options.enableEscapeClose !== false;
         this.enableBackdropClose = options.enableBackdropClose !== false;
         this.showFullSessionId = options.showFullSessionId || false;
 
-        // 當前彈窗引用
+        // 当前弹窗引用
         this.currentModal = null;
         this.keydownHandler = null;
 
@@ -35,45 +35,45 @@
     }
 
     /**
-     * 顯示會話詳情
+     * 显示会话详情
      */
     SessionDetailsModal.prototype.showSessionDetails = function(sessionData) {
         if (!sessionData) {
-            this.showError('沒有可顯示的會話數據');
+            this.showError('没有可显示的会话数据');
             return;
         }
 
-        // console.log('🔍 顯示會話詳情:', sessionData.session_id);
+        // console.log('🔍 显示会话详情:', sessionData.session_id);
 
         // 存储当前会话数据，供复制功能使用
         this.currentSessionData = sessionData;
 
-        // 關閉現有彈窗
+        // 关闭现有弹窗
         this.closeModal();
 
-        // 格式化會話詳情
+        // 格式化会话详情
         const details = this.formatSessionDetails(sessionData);
 
-        // 創建並顯示彈窗
+        // 创建并显示弹窗
         this.createAndShowModal(details);
     };
 
     /**
-     * 格式化會話詳情
+     * 格式化会话详情
      */
     SessionDetailsModal.prototype.formatSessionDetails = function(sessionData) {
-        // console.log('🔍 格式化會話詳情:', sessionData);
+        // console.log('🔍 格式化会话详情:', sessionData);
 
-        // 處理會話 ID - 顯示完整 session ID
+        // 处理会话 ID - 显示完整 session ID
         const sessionId = sessionData.session_id || '未知';
 
-        // 處理建立時間
+        // 处理创建时间
         const createdTime = sessionData.created_at ?
             TimeUtils.formatTimestamp(sessionData.created_at) :
             '未知';
 
-        // 處理持續時間
-        let duration = '進行中';
+        // 处理持续时间
+        let duration = '进行中';
         if (sessionData.duration && sessionData.duration > 0) {
             duration = TimeUtils.formatDuration(sessionData.duration);
         } else if (sessionData.created_at && sessionData.completed_at) {
@@ -82,16 +82,16 @@
         } else if (sessionData.created_at) {
             const elapsed = TimeUtils.calculateElapsedTime(sessionData.created_at);
             if (elapsed > 0) {
-                duration = TimeUtils.formatDuration(elapsed) + ' (進行中)';
+                duration = TimeUtils.formatDuration(elapsed) + ' (进行中)';
             }
         }
 
-        // 處理狀態
+        // 处理状态
         const status = sessionData.status || 'waiting';
         const statusText = StatusUtils.getStatusText(status);
         const statusColor = StatusUtils.getStatusColor(status);
 
-        // 處理用戶訊息記錄
+        // 处理用户消息记录
         const userMessages = sessionData.user_messages || [];
         const userMessageCount = userMessages.length;
 
@@ -102,41 +102,41 @@
             createdTime: createdTime,
             duration: duration,
             projectDirectory: sessionData.project_directory || (window.i18nManager ? window.i18nManager.t('sessionManagement.sessionDetails.unknown') : '未知'),
-            summary: sessionData.summary || (window.i18nManager ? window.i18nManager.t('sessionManagement.sessionDetails.noSummary') : '暫無摘要'),
+            summary: sessionData.summary || (window.i18nManager ? window.i18nManager.t('sessionManagement.sessionDetails.noSummary') : '暂无摘要'),
             userMessages: userMessages,
             userMessageCount: userMessageCount
         };
     };
 
     /**
-     * 創建並顯示彈窗
+     * 创建并显示弹窗
      */
     SessionDetailsModal.prototype.createAndShowModal = function(details) {
-        // 創建彈窗 HTML
+        // 创建弹窗 HTML
         const modalHtml = this.createModalHTML(details);
 
-        // 插入到頁面中
+        // 插入到页面中
         document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-        // 獲取彈窗元素
+        // 获取弹窗元素
         this.currentModal = document.getElementById('sessionDetailsModal');
 
-        // 設置事件監聽器
+        // 设置事件监听器
         this.setupEventListeners();
 
-        // 添加顯示動畫
+        // 添加显示动画
         this.showModal();
     };
 
     /**
-     * 創建彈窗 HTML
+     * 创建弹窗 HTML
      */
     SessionDetailsModal.prototype.createModalHTML = function(details) {
         const i18n = window.i18nManager;
-        const title = i18n ? i18n.t('sessionManagement.sessionDetails.title') : '會話詳細資訊';
-        const closeLabel = i18n ? i18n.t('sessionManagement.sessionDetails.close') : '關閉';
-        const sessionIdLabel = i18n ? i18n.t('sessionManagement.sessionId') : '會話 ID';
-        const statusLabel = i18n ? i18n.t('sessionManagement.status') : '狀態';
+        const title = i18n ? i18n.t('sessionManagement.sessionDetails.title') : '会话详细信息';
+        const closeLabel = i18n ? i18n.t('sessionManagement.sessionDetails.close') : '关闭';
+        const sessionIdLabel = i18n ? i18n.t('sessionManagement.sessionId') : '会话 ID';
+        const statusLabel = i18n ? i18n.t('sessionManagement.status') : '状态';
 
         return `
             <div class="session-details-modal" id="sessionDetailsModal">
@@ -156,22 +156,22 @@
                             <span class="detail-value" style="color: ${details.statusColor};">${details.status}</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">${i18n ? i18n.t('sessionManagement.createdTime') : '建立時間'}:</span>
+                            <span class="detail-label">${i18n ? i18n.t('sessionManagement.createdTime') : '创建时间'}:</span>
                             <span class="detail-value">${details.createdTime}</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">${i18n ? i18n.t('sessionManagement.sessionDetails.duration') : '持續時間'}:</span>
+                            <span class="detail-label">${i18n ? i18n.t('sessionManagement.sessionDetails.duration') : '持续时间'}:</span>
                             <span class="detail-value">${details.duration}</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">${i18n ? i18n.t('sessionManagement.sessionDetails.projectDirectory') : '專案目錄'}:</span>
+                            <span class="detail-label">${i18n ? i18n.t('sessionManagement.sessionDetails.projectDirectory') : '项目目录'}:</span>
                             <span class="detail-value project-path" title="${details.projectDirectory}">${details.projectDirectory}</span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">${i18n ? i18n.t('sessionManagement.aiSummary') : 'AI 摘要'}:</span>
                             <div class="detail-value summary">
                                 <div class="summary-actions">
-                                    <button class="btn-copy-summary" title="複製摘要" aria-label="複製摘要">📋</button>
+                                    <button class="btn-copy-summary" title="拷贝摘要" aria-label="拷贝摘要">📋</button>
                                 </div>
                                 <div class="summary-content">${this.renderMarkdownSafely(details.summary)}</div>
                             </div>
@@ -187,7 +187,7 @@
     };
 
     /**
-     * 創建用戶訊息記錄區段
+     * 创建用户消息记录区段
      */
     SessionDetailsModal.prototype.createUserMessagesSection = function(details) {
         const i18n = window.i18nManager;
@@ -197,32 +197,32 @@
             return '';
         }
 
-        const sectionTitle = i18n ? i18n.t('sessionHistory.userMessages.title') : '用戶訊息記錄';
-        const messageCountLabel = i18n ? i18n.t('sessionHistory.userMessages.messageCount') : '訊息數量';
+        const sectionTitle = i18n ? i18n.t('sessionHistory.userMessages.title') : '用户消息记录';
+        const messageCountLabel = i18n ? i18n.t('sessionHistory.userMessages.messageCount') : '消息数量';
 
         let messagesHtml = '';
 
         userMessages.forEach((message, index) => {
-            const timestamp = message.timestamp ? TimeUtils.formatTimestamp(message.timestamp) : '未知時間';
+            const timestamp = message.timestamp ? TimeUtils.formatTimestamp(message.timestamp) : '未知时间';
             const submissionMethod = message.submission_method === 'auto' ?
-                (i18n ? i18n.t('sessionHistory.userMessages.auto') : '自動提交') :
-                (i18n ? i18n.t('sessionHistory.userMessages.manual') : '手動提交');
+                (i18n ? i18n.t('sessionHistory.userMessages.auto') : '自动提交') :
+                (i18n ? i18n.t('sessionHistory.userMessages.manual') : '手动提交');
 
             let contentHtml = '';
 
             if (message.content !== undefined) {
-                // 完整記錄模式
+                // 完整记录模式
                 const contentPreview = message.content.length > 100 ?
                     message.content.substring(0, 100) + '...' :
                     message.content;
                 contentHtml = `
                     <div class="message-content">
-                        <strong>內容:</strong> ${this.escapeHtml(contentPreview)}
+                        <strong>内容:</strong> ${this.escapeHtml(contentPreview)}
                     </div>
                 `;
 
                 if (message.images && message.images.length > 0) {
-                    const imageCountText = i18n ? i18n.t('sessionHistory.userMessages.imageCount') : '圖片數量';
+                    const imageCountText = i18n ? i18n.t('sessionHistory.userMessages.imageCount') : '图片数量';
                     contentHtml += `
                         <div class="message-images">
                             <strong>${imageCountText}:</strong> ${message.images.length}
@@ -230,20 +230,20 @@
                     `;
                 }
             } else if (message.content_length !== undefined) {
-                // 基本統計模式
-                const contentLengthLabel = i18n ? i18n.t('sessionHistory.userMessages.contentLength') : '內容長度';
-                const imageCountLabel = i18n ? i18n.t('sessionHistory.userMessages.imageCount') : '圖片數量';
+                // 基本统计模式
+                const contentLengthLabel = i18n ? i18n.t('sessionHistory.userMessages.contentLength') : '内容长度';
+                const imageCountLabel = i18n ? i18n.t('sessionHistory.userMessages.imageCount') : '图片数量';
                 contentHtml = `
                     <div class="message-stats">
-                        <strong>${contentLengthLabel}:</strong> ${message.content_length} 字元<br>
+                        <strong>${contentLengthLabel}:</strong> ${message.content_length} 字符<br>
                         <strong>${imageCountLabel}:</strong> ${message.image_count || 0}
                     </div>
                 `;
             } else if (message.privacy_note) {
-                // 隱私保護模式
+                // 隐私保护模式
                 contentHtml = `
                     <div class="message-privacy">
-                        <em style="color: var(--text-secondary);">內容記錄已停用（隱私設定）</em>
+                        <em style="color: var(--text-secondary);">内容记录已停用（隐私设置）</em>
                     </div>
                 `;
             }
@@ -254,7 +254,7 @@
                         <span class="message-index">#${index + 1}</span>
                         <span class="message-time">${timestamp}</span>
                         <span class="message-method">${submissionMethod}</span>
-                        <button class="btn-copy-message" title="複製消息內容" aria-label="複製消息內容" data-message-content="${this.escapeHtml(message.content)}">📋</button>
+                        <button class="btn-copy-message" title="拷贝消息内容" aria-label="拷贝消息内容" data-message-content="${this.escapeHtml(message.content)}">📋</button>
                     </div>
                     ${contentHtml}
                 </div>
@@ -277,14 +277,14 @@
     };
 
     /**
-     * 設置事件監聽器
+     * 设置事件监听器
      */
     SessionDetailsModal.prototype.setupEventListeners = function() {
         if (!this.currentModal) return;
 
         const self = this;
 
-        // 關閉按鈕
+        // 关闭按钮
         const closeBtn = this.currentModal.querySelector('#closeSessionDetails');
         const closeFooterBtn = this.currentModal.querySelector('#closeSessionDetailsBtn');
 
@@ -300,7 +300,7 @@
             });
         }
 
-        // 背景點擊關閉
+        // 背景点击关闭
         if (this.enableBackdropClose) {
             const backdrop = this.currentModal.querySelector('.modal-backdrop');
             if (backdrop) {
@@ -310,7 +310,7 @@
             }
         }
 
-        // ESC 鍵關閉
+        // ESC 键关闭
         if (this.enableEscapeClose) {
             this.keydownHandler = function(e) {
                 if (e.key === 'Escape') {
@@ -340,34 +340,34 @@
     };
 
     /**
-     * 顯示彈窗動畫
+     * 显示弹窗动画
      */
     SessionDetailsModal.prototype.showModal = function() {
         if (!this.currentModal) return;
 
-        // 彈窗已經通過 CSS 動畫自動顯示，無需額外處理
-        // console.log('🔍 會話詳情彈窗已顯示');
+        // 弹窗已经通过 CSS 动画自动显示，无需额外处理
+        // console.log('🔍 会话详情弹窗已显示');
     };
 
     /**
-     * 關閉彈窗
+     * 关闭弹窗
      */
     SessionDetailsModal.prototype.closeModal = function() {
         if (!this.currentModal) return;
 
-        // 移除鍵盤事件監聽器
+        // 移除键盘事件监听器
         if (this.keydownHandler) {
             document.removeEventListener('keydown', this.keydownHandler);
             this.keydownHandler = null;
         }
 
-        // 立即移除元素，無延遲
+        // 立即移除元素，无延迟
         DOMUtils.safeRemoveElement(this.currentModal);
         this.currentModal = null;
     };
 
     /**
-     * 顯示錯誤訊息
+     * 显示错误消息
      */
     SessionDetailsModal.prototype.showError = function(message) {
         if (window.MCPFeedback && window.MCPFeedback.Utils && window.MCPFeedback.Utils.showMessage) {
@@ -378,7 +378,7 @@
     };
 
     /**
-     * HTML 轉義
+     * HTML 转义
      */
     SessionDetailsModal.prototype.escapeHtml = function(text) {
         if (!text) return '';
@@ -389,15 +389,15 @@
     };
 
     /**
-     * 安全地渲染 Markdown 內容
+     * 安全地渲染 Markdown 内容
      */
     SessionDetailsModal.prototype.renderMarkdownSafely = function(content) {
         if (!content) return '';
 
         try {
-            // 檢查 marked 和 DOMPurify 是否可用
+            // 检查 marked 和 DOMPurify 是否可用
             if (typeof window.marked === 'undefined' || typeof window.DOMPurify === 'undefined') {
-                console.warn('⚠️ Markdown 庫未載入，使用純文字顯示');
+                console.warn('⚠️ Markdown 库未加载，使用纯文本显示');
                 return this.escapeHtml(content);
             }
 
@@ -413,13 +413,13 @@
 
             return cleanHtml;
         } catch (error) {
-            console.error('❌ Markdown 渲染失敗:', error);
+            console.error('❌ Markdown 渲染失败:', error);
             return this.escapeHtml(content);
         }
     };
 
     /**
-     * 傳統複製文字到剪貼板的方法
+     * 传统拷贝文本到剪贴板的方法
      */
     SessionDetailsModal.prototype.fallbackCopyTextToClipboard = function(text, successMessage) {
         const self = this;
@@ -435,109 +435,109 @@
         try {
             const successful = document.execCommand('copy');
             if (successful) {
-                // console.log('✅ 內容已複製到剪貼板（傳統方法）');
+                // console.log('✅ 内容已拷贝到剪贴板（传统方法）');
                 self.showToast(successMessage, 'success');
             } else {
-                console.error('❌ 複製失敗（傳統方法）');
-                self.showToast('❌ 複製失敗，請手動複製', 'error');
+                console.error('❌ 拷贝失败（传统方法）');
+                self.showToast('❌ 拷贝失败，请手动拷贝', 'error');
             }
         } catch (err) {
-            console.error('❌ 複製失敗:', err);
-            self.showToast('❌ 複製失敗，請手動複製', 'error');
+            console.error('❌ 拷贝失败:', err);
+            self.showToast('❌ 拷贝失败，请手动拷贝', 'error');
         } finally {
             document.body.removeChild(textArea);
         }
     };
 
     /**
-     * 複製摘要內容到剪貼板
+     * 拷贝摘要内容到剪贴板
      */
     SessionDetailsModal.prototype.copySummaryToClipboard = function() {
         const self = this;
 
         try {
-            // 獲取原始摘要內容（Markdown 原始碼）
+            // 获取原始摘要内容（Markdown 原代码）
             const summaryContent = this.currentSessionData && this.currentSessionData.summary ?
                 this.currentSessionData.summary : '';
 
             if (!summaryContent) {
-                console.warn('⚠️ 沒有摘要內容可複製');
+                console.warn('⚠️ 没有摘要内容可拷贝');
                 return;
             }
 
-            // 使用現代 Clipboard API
+            // 使用现代 Clipboard API
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(summaryContent).then(function() {
-                    // console.log('✅ 摘要內容已複製到剪貼板');
-                    self.showToast('✅ 摘要已複製到剪貼板', 'success');
+                    // console.log('✅ 摘要内容已拷贝到剪贴板');
+                    self.showToast('✅ 摘要已拷贝到剪贴板', 'success');
                 }).catch(function(err) {
-                    console.error('❌ 複製失敗:', err);
-                    // 降級到傳統方法
-                    self.fallbackCopyTextToClipboard(summaryContent, '✅ 摘要已複製到剪貼板');
+                    console.error('❌ 拷贝失败:', err);
+                    // 降级到传统方法
+                    self.fallbackCopyTextToClipboard(summaryContent, '✅ 摘要已拷贝到剪贴板');
                 });
             } else {
-                // 降級到傳統方法
-                this.fallbackCopyTextToClipboard(summaryContent, '✅ 摘要已複製到剪貼板');
+                // 降级到传统方法
+                this.fallbackCopyTextToClipboard(summaryContent, '✅ 摘要已拷贝到剪贴板');
             }
         } catch (error) {
-            console.error('❌ 複製摘要時發生錯誤:', error);
-            this.showToast('❌ 複製失敗，請手動複製', 'error');
+            console.error('❌ 拷贝摘要时发生错误:', error);
+            this.showToast('❌ 拷贝失败，请手动拷贝', 'error');
         }
     };
 
     /**
-     * 複製用戶消息內容到剪貼板
+     * 拷贝用户消息内容到剪贴板
      */
     SessionDetailsModal.prototype.copyMessageToClipboard = function(messageContent) {
         if (!messageContent) {
-            console.warn('⚠️ 沒有消息內容可複製');
+            console.warn('⚠️ 没有消息内容可拷贝');
             return;
         }
 
         const self = this;
 
         try {
-            // 使用現代 Clipboard API
+            // 使用现代 Clipboard API
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(messageContent).then(function() {
-                    // console.log('✅ 用戶消息已複製到剪貼板');
-                    self.showToast('✅ 消息已複製到剪貼板', 'success');
+                    // console.log('✅ 用户消息已拷贝到剪贴板');
+                    self.showToast('✅ 消息已拷贝到剪贴板', 'success');
                 }).catch(function(err) {
-                    console.error('❌ 複製失敗:', err);
-                    // 降級到傳統方法
-                    self.fallbackCopyTextToClipboard(messageContent, '✅ 消息已複製到剪貼板');
+                    console.error('❌ 拷贝失败:', err);
+                    // 降级到传统方法
+                    self.fallbackCopyTextToClipboard(messageContent, '✅ 消息已拷贝到剪贴板');
                 });
             } else {
-                // 降級到傳統方法
-                this.fallbackCopyTextToClipboard(messageContent, '✅ 消息已複製到剪貼板');
+                // 降级到传统方法
+                this.fallbackCopyTextToClipboard(messageContent, '✅ 消息已拷贝到剪贴板');
             }
         } catch (error) {
-            console.error('❌ 複製用戶消息時發生錯誤:', error);
-            this.showToast('❌ 複製失敗，請手動複製', 'error');
+            console.error('❌ 拷贝用户消息时发生错误:', error);
+            this.showToast('❌ 拷贝失败，请手动拷贝', 'error');
         }
     };
 
 
 
     /**
-     * 顯示提示消息
+     * 显示提示消息
      */
     SessionDetailsModal.prototype.showToast = function(message, type) {
-        // 創建提示元素
+        // 创建提示元素
         const toast = document.createElement('div');
         toast.className = 'copy-toast copy-toast-' + type;
         toast.textContent = message;
 
-        // 添加到彈窗中
+        // 添加到弹窗中
         if (this.currentModal) {
             this.currentModal.appendChild(toast);
 
-            // 顯示動畫
+            // 显示动画
             setTimeout(function() {
                 toast.classList.add('show');
             }, 10);
 
-            // 自動隱藏
+            // 自动隐藏
             setTimeout(function() {
                 toast.classList.remove('show');
                 setTimeout(function() {
@@ -550,26 +550,26 @@
     };
 
     /**
-     * 檢查是否有彈窗開啟
+     * 检查是否有弹窗打开
      */
     SessionDetailsModal.prototype.isModalOpen = function() {
         return this.currentModal !== null;
     };
 
     /**
-     * 強制關閉所有彈窗
+     * 强制关闭所有弹窗
      */
     SessionDetailsModal.prototype.forceCloseAll = function() {
-        // 關閉當前彈窗
+        // 关闭当前弹窗
         this.closeModal();
 
-        // 清理可能遺留的彈窗元素
+        // 清理可能遗留的弹窗元素
         const existingModals = document.querySelectorAll('.session-details-modal');
         existingModals.forEach(modal => {
             DOMUtils.safeRemoveElement(modal);
         });
 
-        // 清理事件監聽器
+        // 清理事件监听器
         if (this.keydownHandler) {
             document.removeEventListener('keydown', this.keydownHandler);
             this.keydownHandler = null;
@@ -579,16 +579,16 @@
     };
 
     /**
-     * 清理資源
+     * 清理资源
      */
     SessionDetailsModal.prototype.cleanup = function() {
         this.forceCloseAll();
         // console.log('🔍 SessionDetailsModal 清理完成');
     };
 
-    // 將 SessionDetailsModal 加入命名空間
+    // 将 SessionDetailsModal 加入命名空间
     window.MCPFeedback.Session.DetailsModal = SessionDetailsModal;
 
-    // console.log('✅ SessionDetailsModal 模組載入完成');
+    // console.log('✅ SessionDetailsModal 模块加载完成');
 
 })();

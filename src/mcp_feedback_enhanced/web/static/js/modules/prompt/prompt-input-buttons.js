@@ -1,26 +1,26 @@
 /**
- * MCP Feedback Enhanced - 提示詞輸入按鈕模組
+ * MCP Feedback Enhanced - 提示词输入按钮模块
  * ==========================================
  * 
- * 處理 input-group 區域的提示詞功能按鈕
+ * 处理 input-group 区域的提示词功能按钮
  */
 
 (function() {
     'use strict';
 
-    // 確保命名空間存在
+    // 确保命名空间存在
     window.MCPFeedback = window.MCPFeedback || {};
     window.MCPFeedback.Prompt = window.MCPFeedback.Prompt || {};
 
     const Utils = window.MCPFeedback.Utils;
 
     /**
-     * 提示詞輸入按鈕管理器
+     * 提示词输入按钮管理器
      */
     function PromptInputButtons(options) {
         options = options || {};
 
-        // 依賴注入
+        // 依赖注入
         this.promptManager = options.promptManager || null;
         this.promptModal = options.promptModal || null;
 
@@ -29,14 +29,14 @@
         this.selectButtons = [];
         this.lastUsedButtons = [];
 
-        // 狀態
+        // 状态
         this.isInitialized = false;
 
         console.log('🔘 PromptInputButtons 初始化完成');
     }
 
     /**
-     * 初始化輸入按鈕
+     * 初始化输入按钮
      */
     PromptInputButtons.prototype.init = function(containerSelectors) {
         if (!Array.isArray(containerSelectors)) {
@@ -52,67 +52,67 @@
                 this.bindExistingButtons(container, index);
                 successCount++;
             } else {
-                console.warn('⚠️ 找不到提示詞按鈕容器:', selector);
+                console.warn('⚠️ 找不到提示词按钮容器:', selector);
             }
         });
 
         if (successCount > 0) {
-            // 設置事件監聽器
+            // 设置事件监听器
             this.setupEventListeners();
 
-            // 更新按鈕狀態和文字
+            // 更新按钮状态和文本
             this.updateButtonStates();
 
             this.isInitialized = true;
-            console.log('✅ PromptInputButtons 初始化完成，成功綁定', successCount, '組按鈕');
+            console.log('✅ PromptInputButtons 初始化完成，成功绑定', successCount, '组按钮');
             return true;
         }
 
-        console.error('❌ 沒有成功綁定任何提示詞按鈕');
+        console.error('❌ 没有成功绑定任何提示词按钮');
         return false;
     };
 
     /**
-     * 綁定已存在的按鈕
+     * 绑定已存在的按钮
      */
     PromptInputButtons.prototype.bindExistingButtons = function(container, index) {
-        // 查找已存在的按鈕容器
+        // 查找已存在的按钮容器
         const inputGroup = container.closest('.input-group') || container;
         const buttonContainer = inputGroup.querySelector('.prompt-input-buttons');
 
         if (!buttonContainer) {
-            console.warn('⚠️ 找不到提示詞按鈕容器:', container);
+            console.warn('⚠️ 找不到提示词按钮容器:', container);
             return;
         }
 
-        // 獲取按鈕引用
+        // 获取按钮引用
         const selectBtn = buttonContainer.querySelector('.select-prompt-btn');
         const lastUsedBtn = buttonContainer.querySelector('.last-prompt-btn');
 
         if (selectBtn && lastUsedBtn) {
-            // 設置正確的 data-container-index
+            // 设置正确的 data-container-index
             selectBtn.setAttribute('data-container-index', index);
             lastUsedBtn.setAttribute('data-container-index', index);
 
             this.selectButtons.push(selectBtn);
             this.lastUsedButtons.push(lastUsedBtn);
 
-            console.log('✅ 成功綁定提示詞按鈕，容器索引:', index);
+            console.log('✅ 成功绑定提示词按钮，容器索引:', index);
         } else {
-            console.warn('⚠️ 找不到提示詞按鈕元素:', container);
+            console.warn('⚠️ 找不到提示词按钮元素:', container);
         }
 
-        // 更新按鈕文字
+        // 更新按钮文本
         this.updateButtonTexts();
     };
 
     /**
-     * 設置事件監聽器
+     * 设置事件监听器
      */
     PromptInputButtons.prototype.setupEventListeners = function() {
         const self = this;
 
-        // 選擇提示詞按鈕事件
+        // 选择提示词按钮事件
         this.selectButtons.forEach(function(button) {
             if (button) {
                 button.addEventListener('click', function() {
@@ -122,7 +122,7 @@
             }
         });
 
-        // 使用上次提示詞按鈕事件
+        // 使用上次提示词按钮事件
         this.lastUsedButtons.forEach(function(button) {
             if (button) {
                 button.addEventListener('click', function() {
@@ -132,7 +132,7 @@
             }
         });
 
-        // 設置提示詞管理器回調
+        // 设置提示词管理器回调
         if (this.promptManager) {
             this.promptManager.addPromptsChangeCallback(function() {
                 self.updateButtonStates();
@@ -143,7 +143,7 @@
             });
         }
 
-        // 設置彈窗回調
+        // 设置弹窗回调
         if (this.promptModal) {
             this.promptModal.onSelect = function(promptId) {
                 self.handlePromptSelected(promptId);
@@ -152,143 +152,143 @@
     };
 
     /**
-     * 處理選擇提示詞
+     * 处理选择提示词
      */
     PromptInputButtons.prototype.handleSelectPrompt = function(containerIndex) {
         if (!this.promptManager || !this.promptModal) {
-            console.error('❌ PromptManager 或 PromptModal 未設定');
+            console.error('❌ PromptManager 或 PromptModal 未设置');
             return;
         }
 
         const prompts = this.promptManager.getPromptsSortedByUsage();
         
         if (prompts.length === 0) {
-            this.showError(this.t('prompts.buttons.noPrompts', '尚無常用提示詞，請先在設定中新增'));
+            this.showError(this.t('prompts.buttons.noPrompts', '尚无常用提示词，请先在设置中添加'));
             return;
         }
 
-        // 記錄當前容器索引，用於後續插入文字
+        // 记录当前容器索引，用于后续插入文本
         this.currentContainerIndex = containerIndex;
 
-        // 顯示選擇彈窗
+        // 显示选择弹窗
         this.promptModal.showSelectModal(prompts);
     };
 
     /**
-     * 處理使用上次提示詞
+     * 处理使用上次提示词
      */
     PromptInputButtons.prototype.handleUseLastPrompt = function(containerIndex) {
         if (!this.promptManager) {
-            console.error('❌ PromptManager 未設定');
+            console.error('❌ PromptManager 未设置');
             return;
         }
 
         const lastPrompt = this.promptManager.getLastUsedPrompt();
         
         if (!lastPrompt) {
-            this.showError(this.t('prompts.buttons.noLastPrompt', '尚無最近使用的提示詞'));
+            this.showError(this.t('prompts.buttons.noLastPrompt', '尚无最近使用的提示词'));
             return;
         }
 
-        // 插入提示詞內容
+        // 插入提示词内容
         this.insertPromptContent(containerIndex, lastPrompt);
 
-        // 更新使用記錄
+        // 更新使用记录
         this.promptManager.usePrompt(lastPrompt.id);
 
-        this.showSuccess(this.t('prompts.buttons.lastPromptApplied', '已套用上次使用的提示詞'));
+        this.showSuccess(this.t('prompts.buttons.lastPromptApplied', '已套用上次使用的提示词'));
     };
 
     /**
-     * 處理提示詞選擇完成
+     * 处理提示词选择完成
      */
     PromptInputButtons.prototype.handlePromptSelected = function(promptId) {
         if (!this.promptManager) {
-            console.error('❌ PromptManager 未設定');
+            console.error('❌ PromptManager 未设置');
             return;
         }
 
         const prompt = this.promptManager.getPromptById(promptId);
         if (!prompt) {
-            this.showError(this.t('prompts.buttons.promptNotFound', '找不到指定的提示詞'));
+            this.showError(this.t('prompts.buttons.promptNotFound', '找不到指定的提示词'));
             return;
         }
 
-        // 插入提示詞內容
+        // 插入提示词内容
         this.insertPromptContent(this.currentContainerIndex, prompt);
 
-        // 更新使用記錄
+        // 更新使用记录
         this.promptManager.usePrompt(promptId);
 
-        this.showSuccess(this.t('prompts.buttons.promptApplied', '已套用提示詞：') + prompt.name);
+        this.showSuccess(this.t('prompts.buttons.promptApplied', '已套用提示词：') + prompt.name);
     };
 
     /**
-     * 插入提示詞內容到輸入框
+     * 插入提示词内容到输入框
      */
     PromptInputButtons.prototype.insertPromptContent = function(containerIndex, prompt) {
         if (containerIndex < 0 || containerIndex >= this.containers.length) {
-            console.error('❌ 無效的容器索引:', containerIndex);
+            console.error('❌ 无效的容器索引:', containerIndex);
             return;
         }
 
         const container = this.containers[containerIndex];
 
-        // 檢查容器本身是否是輸入元素
+        // 检查容器本身是否是输入元素
         let textarea = null;
         if (container.tagName === 'TEXTAREA' || container.tagName === 'INPUT') {
             textarea = container;
         } else {
-            // 如果不是，則在容器內查找
+            // 如果不是，则在容器内查找
             textarea = container.querySelector('textarea') || container.querySelector('input[type="text"]');
         }
 
         if (!textarea) {
-            console.error('❌ 找不到輸入框，容器:', container);
+            console.error('❌ 找不到输入框，容器:', container);
             return;
         }
 
-        // 獲取當前內容和游標位置
+        // 获取当前内容和光标位置
         const currentContent = textarea.value;
         const cursorPosition = textarea.selectionStart;
 
-        // 決定插入方式
+        // 决定插入方式
         let newContent;
         let newCursorPosition;
 
         if (currentContent.trim() === '') {
-            // 如果輸入框為空，直接插入
+            // 如果输入框为空，直接插入
             newContent = prompt.content;
             newCursorPosition = prompt.content.length;
         } else {
-            // 如果有內容，在游標位置插入
+            // 如果有内容，在光标位置插入
             const beforeCursor = currentContent.substring(0, cursorPosition);
             const afterCursor = currentContent.substring(cursorPosition);
             
-            // 添加適當的分隔符
+            // 添加适当的分隔符
             const separator = beforeCursor.endsWith('\n') || beforeCursor === '' ? '' : '\n\n';
             
             newContent = beforeCursor + separator + prompt.content + afterCursor;
             newCursorPosition = beforeCursor.length + separator.length + prompt.content.length;
         }
 
-        // 更新內容
+        // 更新内容
         textarea.value = newContent;
         
-        // 設置游標位置
+        // 设置光标位置
         textarea.focus();
         textarea.setSelectionRange(newCursorPosition, newCursorPosition);
 
-        // 觸發 input 事件，確保其他監聽器能夠響應
+        // 触发 input 事件，确保其他监听器能够响应
         const inputEvent = new Event('input', { bubbles: true });
         textarea.dispatchEvent(inputEvent);
     };
 
     /**
-     * 更新按鈕文字
+     * 更新按钮文本
      */
     PromptInputButtons.prototype.updateButtonTexts = function() {
-        // 更新選擇提示詞按鈕文字
+        // 更新选择提示词按钮文本
         this.selectButtons.forEach(function(button) {
             if (button) {
                 const textSpan = button.querySelector('.button-text');
@@ -301,7 +301,7 @@
             }
         });
 
-        // 更新使用上次提示詞按鈕文字
+        // 更新使用上次提示词按钮文本
         this.lastUsedButtons.forEach(function(button) {
             if (button) {
                 const textSpan = button.querySelector('.button-text');
@@ -316,7 +316,7 @@
     };
 
     /**
-     * 更新按鈕狀態
+     * 更新按钮状态
      */
     PromptInputButtons.prototype.updateButtonStates = function() {
         if (!this.promptManager) {
@@ -326,7 +326,7 @@
         const prompts = this.promptManager.getAllPrompts();
         const lastPrompt = this.promptManager.getLastUsedPrompt();
 
-        // 更新選擇提示詞按鈕
+        // 更新选择提示词按钮
         this.selectButtons.forEach(function(button) {
             if (button) {
                 button.disabled = prompts.length === 0;
@@ -334,17 +334,17 @@
                 if (prompts.length === 0) {
                     button.title = window.i18nManager ?
                         window.i18nManager.t('prompts.buttons.selectPromptTooltipEmpty') :
-                        '尚無常用提示詞';
+                        '尚无常用提示词';
                 } else {
                     const tooltipText = window.i18nManager ?
                         window.i18nManager.t('prompts.buttons.selectPromptTooltipAvailable', { count: prompts.length }) :
-                        `選擇常用提示詞 (${prompts.length} 個可用)`;
+                        `选择常用提示词 (${prompts.length} 个可用)`;
                     button.title = tooltipText;
                 }
             }
         });
 
-        // 更新使用上次提示詞按鈕
+        // 更新使用上次提示词按钮
         this.lastUsedButtons.forEach(function(button) {
             if (button) {
                 button.disabled = !lastPrompt;
@@ -352,22 +352,22 @@
                 if (!lastPrompt) {
                     button.title = window.i18nManager ?
                         window.i18nManager.t('prompts.buttons.lastPromptTooltipEmpty') :
-                        '尚無最近使用的提示詞';
+                        '尚无最近使用的提示词';
                 } else {
                     const tooltipText = window.i18nManager ?
                         window.i18nManager.t('prompts.buttons.lastPromptTooltipAvailable', { name: lastPrompt.name }) :
-                        `使用上次提示詞：${lastPrompt.name}`;
+                        `使用上次提示词：${lastPrompt.name}`;
                     button.title = tooltipText;
                 }
             }
         });
 
-        // 同時更新按鈕文字（以防語言切換）
+        // 同时更新按钮文本（以防语言切换）
         this.updateButtonTexts();
     };
 
     /**
-     * 顯示成功訊息
+     * 显示成功消息
      */
     PromptInputButtons.prototype.showSuccess = function(message) {
         if (window.MCPFeedback && window.MCPFeedback.Utils && window.MCPFeedback.Utils.showMessage) {
@@ -378,7 +378,7 @@
     };
 
     /**
-     * 顯示錯誤訊息
+     * 显示错误消息
      */
     PromptInputButtons.prototype.showError = function(message) {
         if (window.MCPFeedback && window.MCPFeedback.Utils && window.MCPFeedback.Utils.showMessage) {
@@ -389,7 +389,7 @@
     };
 
     /**
-     * 翻譯函數
+     * 翻译函数
      */
     PromptInputButtons.prototype.t = function(key, fallback) {
         if (window.i18nManager && typeof window.i18nManager.t === 'function') {
@@ -399,10 +399,10 @@
     };
 
     /**
-     * 銷毀按鈕
+     * 销毁按钮
      */
     PromptInputButtons.prototype.destroy = function() {
-        // 移除所有按鈕容器
+        // 移除所有按钮容器
         this.containers.forEach(function(container) {
             const buttonContainer = container.querySelector('.prompt-input-buttons');
             if (buttonContainer) {
@@ -416,12 +416,12 @@
         this.lastUsedButtons = [];
         this.isInitialized = false;
 
-        console.log('🗑️ PromptInputButtons 已銷毀');
+        console.log('🗑️ PromptInputButtons 已销毁');
     };
 
-    // 將 PromptInputButtons 加入命名空間
+    // 将 PromptInputButtons 加入命名空间
     window.MCPFeedback.Prompt.PromptInputButtons = PromptInputButtons;
 
-    console.log('✅ PromptInputButtons 模組載入完成');
+    console.log('✅ PromptInputButtons 模块加载完成');
 
 })();

@@ -1,11 +1,11 @@
 # Makefile for feedback-angel development
-# 適用於 feedback-angel 專案開發
+# 适用于 feedback-angel 项目开发
 # Compatible with Windows PowerShell and Unix systems
-# 兼容 Windows PowerShell 和 Unix 系統
+# 兼容 Windows PowerShell 和 Unix 系统
 
 .PHONY: help install install-dev install-hooks lint format type-check test clean pre-commit-run pre-commit-all update-deps test-func test-web build-all test-all
 
-# 預設目標 - 顯示幫助訊息
+# 缺省目标 - 显示帮助消息
 help: ## Show this help message
 	@echo "Available commands:"
 	@echo ""
@@ -39,7 +39,7 @@ help: ## Show this help message
 	@echo "  ci                   Simulate CI pipeline locally"
 	@echo "  quick-check          Quick check with auto-fix"
 
-# 安裝相關命令
+# 安装相关命令
 install: ## Install the package
 	uv sync
 
@@ -50,7 +50,7 @@ install-hooks: ## Install pre-commit hooks
 	uv run pre-commit install
 	@echo "✅ Pre-commit hooks installed successfully!"
 
-# 程式碼品質檢查命令
+# 代码品质检查命令
 lint: ## Run linting with Ruff
 	uv run ruff check .
 
@@ -66,12 +66,12 @@ format-check: ## Check code formatting
 type-check: ## Run type checking with mypy
 	uv run mypy
 
-# 組合品質檢查命令
+# 组合品质检查命令
 check: lint format-check type-check ## Run all code quality checks
 
 check-fix: lint-fix format type-check ## Run all checks with auto-fix
 
-# Pre-commit 相關命令
+# Pre-commit 相关命令
 pre-commit-run: ## Run pre-commit on staged files
 	uv run pre-commit run
 
@@ -81,7 +81,7 @@ pre-commit-all: ## Run pre-commit on all files
 pre-commit-update: ## Update pre-commit hooks
 	uv run pre-commit autoupdate
 
-# 測試相關命令
+# 测试相关命令
 test: ## Run tests
 	uv run pytest
 
@@ -91,14 +91,14 @@ test-cov: ## Run tests with coverage
 test-fast: ## Run tests without slow tests
 	uv run pytest -m "not slow"
 
-# 功能測試命令
+# 功能测试命令
 test-func: ## Run functional tests (standard)
 	uv run python -m mcp_feedback_enhanced test
 
 test-web: ## Run Web UI tests (continuous)
 	uvx --no-cache --with-editable . feedback-angel test --web
 
-# 維護相關命令
+# 维护相关命令
 clean: ## Clean up cache and temporary files
 	@echo "Cleaning up..."
 	@if exist ".mypy_cache" rmdir /s /q ".mypy_cache" 2>nul || true
@@ -116,14 +116,14 @@ clean: ## Clean up cache and temporary files
 update-deps: ## Update dependencies
 	uv sync --upgrade
 
-# 建置相關命令
+# 建置相关命令
 build: ## Build the package
 	uv build
 
 build-check: ## Check the built package
 	uv run twine check dist/*
 
-# 版本發布命令
+# 版本发布命令
 bump-patch: ## Bump patch version
 	uv run bump2version patch
 
@@ -133,7 +133,7 @@ bump-minor: ## Bump minor version
 bump-major: ## Bump major version
 	uv run bump2version major
 
-# 開發工作流程
+# 开发工作流程
 dev-setup: install-dev install-hooks ## Complete development setup
 	@echo "🎉 Development environment setup complete!"
 	@echo ""
@@ -142,20 +142,20 @@ dev-setup: install-dev install-hooks ## Complete development setup
 	@echo "  2. Start coding! Pre-commit hooks will run automatically"
 	@echo "  3. Use 'make help' to see all available commands"
 
-# CI 流程模擬
+# CI 流程仿真
 ci: clean install-dev pre-commit-all test ## Simulate CI pipeline locally
 
-# 快速開發命令
+# 快速开发命令
 quick-check: lint-fix format type-check ## Quick check with auto-fix (recommended for development)
 
-# Windows PowerShell 專用命令
+# Windows PowerShell 专用命令
 ps-clean: ## PowerShell version of clean (Windows)
 	powershell -Command "Get-ChildItem -Path . -Recurse -Name '__pycache__' | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue; Get-ChildItem -Path . -Recurse -Name '*.pyc' | Remove-Item -Force -ErrorAction SilentlyContinue; @('.mypy_cache', '.ruff_cache', '.pytest_cache', 'htmlcov', 'dist', 'build') | ForEach-Object { if (Test-Path $$_) { Remove-Item $$_ -Recurse -Force } }"
 
-# 完整構建流程
+# 完整构建流程
 build-all: clean build ## Build complete package
 	@echo "🎉 Complete build finished!"
 
-# 測試所有功能
+# 测试所有功能
 test-all: test test-func ## Run all tests including functional tests
 	@echo "✅ All tests completed!"

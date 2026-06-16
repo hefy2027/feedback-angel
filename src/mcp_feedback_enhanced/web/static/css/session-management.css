@@ -1,33 +1,33 @@
 /**
- * 會話管理和連線監控專用樣式
+ * 会话管理和连接监控专用样式
  * =============================
  * 
- * 為 WebSocket 連線狀態顯示器和會話管理功能提供樣式支援
+ * 为 WebSocket 连接状态显示器和会话管理功能提供样式支持
  */
 
-/* ===== CSS 變數擴展 ===== */
+/* ===== CSS 变量扩展 ===== */
 :root {
-  /* 連線狀態色彩 */
+  /* 连接状态色彩 */
   --status-connected: #4caf50;
   --status-connecting: #ff9800;
   --status-disconnected: #f44336;
   --status-error: #e91e63;
   --status-reconnecting: #9c27b0;
   
-  /* 會話狀態色彩 */
+  /* 会话状态色彩 */
   --session-active: #2196f3;
   --session-waiting: #9c27b0;
   --session-completed: #4caf50;
   --session-error: #f44336;
   --session-timeout: #ff5722;
   
-  /* 面板色彩 - 與主要內容區域統一 */
+  /* 面板色彩 - 与主要内容区域统一 */
   --panel-bg: var(--bg-secondary);
   --panel-border: var(--border-color);
   --panel-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --panel-header-bg: var(--bg-tertiary);
   
-  /* 動畫時間和緩動函數 */
+  /* 动画时间和缓动函数 */
   --transition-fast: 0.2s;
   --transition-normal: 0.4s;
   --transition-slow: 0.6s;
@@ -35,7 +35,7 @@
   --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-/* ===== 頂部連線監控狀態列 ===== */
+/* ===== 顶部连接监控状态栏 ===== */
 .connection-monitor-bar {
   display: flex;
   justify-content: space-between;
@@ -51,7 +51,7 @@
   gap: 20px;
 }
 
-/* 緊湊版頂部欄 */
+/* 紧凑版顶部栏 */
 .connection-monitor-bar.compact {
   padding: 4px 12px;
   gap: 0;
@@ -61,7 +61,7 @@
   justify-content: flex-start;
 }
 
-/* 緊湊版元素樣式 */
+/* 紧凑版元素样式 */
 .app-title-compact {
   font-weight: 600;
   color: var(--text-primary);
@@ -108,7 +108,7 @@
   font-size: 12px;
 }
 
-/* 倒數計時器控制按鈕 */
+/* 倒数计时器控制按钮 */
 .countdown-control-btn {
   background: transparent;
   border: none;
@@ -134,7 +134,7 @@
   transform: scale(0.95);
 }
 
-/* 暫停狀態的計時器樣式 */
+/* 暂停状态的计时器样式 */
 .countdown-display-compact.paused .countdown-timer {
   opacity: 0.6;
   animation: pause-blink 1.5s ease-in-out infinite;
@@ -168,7 +168,7 @@
   color: var(--status-connecting);
 }
 
-/* 應用資訊區域 */
+/* 应用信息区域 */
 .app-info-section {
   display: flex;
   flex-direction: column;
@@ -227,7 +227,7 @@
   justify-content: space-between;
 }
 
-/* 會話狀態資訊區域 */
+/* 会话状态信息区域 */
 .session-status-info {
   display: flex;
   flex-direction: column;
@@ -257,7 +257,7 @@
   margin-left: 20px;
 }
 
-/* 會話ID顯示樣式 */
+/* 会话ID显示样式 */
 .session-id-display {
   font-family: 'Consolas', 'Monaco', monospace;
   color: var(--accent-color);
@@ -281,7 +281,7 @@
   transform: scale(0.98);
 }
 
-/* 會話ID tooltip */
+/* 会话ID tooltip */
 .session-id-display::after {
   content: attr(data-full-id);
   position: absolute;
@@ -308,7 +308,7 @@
   visibility: visible;
 }
 
-/* 專案路徑顯示樣式 - 模仿會話ID顯示 */
+/* 项目路径显示样式 - 模仿会话ID显示 */
 .project-path-display {
   font-family: 'Consolas', 'Monaco', monospace;
   color: var(--accent-color);
@@ -333,7 +333,7 @@
   transform: scale(0.98);
 }
 
-/* 專案路徑 tooltip */
+/* 项目路径 tooltip */
 .project-path-display::after {
   content: attr(data-full-path);
   position: absolute;
@@ -362,7 +362,7 @@
   visibility: visible;
 }
 
-/* 專案路徑 tooltip 位置自動調整 */
+/* 项目路径 tooltip 位置自动调整 */
 .project-path-display.tooltip-up::after {
   top: auto;
   bottom: 100%;
@@ -381,7 +381,7 @@
   transform: translateX(0);
 }
 
-/* 連線和狀態資訊組合容器 */
+/* 连接和状态信息组合容器 */
 .connection-status-combined {
   display: flex;
   flex-direction: column;
@@ -391,7 +391,7 @@
   justify-content: center;
 }
 
-/* 詳細狀態資訊 */
+/* 详细状态信息 */
 .detailed-status-info {
   display: flex;
   gap: 16px;
@@ -547,7 +547,7 @@
   border-color: var(--accent-color);
 }
 
-/* ===== 會話管理頁籤樣式 ===== */
+/* ===== 会话管理页签样式 ===== */
 .session-panel-header {
   display: flex;
   justify-content: space-between;
@@ -577,7 +577,7 @@
 
 
 
-/* ===== 會話卡片 ===== */
+/* ===== 会话卡片 ===== */
 .session-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
@@ -692,7 +692,7 @@
   border-color: var(--accent-color);
 }
 
-/* 匯出按鈕樣式 */
+/* 导出按钮样式 */
 .btn-export {
   background: var(--bg-primary) !important;
   border-color: var(--success-color) !important;
@@ -705,7 +705,7 @@
   border-color: var(--success-color) !important;
 }
 
-/* 會話歷史管理按鈕樣式 */
+/* 会话历史管理按钮样式 */
 #exportSessionHistoryBtn {
   background: var(--success-color);
   border-color: var(--success-color);
@@ -726,7 +726,7 @@
   color: white;
 }
 
-/* ===== 會話統計 ===== */
+/* ===== 会话统计 ===== */
 .session-stats-section {
   margin-top: 16px;
   padding-top: 16px;
@@ -763,9 +763,9 @@
   letter-spacing: 0.5px;
 }
 
-/* ===== 響應式設計 ===== */
+/* ===== 响应式设计 ===== */
 @media (max-width: 768px) {
-  /* 緊湊版頂部欄在移動設備上的調整 */
+  /* 紧凑版顶部栏在移动设备上的调整 */
   .connection-monitor-bar.compact {
     padding: 4px 10px;
     font-size: 11px;
@@ -773,32 +773,32 @@
     white-space: nowrap;
   }
   
-  /* 隱藏專案路徑以節省空間 */
+  /* 隐藏项目路径以节省空间 */
   .project-info-compact {
     display: none;
   }
   
-  /* 隱藏相關的分隔符 */
+  /* 隐藏相关的分隔符 */
   .project-info-compact + .info-separator {
     display: none;
   }
   
-  /* 調整標題字體 */
+  /* 调整标题字体 */
   .app-title-compact {
     font-size: 12px;
   }
   
-  /* 減少分隔符間距 */
+  /* 减少分隔符间距 */
   .info-separator {
     margin: 0 6px;
   }
   
-  /* 確保倒數計時器始終可見 */
+  /* 确保倒数计时器始终可见 */
   .countdown-display-compact {
     font-weight: bold;
   }
 
-  /* 會話管理頁籤響應式調整 */
+  /* 会话管理页签响应式调整 */
   .session-panel-content {
     gap: 16px;
   }
@@ -809,19 +809,19 @@
   }
 }
 
-/* 超小螢幕調整 */
+/* 超小屏幕调整 */
 @media (max-width: 480px) {
-  /* 隱藏會話 ID */
+  /* 隐藏会话 ID */
   .session-info-compact {
     display: none;
   }
   
-  /* 隱藏相關的分隔符 */
+  /* 隐藏相关的分隔符 */
   .session-info-compact + .info-separator {
     display: none;
   }
   
-  /* 保留核心資訊：標題、倒數計時器、連線狀態 */
+  /* 保留内核信息：标题、倒数计时器、连接状态 */
   .connection-monitor-bar.compact {
     justify-content: space-between;
   }
@@ -831,7 +831,7 @@
   }
 }
 
-/* ===== 載入狀態 ===== */
+/* ===== 加载状态 ===== */
 .loading-skeleton {
   background: linear-gradient(90deg, 
     var(--bg-tertiary) 25%, 
@@ -846,7 +846,7 @@
   100% { background-position: 200% 0; }
 }
 
-/* ===== 無障礙支援 ===== */
+/* ===== 无障碍支持 ===== */
 .session-card:focus {
   outline: 2px solid var(--accent-color);
   outline-offset: 2px;
@@ -858,7 +858,7 @@
   outline-offset: 2px;
 }
 
-/* ===== 會話歷史區塊標題樣式 ===== */
+/* ===== 会话历史区块标题样式 ===== */
 .session-history-header {
   display: flex;
   justify-content: space-between;
@@ -879,7 +879,7 @@
   align-items: center;
 }
 
-/* 響應式設計 - 小螢幕上的調整 */
+/* 响应式设计 - 小屏幕上的调整 */
 @media (max-width: 768px) {
   .session-history-header {
     flex-direction: column;
@@ -899,7 +899,7 @@
   }
 }
 
-/* 超小螢幕上使用下拉選單替代 */
+/* 超小屏幕上使用下拉列表替代 */
 @media (max-width: 480px) {
   .session-history-actions {
     position: relative;
@@ -909,7 +909,7 @@
     display: none;
   }
   
-  /* 可選：將第一個按鈕改為下拉選單觸發器 */
+  /* 可选：将第一个按钮改为下拉列表触发器 */
   .session-history-actions .btn-small:first-child::after {
     content: ' ▼';
     font-size: 10px;
@@ -917,7 +917,7 @@
   }
 }
 
-/* ===== 會話詳情彈窗 ===== */
+/* ===== 会话详情弹窗 ===== */
 .session-details-modal {
   position: fixed;
   top: 0;
@@ -1217,7 +1217,7 @@
   border-color: var(--accent-color);
 }
 
-/* ===== 用戶訊息記錄樣式 ===== */
+/* ===== 用户消息记录样式 ===== */
 .user-messages-section {
   margin-top: 16px;
   border-top: 1px solid var(--border-color);
@@ -1316,13 +1316,13 @@
   letter-spacing: 0.5px;
 }
 
-.message-method:contains("自動") {
+.message-method:contains("自动") {
   background: rgba(255, 152, 0, 0.2);
   color: var(--warning-color);
   border: 1px solid var(--warning-color);
 }
 
-.message-method:contains("手動") {
+.message-method:contains("手动") {
   background: rgba(76, 175, 80, 0.2);
   color: var(--success-color);
   border: 1px solid var(--success-color);
@@ -1351,7 +1351,7 @@
   color: var(--text-secondary);
 }
 
-/* 隱私等級選擇器樣式增強 */
+/* 隐私等级选择器样式增强 */
 #userMessagePrivacyLevel {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
@@ -1373,9 +1373,9 @@
   color: var(--text-primary);
 }
 
-/* 用戶訊息記錄開關樣式已整合到標準切換開關樣式中 */
+/* 用户消息记录开关样式已集成到标准切换开关样式中 */
 
-/* 切換開關容器樣式 */
+/* 切换开关容器样式 */
 .toggle-container {
   display: flex;
   align-items: center;
@@ -1389,7 +1389,7 @@
   user-select: none;
 }
 
-/* 減少動畫偏好 */
+/* 减少动画偏好 */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -1398,21 +1398,21 @@
   }
 }
 
-/* 響應式設計 - 緊湊版頂部欄 */
+/* 响应式设计 - 紧凑版顶部栏 */
 @media (max-width: 768px) {
-  /* 小螢幕隱藏專案路徑 */
+  /* 小屏幕隐藏项目路径 */
   .connection-monitor-bar.compact .project-info-compact {
     display: none;
   }
   
-  /* 隱藏相鄰的分隔符 */
+  /* 隐藏相邻的分隔符 */
   .connection-monitor-bar.compact .project-info-compact + .info-separator {
     display: none;
   }
 }
 
 @media (max-width: 480px) {
-  /* 極小螢幕只顯示最關鍵資訊 */
+  /* 极小屏幕只显示最关键信息 */
   .connection-monitor-bar.compact .session-info-compact {
     display: none;
   }
@@ -1421,7 +1421,7 @@
     display: none;
   }
   
-  /* 調整標題字體大小 */
+  /* 调整标题字体大小 */
   .app-title-compact {
     font-size: 12px;
   }

@@ -9,15 +9,15 @@
 ### 🇺🇸 English
 📖 **[View Complete English Release Notes](https://github.com/hefy2027/feedback-angel/blob/main/RELEASE_NOTES/CHANGELOG.en.md)**
 
-### 🇹🇼 繁體中文
-📖 **[查看完整繁體中文發布說明](https://github.com/hefy2027/feedback-angel/blob/main/RELEASE_NOTES/CHANGELOG.zh-TW.md)**
+### 🇹🇼 繁体中文
+📖 **[查看完整繁体中文发布说明](https://github.com/hefy2027/feedback-angel/blob/main/RELEASE_NOTES/CHANGELOG.zh-TW.md)**
 
 ### 🇨🇳 简体中文
 📖 **[查看完整简体中文发布说明](https://github.com/hefy2027/feedback-angel/blob/main/RELEASE_NOTES/CHANGELOG.zh-CN.md)**
 
 ---
 
-## 📦 Quick Installation / 快速安裝
+## 📦 Quick Installation / 快速安装
 
 ```bash
 # Latest version / 最新版本

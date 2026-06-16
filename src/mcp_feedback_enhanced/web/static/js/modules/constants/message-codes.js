@@ -1,23 +1,23 @@
 /**
- * MCP Feedback Enhanced - 訊息代碼常量
+ * MCP Feedback Enhanced - 消息代码常量
  * ====================================
  * 
- * 定義所有系統訊息的標準代碼，用於國際化支援
+ * 定义所有系统消息的标准代码，用于国际化支持
  */
 
 (function() {
     'use strict';
 
-    // 確保命名空間存在
+    // 确保命名空间存在
     window.MCPFeedback = window.MCPFeedback || {};
     window.MCPFeedback.Constants = window.MCPFeedback.Constants || {};
 
     /**
-     * 訊息代碼枚舉
-     * 所有系統訊息都應該使用這些代碼，而非硬編碼字串
+     * 消息代码枚举
+     * 所有系统消息都应该使用这些代码，而非硬编码字符串
      */
     const MessageCodes = {
-        // 系統狀態訊息
+        // 系统状态消息
         SYSTEM: {
             CONNECTION_ESTABLISHED: 'system.connectionEstablished',
             CONNECTION_LOST: 'system.connectionLost',
@@ -27,7 +27,7 @@
             WEBSOCKET_ERROR: 'system.websocketError'
         },
 
-        // 會話相關訊息
+        // 会话相关消息
         SESSION: {
             NO_ACTIVE_SESSION: 'session.noActiveSession',
             SESSION_CREATED: 'session.created',
@@ -43,7 +43,7 @@
             ERROR_CLEANUP: 'session.errorCleanup'
         },
 
-        // 設定相關訊息
+        // 设置相关消息
         SETTINGS: {
             SAVED: 'settings.saved',
             LOADED: 'settings.loaded',
@@ -56,7 +56,7 @@
             INVALID_LOG_LEVEL: 'settings.invalidLogLevel'
         },
 
-        // 通知相關訊息
+        // 通知相关消息
         NOTIFICATION: {
             AUTOPLAY_BLOCKED: 'notification.autoplayBlocked',
             PERMISSION_DENIED: 'notification.permissionDenied',
@@ -66,7 +66,7 @@
             SOUND_DISABLED: 'notification.soundDisabled'
         },
 
-        // 檔案上傳訊息
+        // 文件上传消息
         FILE: {
             UPLOAD_SUCCESS: 'file.uploadSuccess',
             UPLOAD_FAILED: 'file.uploadFailed',
@@ -76,7 +76,7 @@
             REMOVED: 'file.removed'
         },
 
-        // 提示詞相關訊息
+        // 提示词相关消息
         PROMPT: {
             SAVED: 'prompt.saved',
             DELETED: 'prompt.deleted',
@@ -87,7 +87,7 @@
             VALIDATION_FAILED: 'prompt.validationFailed'
         },
 
-        // 錯誤訊息
+        // 错误消息
         ERROR: {
             GENERIC: 'error.generic',
             NETWORK: 'error.network',
@@ -97,7 +97,7 @@
             OPERATION_FAILED: 'error.operationFailed'
         },
 
-        // 命令執行訊息
+        // 命令运行消息
         COMMAND: {
             EXECUTING: 'commandStatus.executing',
             COMPLETED: 'commandStatus.completed',
@@ -109,7 +109,7 @@
     };
 
     /**
-     * 訊息嚴重程度
+     * 消息严重程度
      */
     const MessageSeverity = {
         INFO: 'info',
@@ -119,11 +119,11 @@
     };
 
     /**
-     * 建立標準訊息物件
-     * @param {string} code - 訊息代碼
-     * @param {Object} params - 動態參數
-     * @param {string} severity - 嚴重程度
-     * @returns {Object} 標準訊息物件
+     * 创建标准消息对象
+     * @param {string} code - 消息代码
+     * @param {Object} params - 动态参数
+     * @param {string} severity - 严重程度
+     * @returns {Object} 标准消息对象
      */
     function createMessage(code, params = {}, severity = MessageSeverity.INFO) {
         return {
@@ -136,27 +136,27 @@
     }
 
     /**
-     * 快捷方法：建立成功訊息
+     * 快捷方法：创建成功消息
      */
     function createSuccessMessage(code, params = {}) {
         return createMessage(code, params, MessageSeverity.SUCCESS);
     }
 
     /**
-     * 快捷方法：建立錯誤訊息
+     * 快捷方法：创建错误消息
      */
     function createErrorMessage(code, params = {}) {
         return createMessage(code, params, MessageSeverity.ERROR);
     }
 
     /**
-     * 快捷方法：建立警告訊息
+     * 快捷方法：创建警告消息
      */
     function createWarningMessage(code, params = {}) {
         return createMessage(code, params, MessageSeverity.WARNING);
     }
 
-    // 匯出到全域命名空間
+    // 导出到全域命名空间
     window.MCPFeedback.Constants.MessageCodes = MessageCodes;
     window.MCPFeedback.Constants.MessageSeverity = MessageSeverity;
     window.MCPFeedback.Constants.createMessage = createMessage;
@@ -164,5 +164,5 @@
     window.MCPFeedback.Constants.createErrorMessage = createErrorMessage;
     window.MCPFeedback.Constants.createWarningMessage = createWarningMessage;
 
-    console.log('📋 訊息代碼常量載入完成');
+    console.log('📋 消息代码常量加载完成');
 })();

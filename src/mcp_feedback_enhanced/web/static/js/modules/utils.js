@@ -1,26 +1,26 @@
 /**
- * MCP Feedback Enhanced - 工具模組
+ * MCP Feedback Enhanced - 工具模块
  * ================================
  * 
- * 提供共用的工具函數和常數定義
+ * 提供共用的工具函数和常数定义
  */
 
 (function() {
     'use strict';
 
-    // 確保命名空間存在
+    // 确保命名空间存在
     window.MCPFeedback = window.MCPFeedback || {};
     window.MCPFeedback.Utils = window.MCPFeedback.Utils || {};
 
     /**
-     * 工具函數模組 - 擴展現有的 Utils 物件
+     * 工具函数模块 - 扩展现有的 Utils 对象
      */
     Object.assign(window.MCPFeedback.Utils, {
         
         /**
-         * 格式化檔案大小
-         * @param {number} bytes - 位元組數
-         * @returns {string} 格式化後的檔案大小
+         * 格式化文件大小
+         * @param {number} bytes - 字节数
+         * @returns {string} 格式化后的文件大小
          */
         formatFileSize: function(bytes) {
             if (bytes === 0) return '0 Bytes';
@@ -32,7 +32,7 @@
 
         /**
          * 生成唯一 ID
-         * @param {string} prefix - ID 前綴
+         * @param {string} prefix - ID 前缀
          * @returns {string} 唯一 ID
          */
         generateId: function(prefix) {
@@ -41,9 +41,9 @@
         },
 
         /**
-         * 深度複製物件
-         * @param {Object} obj - 要複製的物件
-         * @returns {Object} 複製後的物件
+         * 深度拷贝对象
+         * @param {Object} obj - 要拷贝的对象
+         * @returns {Object} 拷贝后的对象
          */
         deepClone: function(obj) {
             if (obj === null || typeof obj !== 'object') return obj;
@@ -61,10 +61,10 @@
         },
 
         /**
-         * 防抖函數
-         * @param {Function} func - 要防抖的函數
-         * @param {number} wait - 等待時間（毫秒）
-         * @returns {Function} 防抖後的函數
+         * 防抖函数
+         * @param {Function} func - 要防抖的函数
+         * @param {number} wait - 等待时间（毫秒）
+         * @returns {Function} 防抖后的函数
          */
         debounce: function(func, wait) {
             let timeout;
@@ -79,10 +79,10 @@
         },
 
         /**
-         * 節流函數
-         * @param {Function} func - 要節流的函數
-         * @param {number} limit - 限制時間（毫秒）
-         * @returns {Function} 節流後的函數
+         * 节流函数
+         * @param {Function} func - 要节流的函数
+         * @param {number} limit - 限制时间（毫秒）
+         * @returns {Function} 节流后的函数
          */
         throttle: function(func, limit) {
             let inThrottle;
@@ -99,22 +99,22 @@
 
         /**
          * 安全的 JSON 解析
-         * @param {string} jsonString - JSON 字串
-         * @param {*} defaultValue - 預設值
-         * @returns {*} 解析結果或預設值
+         * @param {string} jsonString - JSON 字符串
+         * @param {*} defaultValue - 默认值
+         * @returns {*} 解析结果或默认值
          */
         safeJsonParse: function(jsonString, defaultValue) {
             try {
                 return JSON.parse(jsonString);
             } catch (error) {
-                console.warn('JSON 解析失敗:', error);
+                console.warn('JSON 解析失败:', error);
                 return defaultValue;
             }
         },
 
         /**
-         * 檢查元素是否存在
-         * @param {string} selector - CSS 選擇器
+         * 检查元素是否存在
+         * @param {string} selector - CSS 选择器
          * @returns {boolean} 元素是否存在
          */
         elementExists: function(selector) {
@@ -122,11 +122,11 @@
         },
 
         /**
-         * 從右側截斷路徑，保留最後幾個目錄層級
-         * @param {string} path - 完整路徑
-         * @param {number} maxLevels - 保留的最大目錄層級數（默認2）
-         * @param {number} maxLength - 最大顯示長度（默認40）
-         * @returns {object} 包含 truncated（截斷後的路徑）和 isTruncated（是否被截斷）
+         * 从右侧截断路径，保留最后几个目录层级
+         * @param {string} path - 完整路径
+         * @param {number} maxLevels - 保留的最大目录层级数（默认2）
+         * @param {number} maxLength - 最大显示长度（默认40）
+         * @returns {object} 包含 truncated（截断后的路径）和 isTruncated（是否被截断）
          */
         truncatePathFromRight: function(path, maxLevels, maxLength) {
             maxLevels = maxLevels || 2;
@@ -136,22 +136,22 @@
                 return { truncated: path || '', isTruncated: false };
             }
 
-            // 如果路徑長度小於最大長度，直接返回
+            // 如果路径长度小于最大长度，直接返回
             if (path.length <= maxLength) {
                 return { truncated: path, isTruncated: false };
             }
 
-            // 統一路徑分隔符為反斜線（Windows風格）
+            // 统一路径分隔符为反斜线（Windows风格）
             const normalizedPath = path.replace(/\//g, '\\');
 
-            // 分割路徑
+            // 分割路径
             const parts = normalizedPath.split('\\').filter(part => part.length > 0);
 
             if (parts.length <= maxLevels) {
                 return { truncated: normalizedPath, isTruncated: false };
             }
 
-            // 取最後幾個層級
+            // 取最后几个层级
             const lastParts = parts.slice(-maxLevels);
             const truncatedPath = '...' + '\\' + lastParts.join('\\');
 
@@ -162,31 +162,31 @@
         },
 
         /**
-         * 複製文字到剪貼板（統一的複製功能）
-         * @param {string} text - 要複製的文字
-         * @param {string} successMessage - 成功提示訊息
-         * @param {string} errorMessage - 錯誤提示訊息
-         * @returns {Promise<boolean>} 複製是否成功
+         * 拷贝文本到剪贴板（统一的拷贝功能）
+         * @param {string} text - 要拷贝的文本
+         * @param {string} successMessage - 成功提示消息
+         * @param {string} errorMessage - 错误提示消息
+         * @returns {Promise<boolean>} 拷贝是否成功
          */
         copyToClipboard: function(text, successMessage, errorMessage) {
             successMessage = successMessage || (window.i18nManager ? 
-                window.i18nManager.t('utils.copySuccess', '已複製到剪貼板') : 
-                '已複製到剪貼板');
+                window.i18nManager.t('utils.copySuccess', '已拷贝到剪贴板') : 
+                '已拷贝到剪贴板');
             errorMessage = errorMessage || (window.i18nManager ? 
-                window.i18nManager.t('utils.copyError', '複製失敗') : 
-                '複製失敗');
+                window.i18nManager.t('utils.copyError', '拷贝失败') : 
+                '拷贝失败');
 
             return new Promise(function(resolve) {
                 if (navigator.clipboard && navigator.clipboard.writeText) {
-                    // 使用現代 Clipboard API
+                    // 使用现代 Clipboard API
                     navigator.clipboard.writeText(text).then(function() {
                         if (window.MCPFeedback && window.MCPFeedback.Utils && window.MCPFeedback.Utils.showMessage) {
                             window.MCPFeedback.Utils.showMessage(successMessage, window.MCPFeedback.Utils.CONSTANTS.MESSAGE_SUCCESS);
                         }
                         resolve(true);
                     }).catch(function(err) {
-                        console.error('Clipboard API 複製失敗:', err);
-                        // 回退到舊方法
+                        console.error('Clipboard API 拷贝失败:', err);
+                        // 回退到旧方法
                         const success = window.MCPFeedback.Utils.fallbackCopyToClipboard(text);
                         if (success) {
                             if (window.MCPFeedback && window.MCPFeedback.Utils && window.MCPFeedback.Utils.showMessage) {
@@ -219,9 +219,9 @@
         },
 
         /**
-         * 回退的複製到剪貼板方法
-         * @param {string} text - 要複製的文字
-         * @returns {boolean} 複製是否成功
+         * 回退的拷贝到剪贴板方法
+         * @param {string} text - 要拷贝的文本
+         * @returns {boolean} 拷贝是否成功
          */
         fallbackCopyToClipboard: function(text) {
             try {
@@ -239,15 +239,15 @@
 
                 return successful;
             } catch (err) {
-                console.error('回退複製方法失敗:', err);
+                console.error('回退拷贝方法失败:', err);
                 return false;
             }
         },
 
         /**
-         * 安全的元素查詢
-         * @param {string} selector - CSS 選擇器
-         * @param {Element} context - 查詢上下文（可選）
+         * 安全的元素查找
+         * @param {string} selector - CSS 选择器
+         * @param {Element} context - 查找上下文（可选）
          * @returns {Element|null} 找到的元素或 null
          */
         safeQuerySelector: function(selector, context) {
@@ -255,49 +255,49 @@
                 const root = context || document;
                 return root.querySelector(selector);
             } catch (error) {
-                console.warn('元素查詢失敗:', selector, error);
+                console.warn('元素查找失败:', selector, error);
                 return null;
             }
         },
 
         /**
-         * 顯示訊息提示
-         * @param {string} message - 訊息內容
-         * @param {string} type - 訊息類型 (success, error, warning, info)
-         * @param {number} duration - 顯示時間（毫秒）
+         * 显示消息提示
+         * @param {string} message - 消息内容
+         * @param {string} type - 消息类型 (success, error, warning, info)
+         * @param {number} duration - 显示时间（毫秒）
          */
         showMessage: function(messageOrCode, type, duration) {
-            // 處理訊息代碼物件
+            // 处理消息代码对象
             let actualMessage = messageOrCode;
             let actualType = type || 'info';
             
             if (typeof messageOrCode === 'object' && messageOrCode.code) {
-                // 使用 i18n 系統翻譯訊息代碼
+                // 使用 i18n 系统翻译消息代码
                 if (window.i18nManager) {
                     actualMessage = window.i18nManager.t(messageOrCode.code, messageOrCode.params);
                 } else {
-                    // 改善 fallback 機制：提供基本的英文訊息
+                    // 改善 fallback 机制：提供基本的英文消息
                     actualMessage = this.getFallbackMessage(messageOrCode.code, messageOrCode.params);
                 }
-                // 使用訊息物件中的嚴重程度
+                // 使用消息对象中的严重程度
                 actualType = messageOrCode.severity || type || 'info';
             }
             
-            // 呼叫內部顯示方法
+            // 调用内部显示方法
             return this._displayMessage(actualMessage, actualType, duration);
         },
         
         /**
-         * 獲取 fallback 訊息
-         * 當 i18n 系統尚未載入時使用
-         * @param {string} code - 訊息代碼
-         * @param {Object} params - 參數
-         * @returns {string} fallback 訊息
+         * 获取 fallback 消息
+         * 当 i18n 系统尚未加载时使用
+         * @param {string} code - 消息代码
+         * @param {Object} params - 参数
+         * @returns {string} fallback 消息
          */
         getFallbackMessage: function(code, params) {
-            // 基本的 fallback 訊息對照表
+            // 基本的 fallback 消息对照表
             const fallbackMessages = {
-                // 系統相關
+                // 系统相关
                 'system.connectionEstablished': 'WebSocket connection established',
                 'system.connectionLost': 'WebSocket connection lost',
                 'system.connectionReconnecting': 'Reconnecting...',
@@ -310,7 +310,7 @@
                 'system.processKilled': 'Process killed',
                 'system.heartbeatStopped': 'Heartbeat stopped',
                 
-                // 會話相關
+                // 会话相关
                 'session.noActiveSession': 'No active session',
                 'session.created': 'New session created',
                 'session.updated': 'Session updated',
@@ -322,7 +322,7 @@
                 'session.historySaved': 'Session history saved',
                 'session.historyLoaded': 'Session history loaded',
                 
-                // 設定相關
+                // 设置相关
                 'settings.saved': 'Settings saved',
                 'settings.loaded': 'Settings loaded',
                 'settings.cleared': 'Settings cleared',
@@ -333,7 +333,7 @@
                 'settings.logLevelUpdated': 'Log level updated',
                 'settings.invalidLogLevel': 'Invalid log level',
                 
-                // 錯誤相關
+                // 错误相关
                 'error.generic': 'An error occurred',
                 'error.userMessageFailed': 'Failed to add user message',
                 'error.getSessionsFailed': 'Failed to get sessions',
@@ -342,17 +342,17 @@
                 'error.resourceCleanup': 'Resource cleanup error',
                 'error.processing': 'Processing error',
                 
-                // 通知相關
+                // 通知相关
                 'notification.autoplayBlocked': 'Browser blocked autoplay, click page to enable sound',
                 
-                // 預設訊息
+                // 缺省消息
                 'default': 'System message'
             };
             
-            // 嘗試獲取對應的 fallback 訊息
+            // 尝试获取对应的 fallback 消息
             let message = fallbackMessages[code] || fallbackMessages['default'];
             
-            // 處理參數替換（簡單版本）
+            // 处理参数替换（简单版本）
             if (params && typeof params === 'object') {
                 for (const key in params) {
                     if (params.hasOwnProperty(key)) {
@@ -362,7 +362,7 @@
                 }
             }
             
-            // 在開發模式下顯示警告
+            // 在开发模式下显示警告
             if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
                 console.warn('[i18n] Fallback message used for:', code, '→', message);
             }
@@ -371,14 +371,14 @@
         },
         
         /**
-         * 內部方法：實際顯示訊息
+         * 内部方法：实际显示消息
          * @private
          */
         _displayMessage: function(message, type, duration) {
             type = type || 'info';
             duration = duration || 3000;
 
-            // 創建訊息元素
+            // 创建消息元素
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message message-' + type;
             messageDiv.style.cssText = `
@@ -399,7 +399,7 @@
 
             document.body.appendChild(messageDiv);
 
-            // 自動移除
+            // 自动移除
             setTimeout(() => {
                 if (messageDiv.parentNode) {
                     messageDiv.style.opacity = '0';
@@ -413,7 +413,7 @@
         },
 
         /**
-         * 檢查 WebSocket 是否可用
+         * 检查 WebSocket 是否可用
          * @returns {boolean} WebSocket 是否可用
          */
         isWebSocketSupported: function() {
@@ -423,9 +423,9 @@
 
 
         /**
-         * HTML 轉義函數
-         * @param {string} text - 要轉義的文字
-         * @returns {string} 轉義後的文字
+         * HTML 转义函数
+         * @param {string} text - 要转义的文本
+         * @returns {string} 转义后的文本
          */
         escapeHtml: function(text) {
             if (typeof text !== 'string') {
@@ -438,28 +438,28 @@
         },
 
         /**
-         * 常數定義
+         * 常数定义
          */
         CONSTANTS: {
-            // WebSocket 狀態
+            // WebSocket 状态
             WS_CONNECTING: 0,
             WS_OPEN: 1,
             WS_CLOSING: 2,
             WS_CLOSED: 3,
 
-            // 回饋狀態
+            // 回馈状态
             FEEDBACK_WAITING: 'waiting_for_feedback',
             FEEDBACK_SUBMITTED: 'feedback_submitted',
             FEEDBACK_PROCESSING: 'processing',
 
-            // 預設設定（優化後的值）
-            DEFAULT_HEARTBEAT_FREQUENCY: 60000,  // 從 30 秒調整為 60 秒，減少網路負載
-            DEFAULT_TAB_HEARTBEAT_FREQUENCY: 10000,  // 從 5 秒調整為 10 秒，減少標籤頁檢查頻率
+            // 缺省设置（优化后的值）
+            DEFAULT_HEARTBEAT_FREQUENCY: 60000,  // 从 30 秒调整为 60 秒，减少网络负载
+            DEFAULT_TAB_HEARTBEAT_FREQUENCY: 10000,  // 从 5 秒调整为 10 秒，减少标签页检查频率
             DEFAULT_RECONNECT_DELAY: 1000,
             MAX_RECONNECT_ATTEMPTS: 5,
-            TAB_EXPIRED_THRESHOLD: 60000,  // 從 30 秒調整為 60 秒，與心跳頻率保持一致
+            TAB_EXPIRED_THRESHOLD: 60000,  // 从 30 秒调整为 60 秒，与心跳频率保持一致
 
-            // 訊息類型
+            // 消息类型
             MESSAGE_SUCCESS: 'success',
             MESSAGE_ERROR: 'error',
             MESSAGE_WARNING: 'warning',
@@ -467,6 +467,6 @@
         }
     });
 
-    console.log('✅ Utils 模組載入完成');
+    console.log('✅ Utils 模块加载完成');
 
 })();

@@ -22,8 +22,8 @@
     },
     "feedback": {
         "title": "💬 提供反馈",
-        "description": "请提供您对 AI 工作成果的反馈意见。您可以输入文字反馈并上传相关图片。",
-        "textLabel": "文字反馈",
+        "description": "请提供您对 AI 工作成果的反馈意见。您可以输入文本反馈并上传相关图片。",
+        "textLabel": "文本反馈",
         "placeholder": "请在这里输入您的反馈...",
         "detailedPlaceholder": "请在这里输入您的反馈...\n\n💡 小提示：\n• 按 Ctrl+Enter/Cmd+Enter (支持数字键盘) 可快速提交\n• 按 Ctrl+I/Cmd+I 可聚焦输入框\n• 按 Ctrl+V/Cmd+V 可直接粘贴剪贴板图片",
         "imageLabel": "图片附件（可选）",
@@ -31,7 +31,7 @@
         "submit": "✅ 提交反馈",
         "uploading": "上传中...",
         "dragdrop": "拖放图片到这里或点击上传",
-        "selectfiles": "选择文件",
+        "selectfiles": "选择文档",
         "processing": "处理中...",
         "success": "反馈已成功提交！",
         "error": "提交反馈时发生错误",
@@ -51,7 +51,7 @@
         "noContent": "没有可复制的内容",
         "copySuccess": "内容已复制到剪贴板",
         "copyFailed": "复制失败",
-        "provideTextOrImage": "请提供反馈文字或上传图片"
+        "provideTextOrImage": "请提供反馈文本或上传图片"
     },
     "summary": {
         "title": "📋 AI 工作摘要",
@@ -96,7 +96,7 @@
             "title": "🤖 自动执行命令设置",
             "description": "设置在特定时机自动执行的命令",
             "enabled": "启用自动执行命令",
-            "onNewSession": "新会话建立时执行",
+            "onNewSession": "新会话创建时执行",
             "onNewSessionPlaceholder": "例如：pwd 或 git status",
             "onFeedbackSubmit": "提交反馈后执行",
             "onFeedbackSubmitPlaceholder": "例如：echo '反馈已提交'",
@@ -137,7 +137,7 @@
         "resetSuccess": "设定已重置为预设值",
         "resetError": "重置设定时发生错误",
         "timeout": "连线逾时 (秒)",
-        "autorefresh": "自动重新整理",
+        "autorefresh": "自动刷新",
         "debug": "除错模式",
         "autoCommitNoPrompt": "请先选择一个提示词作为自动提交内容",
         "sessionTimeoutTitle": "⏱️ 会话超时设置",
@@ -148,7 +148,7 @@
         "sessionTimeoutSeconds": "秒"
     },
     "languages": {
-        "zh-TW": "繁體中文",
+        "zh-TW": "繁体中文",
         "zh-CN": "简体中文",
         "en": "English"
     },
@@ -246,11 +246,11 @@
         "activeTime": "活跃时间",
         "switchSession": "切换会话",
         "viewDetails": "详细信息",
-        "refresh": "重新整理",
+        "refresh": "刷新",
         "noHistory": "暂无历史会话",
         "todaySessions": "今日会话",
         "todayAverageDuration": "今日平均时长",
-        "createdTime": "建立时间",
+        "createdTime": "创建时间",
         "project": "项目",
         "aiSummary": "AI 总结",
         "noSummary": "无总结",
@@ -279,7 +279,7 @@
             "export": "导出",
             "clear": "清空",
             "exportAll": "导出全部",
-            "exportAllTitle": "导出所有会话历史到文件",
+            "exportAllTitle": "导出所有会话历史到文档",
             "exportSingle": "导出此会话",
             "confirmClear": "确定要清空所有会话历史吗？",
             "exportSuccess": "会话历史已导出",
@@ -367,20 +367,20 @@
     },
 
     "dynamic": {
-        "aiSummary": "测试 Web UI 功能\n\n🎯 **功能测试项目：**\n- Web UI 服务器启动和运行\n- WebSocket 实时通讯\n- 反馈提交功能\n- 图片上传和预览\n- 命令执行功能\n- 智能 Ctrl+V 图片粘贴\n- 多语言界面功能\n\n📋 **测试步骤：**\n1. 测试图片上传（拖拽、选择文件、剪贴板）\n2. 在文本框内按 Ctrl+V 测试智能粘贴\n3. 尝试切换语言（繁中/简中/英文）\n4. 测试命令执行功能\n5. 提交反馈和图片\n\n请测试这些功能并提供反馈！",
+        "aiSummary": "测试 Web UI 功能\n\n🎯 **功能测试项目：**\n- Web UI 服务器启动和运行\n- WebSocket 实时通讯\n- 反馈提交功能\n- 图片上传和预览\n- 命令执行功能\n- 智能 Ctrl+V 图片粘贴\n- 多语言界面功能\n\n📋 **测试步骤：**\n1. 测试图片上传（拖拽、选择文档、剪贴板）\n2. 在文本框内按 Ctrl+V 测试智能粘贴\n3. 尝试切换语言（繁中/简中/英文）\n4. 测试命令执行功能\n5. 提交反馈和图片\n\n请测试这些功能并提供反馈！",
         "terminalWelcome": "欢迎使用交互反馈终端\n========================================\n项目目录: {sessionId}\n输入命令后按 Enter 或点击执行按钮\n支持的命令: ls, dir, pwd, cat, type 等\n\n$ "
     },
     "prompts": {
         "management": {
             "title": "📝 常用提示词管理",
             "description": "管理您的常用提示词模板，可在反馈输入时快速选用",
-            "addNew": "新增提示词",
+            "addNew": "添加提示词",
             "edit": "编辑",
             "delete": "删除",
             "confirmDelete": "确定要删除此提示词吗？",
-            "emptyState": "尚未建立任何常用提示词",
-            "emptyHint": "点击上方「新增提示词」按钮开始建立您的第一个提示词模板",
-            "created": "建立于",
+            "emptyState": "尚未创建任何常用提示词",
+            "emptyHint": "点击上方「添加提示词」按钮开始创建您的第一个提示词模板",
+            "created": "创建于",
             "lastUsed": "最近使用",
             "autoSubmit": "自动提交",
             "setAutoSubmit": "设定为自动提交",
@@ -388,14 +388,14 @@
             "autoSubmitSet": "已设定为自动提交提示词：",
             "autoSubmitCancelled": "已取消自动提交设定",
             "notFound": "找不到指定的提示词",
-            "addSuccess": "提示词已新增",
+            "addSuccess": "提示词已添加",
             "updateSuccess": "提示词已更新",
             "deleteSuccess": "提示词已删除"
         },
         "buttons": {
             "selectPrompt": "常用提示",
             "useLastPrompt": "上次提示",
-            "noPrompts": "尚无常用提示词，请先在设置中新增",
+            "noPrompts": "尚无常用提示词，请先在设置中添加",
             "noLastPrompt": "尚无最近使用的提示词",
             "lastPromptApplied": "已套用上次使用的提示词",
             "promptNotFound": "找不到指定的提示词",
@@ -409,7 +409,7 @@
             "title": "选择常用提示词"
         },
         "modal": {
-            "addTitle": "新增提示词",
+            "addTitle": "添加提示词",
             "editTitle": "编辑提示词",
             "nameLabel": "提示词名称",
             "contentLabel": "提示词内容",
@@ -423,7 +423,7 @@
     "about": {
         "title": "ℹ️ 关于",
         "description": "一个强大的 MCP 服务器，为 AI 辅助开发工具提供人在回路的互动反馈功能。支持 Web UI 界面，并具备图片上传、命令执行、多语言等丰富功能。",
-        "appInfo": "应用程序信息",
+        "appInfo": "应用进程信息",
         "version": "版本",
         "projectLinks": "项目链接",
         "githubProject": "GitHub 项目",
@@ -433,13 +433,13 @@
         "joinDiscord": "加入 Discord",
         "contactDescription": "如需技术支持、问题反馈或功能建议，欢迎通过 Discord 社群或 GitHub Issues 与我们联系。",
         "thanks": "致谢与贡献",
-        "thanksText": "感谢原作者 Fábio Ferreira (@fabiomlferreira) 创建了原始的 interactive-feedback-mcp 项目。\n\n本增强版本由 Minidoracat 开发和维护，大幅扩展了项目功能，新增了 Web UI 界面、图片支持、多语言能力以及许多其他改进功能。\n\n同时感谢 sanshao85 的 mcp-feedback-collector 项目提供的 UI 设计灵感。\n\n开源协作让技术变得更美好！"
+        "thanksText": "感谢原作者 Fábio Ferreira (@fabiomlferreira) 创建了原始的 interactive-feedback-mcp 项目。\n\n本增强版本由 Minidoracat 开发和维护，大幅扩展了项目功能，添加了 Web UI 界面、图片支持、多语言能力以及许多其他改进功能。\n\n同时感谢 sanshao85 的 mcp-feedback-collector 项目提供的 UI 设计灵感。\n\n开源协作让技术变得更美好！"
     },
     "images": {
         "settings": {
             "title": "🖼️ 图片设置",
             "sizeLimit": "图片大小限制",
-            "sizeLimitDesc": "设定上传图片的最大文件大小限制",
+            "sizeLimitDesc": "设定上传图片的最大文档大小限制",
             "sizeLimitOptions": {
                 "unlimited": "无限制",
                 "1mb": "1MB",
@@ -484,7 +484,7 @@
             "selectAudio": "选择音效",
             "testPlay": "测试播放",
             "uploadCustom": "上传自定义音效",
-            "chooseFile": "选择文件",
+            "chooseFile": "选择文档",
             "supportedFormats": "支持 MP3、WAV、OGG 格式",
             "customAudios": "自定义音效",
             "defaultBeep": "经典提示音",
@@ -498,7 +498,7 @@
             "enterAudioName": "输入音效名称",
             "audioName": "音效名称",
             "audioNamePlaceholder": "请输入音效名称...",
-            "audioNameHint": "留空将使用默认文件名称",
+            "audioNameHint": "留空将使用默认文档名称",
             "nameRequired": "音效名称不能为空",
             "uploading": "上传中...",
             "uploadSuccess": "音效上传成功: ",
@@ -516,7 +516,7 @@
     "notification": {
         "title": "浏览器通知",
         "settingLabel": "浏览器通知",
-        "description": "新会话建立时通知（仅在后台运行时）",
+        "description": "新会话创建时通知（仅在后台运行时）",
         "enabled": "通知已启用 ✅",
         "disabled": "通知已关闭",
         "permissionRequired": "需要通知权限才能启用此功能",
@@ -534,7 +534,7 @@
         "triggerDescription": "选择何时接收通知",
         "triggerModeUpdated": "通知触发模式已更新",
         "trigger": {
-            "focusLost": "窗口失去焦点时（切换到其他应用程序）",
+            "focusLost": "窗口失去焦点时（切换到其他应用进程）",
             "tabSwitch": "切换到其他标签页时",
             "background": "窗口最小化或隐藏时",
             "always": "总是通知（包括前景）"
@@ -551,7 +551,7 @@
         }
     },
     "system": {
-        "connectionEstablished": "WebSocket 连接已建立",
+        "connectionEstablished": "WebSocket 连接已创建",
         "connectionLost": "WebSocket 连接已断开",
         "connectionReconnecting": "正在重新连接...",
         "connectionReconnected": "已重新连接",
@@ -582,12 +582,12 @@
         "invalidLogLevel": "无效的日志等级，必须是 DEBUG, INFO, WARN, ERROR 之一"
     },
     "file": {
-        "uploadSuccess": "文件上传成功",
-        "uploadFailed": "文件上传失败",
-        "sizeTooLarge": "文件大小超过限制",
-        "typeNotSupported": "不支持的文件类型",
-        "processing": "正在处理文件...",
-        "removed": "文件已移除"
+        "uploadSuccess": "文档上传成功",
+        "uploadFailed": "文档上传失败",
+        "sizeTooLarge": "文档大小超过限制",
+        "typeNotSupported": "不支持的文档类型",
+        "processing": "正在处理文档...",
+        "removed": "文档已移除"
     },
     "prompt": {
         "saved": "提示词已保存",
@@ -619,8 +619,8 @@
     },
     "fileUpload": {
         "fileSizeExceeded": "图片大小超过限制 ({limit}): {filename}",
-        "maxFilesExceeded": "最多只能上传 {maxFiles} 个文件",
-        "processingFailed": "文件处理失败，请重试"
+        "maxFilesExceeded": "最多只能上传 {maxFiles} 个文档",
+        "processingFailed": "文档处理失败，请重试"
     },
     "aria": {
         "toggleAutoSubmit": "切换自动提交",

@@ -1,14 +1,14 @@
 /**
- * 音效管理功能樣式
+ * 音效管理功能样式
  * =================
  * 
- * 包含音效通知設定相關的所有 UI 樣式
- * 參考 prompt-management.css 的設計風格
+ * 包含音效通知设置相关的所有 UI 样式
+ * 参考 prompt-management.css 的设计风格
  */
 
-/* ===== 音效管理區塊樣式 ===== */
+/* ===== 音效管理区块样式 ===== */
 
-/* 音效描述文字 */
+/* 音效描述文本 */
 
 .audio-management-description {
     color: var(--text-secondary);
@@ -19,7 +19,7 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-/* ===== 音效設定控制項樣式 ===== */
+/* ===== 音效设置控制项样式 ===== */
 
 .audio-settings-controls {
     display: flex;
@@ -43,7 +43,7 @@
     cursor: pointer;
 }
 
-/* ===== 開關控制項樣式 ===== */
+/* ===== 开关控制项样式 ===== */
 
 .audio-toggle {
     width: 18px;
@@ -57,7 +57,7 @@
     cursor: not-allowed;
 }
 
-/* ===== 音量控制項樣式 ===== */
+/* ===== 音量控制项样式 ===== */
 
 .audio-volume-control {
     display: flex;
@@ -120,7 +120,7 @@
     text-align: right;
 }
 
-/* ===== 音效選擇控制項樣式 ===== */
+/* ===== 音效选择控制项样式 ===== */
 
 .audio-select-control {
     display: flex;
@@ -157,7 +157,7 @@
     white-space: nowrap;
 }
 
-/* ===== 檔案上傳控制項樣式 ===== */
+/* ===== 文件上传控制项样式 ===== */
 
 .audio-upload-control {
     display: flex;
@@ -180,7 +180,7 @@
     font-style: italic;
 }
 
-/* ===== 自訂音效列表樣式 ===== */
+/* ===== 自订音效列表样式 ===== */
 
 .audio-custom-list {
     display: flex;
@@ -237,7 +237,7 @@
     border-radius: 4px;
 }
 
-/* 覆蓋 Bootstrap btn-danger 的預設樣式，使其符合深色主題 */
+/* 覆盖 Bootstrap btn-danger 的缺省样式，使其符合深色主题 */
 .audio-delete-btn.btn-danger {
     background: var(--bg-secondary);
     color: var(--text-primary);
@@ -257,7 +257,7 @@
     color: white;
 }
 
-/* ===== 空狀態樣式 ===== */
+/* ===== 空状态样式 ===== */
 
 .audio-empty-state {
     text-align: center;
@@ -273,7 +273,7 @@
     margin-bottom: 12px;
 }
 
-/* ===== 響應式設計 ===== */
+/* ===== 响应式设计 ===== */
 
 @media (max-width: 768px) {
     .audio-select-control {
@@ -306,7 +306,7 @@
     }
 }
 
-/* ===== 動畫效果 ===== */
+/* ===== 动画效果 ===== */
 
 @keyframes audioFadeIn {
     from {
@@ -323,7 +323,7 @@
     animation: audioFadeIn 0.3s ease;
 }
 
-/* ===== 無障礙改進 ===== */
+/* ===== 无障碍改进 ===== */
 
 .audio-toggle:focus,
 .audio-volume-slider:focus,
@@ -336,7 +336,7 @@
     outline-offset: 2px;
 }
 
-/* ===== 禁用狀態樣式 ===== */
+/* ===== 禁用状态样式 ===== */
 
 .audio-setting-item.disabled {
     opacity: 0.6;
@@ -346,7 +346,7 @@
     color: var(--text-secondary);
 }
 
-/* ===== 載入狀態樣式 ===== */
+/* ===== 加载状态样式 ===== */
 
 .audio-upload-btn:disabled {
     opacity: 0.7;
@@ -376,7 +376,7 @@
     100% { transform: rotate(360deg); }
 }
 
-/* ===== 成功/錯誤狀態樣式 ===== */
+/* ===== 成功/错误状态样式 ===== */
 
 .audio-setting-item.success {
     border-left: 4px solid var(--success-color);
@@ -388,7 +388,7 @@
     background: rgba(244, 67, 54, 0.05);
 }
 
-/* ===== 音效名稱輸入模態框樣式 ===== */
+/* ===== 音效名称输入模态框样式 ===== */
 
 .audio-name-modal-overlay {
     position: fixed;
@@ -522,7 +522,7 @@
     background: var(--accent-hover);
 }
 
-/* ===== 模態框動畫 ===== */
+/* ===== 模态框动画 ===== */
 
 @keyframes audioModalFadeIn {
     from {

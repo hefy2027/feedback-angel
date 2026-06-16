@@ -1,34 +1,34 @@
 /**
- * MCP Feedback Enhanced - 提示詞彈窗管理模組
+ * MCP Feedback Enhanced - 提示词弹窗管理模块
  * ==========================================
  * 
- * 處理提示詞新增、編輯、選擇的彈窗介面
+ * 处理提示词添加、编辑、选择的弹窗接口
  */
 
 (function() {
     'use strict';
 
-    // 確保命名空間存在
+    // 确保命名空间存在
     window.MCPFeedback = window.MCPFeedback || {};
     window.MCPFeedback.Prompt = window.MCPFeedback.Prompt || {};
 
     const Utils = window.MCPFeedback.Utils;
 
     /**
-     * 提示詞彈窗管理器
+     * 提示词弹窗管理器
      */
     function PromptModal(options) {
         options = options || {};
 
-        // 彈窗選項
+        // 弹窗选项
         this.enableEscapeClose = options.enableEscapeClose !== false;
         this.enableBackdropClose = options.enableBackdropClose !== false;
 
-        // 當前彈窗引用
+        // 当前弹窗引用
         this.currentModal = null;
         this.keydownHandler = null;
 
-        // 回調函數
+        // 回调函数
         this.onSave = options.onSave || null;
         this.onSelect = options.onSelect || null;
         this.onCancel = options.onCancel || null;
@@ -37,12 +37,12 @@
     }
 
     /**
-     * 顯示新增提示詞彈窗
+     * 显示添加提示词弹窗
      */
     PromptModal.prototype.showAddModal = function() {
         const modalData = {
             type: 'add',
-            title: this.t('prompts.modal.addTitle', '新增提示詞'),
+            title: this.t('prompts.modal.addTitle', '添加提示词'),
             prompt: {
                 name: '',
                 content: ''
@@ -53,17 +53,17 @@
     };
 
     /**
-     * 顯示編輯提示詞彈窗
+     * 显示编辑提示词弹窗
      */
     PromptModal.prototype.showEditModal = function(prompt) {
         if (!prompt) {
-            console.error('❌ 編輯提示詞時缺少提示詞資料');
+            console.error('❌ 编辑提示词时缺少提示词数据');
             return;
         }
 
         const modalData = {
             type: 'edit',
-            title: this.t('prompts.modal.editTitle', '編輯提示詞'),
+            title: this.t('prompts.modal.editTitle', '编辑提示词'),
             prompt: {
                 id: prompt.id,
                 name: prompt.name,
@@ -75,17 +75,17 @@
     };
 
     /**
-     * 顯示選擇提示詞彈窗
+     * 显示选择提示词弹窗
      */
     PromptModal.prototype.showSelectModal = function(prompts) {
         if (!prompts || !Array.isArray(prompts)) {
-            console.error('❌ 選擇提示詞時缺少提示詞列表');
+            console.error('❌ 选择提示词时缺少提示词列表');
             return;
         }
 
         const modalData = {
             type: 'select',
-            title: this.t('prompts.select.title', '選擇常用提示詞'),
+            title: this.t('prompts.select.title', '选择常用提示词'),
             prompts: prompts
         };
 
@@ -93,35 +93,35 @@
     };
 
     /**
-     * 創建並顯示彈窗
+     * 创建并显示弹窗
      */
     PromptModal.prototype.createAndShowModal = function(modalData) {
-        // 如果已有彈窗，先關閉
+        // 如果已有弹窗，先关闭
         if (this.currentModal) {
             this.closeModal();
         }
 
-        // 創建彈窗 HTML
+        // 创建弹窗 HTML
         const modalHtml = this.createModalHTML(modalData);
 
-        // 插入到頁面中
+        // 插入到页面中
         document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-        // 獲取彈窗元素
+        // 获取弹窗元素
         this.currentModal = document.getElementById('promptModal');
 
-        // 設置事件監聽器
+        // 设置事件监听器
         this.setupEventListeners(modalData);
 
-        // 添加顯示動畫
+        // 添加显示动画
         this.showModal();
 
-        // 聚焦到第一個輸入框
+        // 聚焦到第一个输入框
         this.focusFirstInput();
     };
 
     /**
-     * 創建彈窗 HTML
+     * 创建弹窗 HTML
      */
     PromptModal.prototype.createModalHTML = function(modalData) {
         const modalId = 'promptModal';
@@ -134,7 +134,7 @@
     };
 
     /**
-     * 創建編輯彈窗 HTML
+     * 创建编辑弹窗 HTML
      */
     PromptModal.prototype.createEditModalHTML = function(modalId, modalData) {
         return `
@@ -142,28 +142,28 @@
                 <div class="modal-container">
                     <div class="modal-header">
                         <h3 class="modal-title">${Utils.escapeHtml(modalData.title)}</h3>
-                        <button type="button" class="modal-close-btn" aria-label="關閉">×</button>
+                        <button type="button" class="modal-close-btn" aria-label="关闭">×</button>
                     </div>
                     <div class="modal-body">
                         <form id="promptForm" class="prompt-form">
                             <div class="input-group">
-                                <label for="promptName" class="input-label">${this.t('prompts.modal.nameLabel', '提示詞名稱')}</label>
+                                <label for="promptName" class="input-label">${this.t('prompts.modal.nameLabel', '提示词名称')}</label>
                                 <input 
                                     type="text" 
                                     id="promptName" 
                                     class="text-input" 
                                     value="${Utils.escapeHtml(modalData.prompt.name)}"
-                                    placeholder="${this.t('prompts.modal.namePlaceholder', '請輸入提示詞名稱...')}"
+                                    placeholder="${this.t('prompts.modal.namePlaceholder', '请输入提示词名称...')}"
                                     required
                                     maxlength="100"
                                 />
                             </div>
                             <div class="input-group">
-                                <label for="promptContent" class="input-label">${this.t('prompts.modal.contentLabel', '提示詞內容')}</label>
+                                <label for="promptContent" class="input-label">${this.t('prompts.modal.contentLabel', '提示词内容')}</label>
                                 <textarea 
                                     id="promptContent" 
                                     class="text-input" 
-                                    placeholder="${this.t('prompts.modal.contentPlaceholder', '請輸入提示詞內容...')}"
+                                    placeholder="${this.t('prompts.modal.contentPlaceholder', '请输入提示词内容...')}"
                                     required
                                     rows="8"
                                     style="min-height: 200px; resize: vertical;"
@@ -176,7 +176,7 @@
                             ${this.t('prompts.modal.cancel', '取消')}
                         </button>
                         <button type="submit" form="promptForm" class="btn btn-primary modal-save-btn">
-                            ${this.t('prompts.modal.save', '儲存')}
+                            ${this.t('prompts.modal.save', '保存')}
                         </button>
                     </div>
                 </div>
@@ -185,7 +185,7 @@
     };
 
     /**
-     * 創建選擇彈窗 HTML
+     * 创建选择弹窗 HTML
      */
     PromptModal.prototype.createSelectModalHTML = function(modalId, modalData) {
         const promptsHtml = modalData.prompts.map(prompt => `
@@ -204,11 +204,11 @@
                 <div class="modal-container modal-large">
                     <div class="modal-header">
                         <h3 class="modal-title">${Utils.escapeHtml(modalData.title)}</h3>
-                        <button type="button" class="modal-close-btn" aria-label="關閉">×</button>
+                        <button type="button" class="modal-close-btn" aria-label="关闭">×</button>
                     </div>
                     <div class="modal-body">
                         <div class="prompt-list">
-                            ${promptsHtml || '<div class="empty-state">尚無常用提示詞</div>'}
+                            ${promptsHtml || '<div class="empty-state">尚无常用提示词</div>'}
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -222,12 +222,12 @@
     };
 
     /**
-     * 設置事件監聽器
+     * 设置事件监听器
      */
     PromptModal.prototype.setupEventListeners = function(modalData) {
         const self = this;
 
-        // 關閉按鈕
+        // 关闭按钮
         const closeBtn = this.currentModal.querySelector('.modal-close-btn');
         if (closeBtn) {
             closeBtn.addEventListener('click', function() {
@@ -235,7 +235,7 @@
             });
         }
 
-        // 取消按鈕
+        // 取消按钮
         const cancelBtn = this.currentModal.querySelector('.modal-cancel-btn');
         if (cancelBtn) {
             cancelBtn.addEventListener('click', function() {
@@ -243,7 +243,7 @@
             });
         }
 
-        // 背景點擊關閉
+        // 背景点击关闭
         if (this.enableBackdropClose) {
             this.currentModal.addEventListener('click', function(e) {
                 if (e.target === self.currentModal) {
@@ -252,7 +252,7 @@
             });
         }
 
-        // ESC 鍵關閉
+        // ESC 键关闭
         if (this.enableEscapeClose) {
             this.keydownHandler = function(e) {
                 if (e.key === 'Escape') {
@@ -262,7 +262,7 @@
             document.addEventListener('keydown', this.keydownHandler);
         }
 
-        // 根據彈窗類型設置特定事件
+        // 根据弹窗类型设置特定事件
         if (modalData.type === 'select') {
             this.setupSelectModalEvents();
         } else {
@@ -271,7 +271,7 @@
     };
 
     /**
-     * 設置編輯彈窗事件
+     * 设置编辑弹窗事件
      */
     PromptModal.prototype.setupEditModalEvents = function(modalData) {
         const self = this;
@@ -286,7 +286,7 @@
     };
 
     /**
-     * 設置選擇彈窗事件
+     * 设置选择弹窗事件
      */
     PromptModal.prototype.setupSelectModalEvents = function() {
         const self = this;
@@ -301,14 +301,14 @@
     };
 
     /**
-     * 處理表單提交
+     * 处理表单提交
      */
     PromptModal.prototype.handleFormSubmit = function(modalData) {
         const nameInput = this.currentModal.querySelector('#promptName');
         const contentInput = this.currentModal.querySelector('#promptContent');
         
         if (!nameInput || !contentInput) {
-            console.error('❌ 找不到表單輸入元素');
+            console.error('❌ 找不到表单输入元素');
             return;
         }
 
@@ -316,7 +316,7 @@
         const content = contentInput.value.trim();
 
         if (!name || !content) {
-            this.showError(this.t('prompts.modal.emptyFields', '請填寫所有必填欄位'));
+            this.showError(this.t('prompts.modal.emptyFields', '请填写所有必填字段'));
             return;
         }
 
@@ -329,7 +329,7 @@
             promptData.id = modalData.prompt.id;
         }
 
-        // 觸發保存回調
+        // 触发保存回调
         if (this.onSave) {
             try {
                 this.onSave(promptData, modalData.type);
@@ -341,7 +341,7 @@
     };
 
     /**
-     * 處理提示詞選擇
+     * 处理提示词选择
      */
     PromptModal.prototype.handlePromptSelect = function(promptId) {
         if (this.onSelect) {
@@ -351,48 +351,48 @@
     };
 
     /**
-     * 顯示彈窗動畫
+     * 显示弹窗动画
      */
     PromptModal.prototype.showModal = function() {
         if (!this.currentModal) return;
 
-        // 添加顯示類觸發動畫
+        // 添加显示类触发动画
         requestAnimationFrame(() => {
             this.currentModal.classList.add('show');
         });
     };
 
     /**
-     * 關閉彈窗
+     * 关闭弹窗
      */
     PromptModal.prototype.closeModal = function() {
         if (!this.currentModal) return;
 
-        // 移除鍵盤事件監聽器
+        // 移除键盘事件监听器
         if (this.keydownHandler) {
             document.removeEventListener('keydown', this.keydownHandler);
             this.keydownHandler = null;
         }
 
-        // 添加關閉動畫
+        // 添加关闭动画
         this.currentModal.classList.add('hide');
 
-        // 延遲移除元素
+        // 延迟移除元素
         setTimeout(() => {
             if (this.currentModal) {
                 this.currentModal.remove();
                 this.currentModal = null;
             }
-        }, 300); // 與 CSS 動畫時間一致
+        }, 300); // 与 CSS 动画时间一致
 
-        // 觸發取消回調
+        // 触发取消回调
         if (this.onCancel) {
             this.onCancel();
         }
     };
 
     /**
-     * 聚焦到第一個輸入框
+     * 聚焦到第一个输入框
      */
     PromptModal.prototype.focusFirstInput = function() {
         if (!this.currentModal) return;
@@ -406,7 +406,7 @@
     };
 
     /**
-     * 顯示錯誤訊息
+     * 显示错误消息
      */
     PromptModal.prototype.showError = function(message) {
         if (window.MCPFeedback && window.MCPFeedback.Utils && window.MCPFeedback.Utils.showMessage) {
@@ -417,7 +417,7 @@
     };
 
     /**
-     * 翻譯函數
+     * 翻译函数
      */
     PromptModal.prototype.t = function(key, fallback) {
         if (window.i18nManager && typeof window.i18nManager.t === 'function') {
@@ -441,7 +441,7 @@
     };
 
     /**
-     * 截斷文字
+     * 截断文本
      */
     PromptModal.prototype.truncateText = function(text, maxLength) {
         if (!text || text.length <= maxLength) {
@@ -450,9 +450,9 @@
         return text.substring(0, maxLength) + '...';
     };
 
-    // 將 PromptModal 加入命名空間
+    // 将 PromptModal 加入命名空间
     window.MCPFeedback.Prompt.PromptModal = PromptModal;
 
-    console.log('✅ PromptModal 模組載入完成');
+    console.log('✅ PromptModal 模块加载完成');
 
 })();

@@ -1,95 +1,95 @@
-# 組件詳細說明
+# 组件详细说明
 
-## 🏗️ 四層架構組件
+## 🏗️ 四层架构组件
 
-MCP Feedback Enhanced 採用清晰的四層架構設計，每層負責特定的功能領域。本文檔詳細說明各層組件的實現細節、職責分工和交互機制。
+MCP Feedback Enhanced 采用清晰的四层架构设计，每层负责特定的功能领域。本文档详细说明各层组件的实现细节、职责分工和交互机制。
 
-### 架構設計原則
+### 架构设计原则
 
-- **單一職責**: 每個組件專注於特定功能領域
-- **低耦合**: 層間通過明確的接口通信
-- **高內聚**: 相關功能集中在同一層內
-- **可擴展**: 支援新功能的無縫集成
-- **可測試**: 每層都可獨立進行單元測試
+- **单一职责**: 每个组件专注于特定功能领域
+- **低耦合**: 层间通过明确的接口通信
+- **高内聚**: 相关功能集中在同一层内
+- **可扩展**: 支持新功能的无缝集成
+- **可测试**: 每层都可独立进行单元测试
 
-### 詳細組件關係圖
+### 详细组件关系图
 
 ```mermaid
 graph TB
-    subgraph "第一層：MCP 服務層"
-        SERVER[server.py<br/>MCP 服務器<br/>FastMCP 實現]
-        TOOL[interactive_feedback<br/>核心工具<br/>參數驗證]
-        I18N[i18n.py<br/>國際化支援<br/>多語言管理]
-        DEBUG[debug.py<br/>統一調試<br/>日誌輸出]
+    subgraph "第一层：MCP 服务层"
+        SERVER[server.py<br/>MCP 服务器<br/>FastMCP 实现]
+        TOOL[interactive_feedback<br/>内核工具<br/>参数验证]
+        I18N[i18n.py<br/>国际化支持<br/>多语言管理]
+        DEBUG[debug.py<br/>统一调试<br/>日志输出]
     end
 
-    subgraph "第二層：Web UI 管理層"
-        MANAGER[WebUIManager<br/>單例管理器<br/>會話控制]
-        SESSION[WebFeedbackSession<br/>會話模型<br/>狀態管理]
-        MODELS[models/<br/>數據模型<br/>類型定義]
+    subgraph "第二层：Web UI 管理层"
+        MANAGER[WebUIManager<br/>单例管理器<br/>会话控制]
+        SESSION[WebFeedbackSession<br/>会话模型<br/>状态管理]
+        MODELS[models/<br/>数据模型<br/>类型定义]
     end
 
-    subgraph "第三層：Web 服務層"
-        MAIN[main.py<br/>FastAPI 應用<br/>HTTP 服務]
-        ROUTES[routes/main_routes.py<br/>路由處理<br/>API 端點]
-        WS[WebSocket<br/>實時通信<br/>雙向數據流]
+    subgraph "第三层：Web 服务层"
+        MAIN[main.py<br/>FastAPI 应用<br/>HTTP 服务]
+        ROUTES[routes/main_routes.py<br/>路由处理<br/>API 端点]
+        WS[WebSocket<br/>实时通信<br/>双向数据流]
     end
 
-    subgraph "第四層：前端交互層"
+    subgraph "第四层：前端交互层"
         HTML[templates/<br/>HTML 模板<br/>Jinja2 渲染]
-        JS[static/js/<br/>JavaScript 模組<br/>ES6+ 架構]
-        CSS[static/css/<br/>樣式系統<br/>響應式設計]
-        LOCALES[locales/<br/>翻譯文件<br/>JSON 格式]
-        PROMPT_MODULES[prompt/<br/>提示詞管理模組<br/>CRUD 操作]
-        SESSION_MODULES[session/<br/>會話管理模組<br/>歷史追蹤]
+        JS[static/js/<br/>JavaScript 模块<br/>ES6+ 架构]
+        CSS[static/css/<br/>样式系统<br/>响应式设计]
+        LOCALES[locales/<br/>翻译文档<br/>JSON 格式]
+        PROMPT_MODULES[prompt/<br/>提示词管理模块<br/>CRUD 操作]
+        SESSION_MODULES[session/<br/>会话管理模块<br/>历史追踪]
     end
 
-    subgraph "工具層 - 核心工具"
-        ERROR[utils/error_handler.py<br/>錯誤處理<br/>統一異常管理]
-        MEMORY[utils/memory_monitor.py<br/>記憶體監控<br/>資源追蹤]
-        RESOURCE[utils/resource_manager.py<br/>資源管理<br/>生命週期控制]
+    subgraph "工具层 - 内核工具"
+        ERROR[utils/error_handler.py<br/>错误处理<br/>统一异常管理]
+        MEMORY[utils/memory_monitor.py<br/>内存监控<br/>资源追踪]
+        RESOURCE[utils/resource_manager.py<br/>资源管理<br/>生命周期控制]
     end
 
-    subgraph "工具層 - Web 工具"
-        BROWSER[utils/browser.py<br/>瀏覽器控制<br/>智能開啟]
-        PORT[utils/port_manager.py<br/>埠管理<br/>動態分配]
-        COMPRESS[utils/compression_*.py<br/>壓縮工具<br/>數據優化]
-        CLEANUP[utils/session_cleanup_manager.py<br/>清理管理<br/>自動回收]
+    subgraph "工具层 - Web 工具"
+        BROWSER[utils/browser.py<br/>浏览器控制<br/>智能打开]
+        PORT[utils/port_manager.py<br/>端口管理<br/>动态分配]
+        COMPRESS[utils/compression_*.py<br/>压缩工具<br/>数据优化]
+        CLEANUP[utils/session_cleanup_manager.py<br/>清理管理<br/>自动回收]
     end
 
-    %% 主要數據流
-    SERVER -->|MCP 調用| TOOL
-    TOOL -->|創建會話| MANAGER
+    %% 主要数据流
+    SERVER -->|MCP 调用| TOOL
+    TOOL -->|创建会话| MANAGER
     MANAGER -->|管理| SESSION
-    MANAGER -->|啟動服務| MAIN
-    MAIN -->|路由分發| ROUTES
-    ROUTES -->|渲染頁面| HTML
-    HTML -->|載入腳本| JS
+    MANAGER -->|启动服务| MAIN
+    MAIN -->|路由分发| ROUTES
+    ROUTES -->|渲染页面| HTML
+    HTML -->|加载脚本| JS
     JS -->|WebSocket| WS
-    WS -->|回傳數據| SESSION
+    WS -->|回传数据| SESSION
 
-    %% 新功能模組
-    JS -->|載入模組| PROMPT_MODULES
-    JS -->|載入模組| SESSION_MODULES
-    PROMPT_MODULES -->|提示詞管理| WS
-    SESSION_MODULES -->|會話追蹤| WS
+    %% 新功能模块
+    JS -->|加载模块| PROMPT_MODULES
+    JS -->|加载模块| SESSION_MODULES
+    PROMPT_MODULES -->|提示词管理| WS
+    SESSION_MODULES -->|会话追踪| WS
 
-    %% 支援服務
-    I18N -->|翻譯服務| ROUTES
-    I18N -->|語言包| LOCALES
-    DEBUG -->|日誌記錄| SERVER
-    MODELS -->|數據結構| SESSION
+    %% 支持服务
+    I18N -->|翻译服务| ROUTES
+    I18N -->|语言包| LOCALES
+    DEBUG -->|日志记录| SERVER
+    MODELS -->|数据结构| SESSION
 
-    %% 工具層支援
-    ERROR -->|錯誤處理| MANAGER
-    MEMORY -->|監控| MANAGER
-    RESOURCE -->|資源管理| SESSION
-    BROWSER -->|開啟瀏覽器| MANAGER
-    PORT -->|埠分配| MAIN
-    COMPRESS -->|數據壓縮| ROUTES
-    CLEANUP -->|清理會話| SESSION
+    %% 工具层支持
+    ERROR -->|错误处理| MANAGER
+    MEMORY -->|监控| MANAGER
+    RESOURCE -->|资源管理| SESSION
+    BROWSER -->|打开浏览器| MANAGER
+    PORT -->|端口分配| MAIN
+    COMPRESS -->|数据压缩| ROUTES
+    CLEANUP -->|清理会话| SESSION
 
-    %% 樣式定義
+    %% 样式定义
     classDef layer1 fill:#e3f2fd
     classDef layer2 fill:#f3e5f5
     classDef layer3 fill:#e8f5e8
@@ -103,63 +103,63 @@ graph TB
     class ERROR,MEMORY,RESOURCE,BROWSER,PORT,COMPRESS,CLEANUP tools
 ```
 
-## 🔧 第一層：MCP 服務層
+## 🔧 第一层：MCP 服务层
 
-### server.py - MCP 服務器核心
+### server.py - MCP 服务器内核
 
-**架構實現**：
+**架构实现**：
 ```python
-# 基於 FastMCP 的服務器實現
+# 基于 FastMCP 的服务器实现
 mcp = FastMCP("mcp-feedback-enhanced")
 
 @mcp.tool()
 async def interactive_feedback(
-    project_directory: Annotated[str, Field(description="專案目錄路徑")] = ".",
-    summary: Annotated[str, Field(description="AI 工作完成的摘要說明")] = "我已完成了您請求的任務。",
-    timeout: Annotated[int, Field(description="等待用戶回饋的超時時間（秒）")] = 600,
+    project_directory: Annotated[str, Field(description="项目目录路径")] = ".",
+    summary: Annotated[str, Field(description="AI 工作完成的摘要说明")] = "我已完成了您请求的任务。",
+    timeout: Annotated[int, Field(description="等待用户回馈的超时时间（秒）")] = 600,
 ) -> list:
     """
-    收集用戶的互動回饋，支援文字和圖片
+    收集用户的交互回馈，支持文本和图片
     """
-    # 1. 參數驗證和環境檢測
-    # 2. 啟動 Web UI 管理器
-    # 3. 創建或更新會話
-    # 4. 等待用戶回饋
-    # 5. 處理和返回結果
+    # 1. 参数验证和环境检测
+    # 2. 启动 Web UI 管理器
+    # 3. 创建或更新会话
+    # 4. 等待用户回馈
+    # 5. 处理和返回结果
 ```
 
-**主要職責**：
-- **MCP 協議實現**: 基於 FastMCP 框架的標準實現
-- **工具註冊**: 註冊 `interactive_feedback` 和 `get_system_info` 工具
-- **環境檢測**: 自動識別 Local/SSH Remote/WSL 環境
-- **生命週期管理**: 控制 Web UI 的啟動、運行和清理
-- **接口層**: 作為 AI 助手與系統的主要通信接口
+**主要职责**：
+- **MCP 协议实现**: 基于 FastMCP 框架的标准实现
+- **工具注册**: 注册 `interactive_feedback` 和 `get_system_info` 工具
+- **环境检测**: 自动识别 Local/SSH Remote/WSL 环境
+- **生命周期管理**: 控制 Web UI 的启动、运行和清理
+- **接口层**: 作为 AI 助手与系统的主要通信接口
 
-**核心特性**：
-- 支援 MCP 2.0+ 協議標準
-- 異步處理提升性能
-- 完整的錯誤處理和日誌記錄
-- 參數類型驗證和文檔生成
+**内核特性**：
+- 支持 MCP 2.0+ 协议标准
+- 异步处理提升性能
+- 完整的错误处理和日志记录
+- 参数类型验证和文档生成
 
 ### interactive_feedback 工具
 
-**工具執行流程**：
+**工具运行流程**：
 ```mermaid
 flowchart TD
-    START[AI 助手調用] --> VALIDATE[參數驗證]
-    VALIDATE --> ENV[環境檢測]
-    ENV --> MANAGER[獲取 WebUIManager]
-    MANAGER --> SESSION[創建/更新會話]
-    SESSION --> LAUNCH[啟動 Web 服務]
-    LAUNCH --> BROWSER[智能開啟瀏覽器]
-    BROWSER --> WAIT[等待用戶回饋]
-    WAIT --> TIMEOUT{超時檢查}
-    TIMEOUT -->|未超時| FEEDBACK[接收回饋]
-    TIMEOUT -->|超時| CLEANUP[清理資源]
-    FEEDBACK --> PROCESS[處理回饋數據]
-    PROCESS --> SAVE[保存回饋記錄]
-    SAVE --> RETURN[返回結果給 AI]
-    CLEANUP --> ERROR[返回超時錯誤]
+    START[AI 助手调用] --> VALIDATE[参数验证]
+    VALIDATE --> ENV[环境检测]
+    ENV --> MANAGER[获取 WebUIManager]
+    MANAGER --> SESSION[创建/更新会话]
+    SESSION --> LAUNCH[启动 Web 服务]
+    LAUNCH --> BROWSER[智能打开浏览器]
+    BROWSER --> WAIT[等待用户回馈]
+    WAIT --> TIMEOUT{超时检查}
+    TIMEOUT -->|未超时| FEEDBACK[接收回馈]
+    TIMEOUT -->|超时| CLEANUP[清理资源]
+    FEEDBACK --> PROCESS[处理回馈数据]
+    PROCESS --> SAVE[保存回馈记录]
+    SAVE --> RETURN[返回结果给 AI]
+    CLEANUP --> ERROR[返回超时错误]
     ERROR --> RETURN
 
     style START fill:#e3f2fd
@@ -167,26 +167,26 @@ flowchart TD
     style ERROR fill:#ffebee
 ```
 
-**參數說明**：
-- `project_directory`: 專案目錄路徑，用於命令執行上下文
-- `summary`: AI 工作摘要，顯示給用戶確認
-- `timeout`: 等待超時時間，預設 600 秒（10 分鐘）
+**参数说明**：
+- `project_directory`: 项目目录路径，用于命令运行上下文
+- `summary`: AI 工作摘要，显示给用户确认
+- `timeout`: 等待超时时间，缺省 600 秒（10 分钟）
 
 **返回格式**：
 ```python
 # 成功返回
 [
-    TextContent(type="text", text="用戶回饋內容"),
-    MCPImage(data="base64_encoded_image", mimeType="image/png")  # 可選
+    TextContent(type="text", text="用户回馈内容"),
+    MCPImage(data="base64_encoded_image", mimeType="image/png")  # 可选
 ]
 
-# 錯誤返回
-[TextContent(type="text", text="錯誤描述")]
+# 错误返回
+[TextContent(type="text", text="错误描述")]
 ```
 
-### i18n.py - 國際化支援
+### i18n.py - 国际化支持
 
-**多語言架構**：
+**多语言架构**：
 ```python
 class I18nManager:
     def __init__(self):
@@ -195,50 +195,50 @@ class I18nManager:
         self._locales_dir = Path(__file__).parent / "web" / "locales"
 
     def t(self, key: str, **kwargs) -> str:
-        """翻譯函數，支援巢狀鍵值和參數替換"""
+        """翻译函数，支持嵌套键值和参数替换"""
 ```
 
-**核心功能**：
-- **三語支援**: 繁體中文、簡體中文、英文
-- **智能檢測**: 基於系統語言自動選擇
-- **動態切換**: 運行時語言切換無需重啟
-- **巢狀翻譯**: 支援 `buttons.submit` 格式的鍵值
-- **參數替換**: 支援 `{name}` 格式的動態內容
-- **回退機制**: 翻譯缺失時自動使用英文
+**内核功能**：
+- **三语支持**: 繁体中文、简体中文、英文
+- **智能检测**: 基于系统语言自动选择
+- **动态切换**: 运行时语言切换无需重启
+- **嵌套翻译**: 支持 `buttons.submit` 格式的键值
+- **参数替换**: 支持 `{name}` 格式的动态内容
+- **回退机制**: 翻译缺失时自动使用英文
 
-**翻譯文件結構**：
+**翻译文档结构**：
 ```json
 {
     "app": {
         "title": "MCP Feedback Enhanced",
-        "subtitle": "AI 輔助開發回饋收集器"
+        "subtitle": "AI 辅助开发回馈收集器"
     },
     "buttons": {
-        "submit": "提交回饋",
+        "submit": "提交回馈",
         "cancel": "取消"
     }
 }
 ```
 
-### debug.py - 統一調試系統
+### debug.py - 统一调试系统
 
-**調試功能**：
-- **條件輸出**: 只在 `MCP_DEBUG=true` 時輸出
-- **分類日誌**: 不同模組使用不同前綴
-- **安全輸出**: 輸出到 stderr 避免干擾 MCP 通信
-- **編碼處理**: 自動處理中文字符編碼問題
+**调试功能**：
+- **条件输出**: 只在 `MCP_DEBUG=true` 时输出
+- **分类日志**: 不同模块使用不同前缀
+- **安全输出**: 输出到 stderr 避免干扰 MCP 通信
+- **编码处理**: 自动处理中文本符编码问题
 
 **使用方式**：
 ```python
 from .debug import server_debug_log as debug_log
-debug_log("伺服器啟動完成")  # [SERVER] 伺服器啟動完成
+debug_log("服务器启动完成")  # [SERVER] 服务器启动完成
 ```
 
-## 🎛️ 第二層：Web UI 管理層
+## 🎛️ 第二层：Web UI 管理层
 
-### WebUIManager - 核心管理器
+### WebUIManager - 内核管理器
 
-**單例模式實現**：
+**单例模式实现**：
 ```python
 class WebUIManager:
     _instance: Optional['WebUIManager'] = None
@@ -259,82 +259,82 @@ class WebUIManager:
         self.port_manager = PortManager()
 ```
 
-**核心職責**：
-- **會話管理**: 單一活躍會話的創建、更新、清理
-- **服務器控制**: FastAPI 應用的啟動、停止、重啟
-- **瀏覽器控制**: 智能開啟瀏覽器，避免重複視窗
-- **資源管理**: 自動清理過期資源和錯誤處理
-- **狀態同步**: 維護全局狀態和標籤頁追蹤
+**内核职责**：
+- **会话管理**: 单一活跃会话的创建、更新、清理
+- **服务器控制**: FastAPI 应用的启动、停止、重启
+- **浏览器控制**: 智能打开浏览器，避免重复窗口
+- **资源管理**: 自动清理过期资源和错误处理
+- **状态同步**: 维护全局状态和标签页追踪
 
-**關鍵方法**：
+**关键方法**：
 ```python
 async def create_session(self, project_dir: str, summary: str) -> str:
-    """創建新會話或更新現有會話"""
+    """创建新会话或更新现有会话"""
 
 async def smart_open_browser(self, url: str) -> bool:
-    """智能開啟瀏覽器，檢測活躍標籤頁"""
+    """智能打开浏览器，检测活跃标签页"""
 
 def cleanup_session(self, reason: CleanupReason = CleanupReason.MANUAL):
-    """清理會話資源"""
+    """清理会话资源"""
 
 def get_server_url(self) -> str:
-    """獲取服務器 URL"""
+    """获取服务器 URL"""
 ```
 
-**智能瀏覽器開啟機制**：
+**智能浏览器打开机制**：
 ```mermaid
 flowchart TD
-    START[開啟瀏覽器請求] --> CHECK[檢查活躍標籤頁]
-    CHECK --> ACTIVE{有活躍標籤?}
-    ACTIVE -->|是| NOTIFY[發送會話更新通知]
-    ACTIVE -->|否| DETECT[檢測運行環境]
-    DETECT --> LOCAL{本地環境?}
-    LOCAL -->|是| DIRECT[直接開啟瀏覽器]
+    START[打开浏览器请求] --> CHECK[检查活跃标签页]
+    CHECK --> ACTIVE{有活跃标签?}
+    ACTIVE -->|是| NOTIFY[发送会话更新通知]
+    ACTIVE -->|否| DETECT[检测运行环境]
+    DETECT --> LOCAL{本地环境?}
+    LOCAL -->|是| DIRECT[直接打开浏览器]
     LOCAL -->|否| SSH{SSH Remote?}
-    SSH -->|是| TUNNEL[建立 SSH 隧道]
-    SSH -->|否| WSL[WSL 環境處理]
-    DIRECT --> SUCCESS[開啟成功]
+    SSH -->|是| TUNNEL[创建 SSH 隧道]
+    SSH -->|否| WSL[WSL 环境处理]
+    DIRECT --> SUCCESS[打开成功]
     TUNNEL --> SUCCESS
     WSL --> SUCCESS
     NOTIFY --> SUCCESS
-    SUCCESS --> TRACK[追蹤標籤頁狀態]
+    SUCCESS --> TRACK[追踪标签页状态]
 ```
 
-### WebFeedbackSession - 會話模型
+### WebFeedbackSession - 会话模型
 
-**會話狀態機**：
+**会话状态机**：
 ```mermaid
 stateDiagram-v2
-    [*] --> WAITING: 會話創建
-    WAITING --> FEEDBACK_PROCESSING: 用戶提交回饋
-    FEEDBACK_PROCESSING --> FEEDBACK_SUBMITTED: 處理完成
-    FEEDBACK_SUBMITTED --> WAITING: AI 再次調用
-    FEEDBACK_SUBMITTED --> CLEANUP: 會話結束
-    CLEANUP --> [*]: 資源釋放
+    [*] --> WAITING: 会话创建
+    WAITING --> FEEDBACK_PROCESSING: 用户提交回馈
+    FEEDBACK_PROCESSING --> FEEDBACK_SUBMITTED: 处理完成
+    FEEDBACK_SUBMITTED --> WAITING: AI 再次调用
+    FEEDBACK_SUBMITTED --> CLEANUP: 会话结束
+    CLEANUP --> [*]: 资源释放
 
-    WAITING --> TIMEOUT: 超時檢測
-    TIMEOUT --> CLEANUP: 清理資源
+    WAITING --> TIMEOUT: 超时检测
+    TIMEOUT --> CLEANUP: 清理资源
 
     note right of WAITING
-        - 顯示 AI 摘要
-        - 等待用戶輸入
-        - 支援文字/圖片/命令
+        - 显示 AI 摘要
+        - 等待用户输入
+        - 支持文本/图片/命令
     end note
 
     note right of FEEDBACK_PROCESSING
-        - 驗證回饋數據
-        - 圖片壓縮處理
-        - 命令執行結果
+        - 验证回馈数据
+        - 图片压缩处理
+        - 命令运行结果
     end note
 
     note right of FEEDBACK_SUBMITTED
-        - 回饋已保存
-        - 等待 AI 處理
-        - 準備下次調用
+        - 回馈已保存
+        - 等待 AI 处理
+        - 准备下次调用
     end note
 ```
 
-**會話數據結構**：
+**会话数据结构**：
 ```python
 @dataclass
 class WebFeedbackSession:
@@ -346,29 +346,29 @@ class WebFeedbackSession:
     timeout: int
     feedback_future: Optional[asyncio.Future] = None
 
-    # 回饋數據
+    # 回馈数据
     interactive_feedback: str = ""
     command_logs: str = ""
     images: List[Dict[str, Any]] = field(default_factory=list)
 
     async def wait_for_feedback(self, timeout: int) -> Dict[str, Any]:
-        """等待用戶回饋，支援超時處理"""
+        """等待用户回馈，支持超时处理"""
 
     def update_session(self, project_dir: str, summary: str, timeout: int):
-        """更新會話內容，支援 AI 多次調用"""
+        """更新会话内容，支持 AI 多次调用"""
 ```
 
-**狀態枚舉**：
+**状态枚举**：
 ```python
 class SessionStatus(Enum):
-    WAITING = "waiting"                    # 等待用戶回饋
-    FEEDBACK_PROCESSING = "processing"     # 處理回饋中
-    FEEDBACK_SUBMITTED = "submitted"       # 回饋已提交
-    TIMEOUT = "timeout"                    # 會話超時
-    ERROR = "error"                        # 發生錯誤
+    WAITING = "waiting"                    # 等待用户回馈
+    FEEDBACK_PROCESSING = "processing"     # 处理回馈中
+    FEEDBACK_SUBMITTED = "submitted"       # 回馈已提交
+    TIMEOUT = "timeout"                    # 会话超时
+    ERROR = "error"                        # 发生错误
 ```
 
-### models/ - 數據模型層
+### models/ - 数据模型层
 
 **FeedbackResult 模型**：
 ```python
@@ -381,58 +381,58 @@ class FeedbackResult:
     timestamp: datetime = field(default_factory=datetime.now)
 
     def to_mcp_response(self) -> List[Union[TextContent, MCPImage]]:
-        """轉換為 MCP 協議格式"""
+        """转换为 MCP 协议格式"""
 ```
 
-**CleanupReason 枚舉**：
+**CleanupReason 枚举**：
 ```python
 class CleanupReason(Enum):
-    TIMEOUT = "timeout"        # 超時清理
-    MANUAL = "manual"          # 手動清理
-    ERROR = "error"            # 錯誤清理
-    SHUTDOWN = "shutdown"      # 系統關閉
+    TIMEOUT = "timeout"        # 超时清理
+    MANUAL = "manual"          # 手动清理
+    ERROR = "error"            # 错误清理
+    SHUTDOWN = "shutdown"      # 系统关闭
 ```
 
 **WebSocket 消息模型**：
 ```python
 @dataclass
 class WebSocketMessage:
-    type: str                  # 消息類型
-    data: Dict[str, Any]       # 消息數據
+    type: str                  # 消息类型
+    data: Dict[str, Any]       # 消息数据
     session_id: Optional[str] = None
     timestamp: datetime = field(default_factory=datetime.now)
 ```
 
-## 🌐 第三層：Web 服務層
+## 🌐 第三层：Web 服务层
 
-### main.py - FastAPI 應用
+### main.py - FastAPI 应用
 
-**應用架構**：
+**应用架构**：
 ```python
 def create_app(manager: 'WebUIManager') -> FastAPI:
-    """創建 FastAPI 應用實例"""
+    """创建 FastAPI 应用实例"""
     app = FastAPI(
         title="MCP Feedback Enhanced",
-        description="AI 輔助開發回饋收集系統",
+        description="AI 辅助开发回馈收集系统",
         version="2.3.0"
     )
 
-    # 設置中間件
+    # 设置中间件
     setup_middleware(app)
 
-    # 設置路由
+    # 设置路由
     setup_routes(manager)
 
-    # 設置 WebSocket
+    # 设置 WebSocket
     setup_websocket(app, manager)
 
     return app
 ```
 
-**中間件配置**：
+**中间件配置**：
 ```python
 def setup_middleware(app: FastAPI):
-    # CORS 設定 - 允許本地開發
+    # CORS 设置 - 允许本地开发
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["http://127.0.0.1:*", "http://localhost:*"],
@@ -441,51 +441,51 @@ def setup_middleware(app: FastAPI):
         allow_headers=["*"],
     )
 
-    # 靜態文件服務
+    # 静态文档服务
     app.mount("/static", StaticFiles(directory="static"), name="static")
 
-    # 錯誤處理中間件
+    # 错误处理中间件
     @app.exception_handler(Exception)
     async def global_exception_handler(request, exc):
         return JSONResponse(
             status_code=500,
-            content={"detail": f"內部服務器錯誤: {str(exc)}"}
+            content={"detail": f"内部服务器错误: {str(exc)}"}
         )
 ```
 
-**核心功能**：
-- **HTTP 路由處理**: RESTful API 端點
-- **WebSocket 連接管理**: 實時雙向通信
-- **靜態資源服務**: CSS、JS、圖片等資源
+**内核功能**：
+- **HTTP 路由处理**: RESTful API 端点
+- **WebSocket 连接管理**: 实时双向通信
+- **静态资源服务**: CSS、JS、图片等资源
 - **模板渲染**: Jinja2 模板引擎
-- **錯誤處理**: 統一的異常處理機制
-- **安全配置**: CORS 和安全標頭設定
+- **错误处理**: 统一的异常处理机制
+- **安全配置**: CORS 和安全标头设置
 
-### routes/main_routes.py - 路由處理
+### routes/main_routes.py - 路由处理
 
-**路由架構圖**：
+**路由架构图**：
 ```mermaid
 graph TB
     subgraph "HTTP 路由"
-        ROOT[GET /<br/>主頁重定向]
-        FEEDBACK[GET /feedback<br/>回饋頁面]
-        API_SESSION[GET /api/session<br/>會話資訊]
-        API_SETTINGS[GET/POST /api/settings<br/>設定管理]
-        API_I18N[GET /api/i18n<br/>翻譯資源]
-        STATIC[/static/*<br/>靜態資源]
+        ROOT[GET /<br/>主页重定向]
+        FEEDBACK[GET /feedback<br/>回馈页面]
+        API_SESSION[GET /api/session<br/>会话信息]
+        API_SETTINGS[GET/POST /api/settings<br/>设置管理]
+        API_I18N[GET /api/i18n<br/>翻译资源]
+        STATIC[/static/*<br/>静态资源]
     end
 
     subgraph "WebSocket 路由"
-        WS[/ws<br/>WebSocket 連接]
-        MSG_HANDLER[訊息處理器]
-        BROADCAST[廣播機制]
+        WS[/ws<br/>WebSocket 连接]
+        MSG_HANDLER[消息处理器]
+        BROADCAST[广播机制]
     end
 
-    subgraph "API 端點"
-        SUBMIT[POST /api/submit-feedback<br/>提交回饋]
-        COMMAND[POST /api/execute-command<br/>執行命令]
-        UPLOAD[POST /api/upload-image<br/>圖片上傳]
-        STATUS[GET /api/status<br/>系統狀態]
+    subgraph "API 端点"
+        SUBMIT[POST /api/submit-feedback<br/>提交回馈]
+        COMMAND[POST /api/execute-command<br/>运行命令]
+        UPLOAD[POST /api/upload-image<br/>图片上传]
+        STATUS[GET /api/status<br/>系统状态]
     end
 
     ROOT --> FEEDBACK
@@ -497,18 +497,18 @@ graph TB
     UPLOAD --> MSG_HANDLER
 ```
 
-**主要路由端點**：
+**主要路由端点**：
 
-**頁面路由**：
+**页面路由**：
 ```python
 @app.get("/")
 async def root():
-    """主頁重定向到回饋頁面"""
+    """主页重定向到回馈页面"""
     return RedirectResponse(url="/feedback")
 
 @app.get("/feedback")
 async def feedback_page(request: Request):
-    """回饋收集頁面"""
+    """回馈收集页面"""
     return templates.TemplateResponse("feedback.html", {
         "request": request,
         "project_directory": session.project_directory,
@@ -520,32 +520,32 @@ async def feedback_page(request: Request):
 ```python
 @app.get("/api/session")
 async def get_session():
-    """獲取當前會話資訊"""
+    """获取当前会话信息"""
 
 @app.post("/api/submit-feedback")
 async def submit_feedback(feedback_data: dict):
-    """提交用戶回饋"""
+    """提交用户回馈"""
 
 @app.post("/api/execute-command")
 async def execute_command(command_data: dict):
-    """執行用戶命令"""
+    """运行用户命令"""
 
 @app.post("/api/upload-image")
 async def upload_image(file: UploadFile):
-    """處理圖片上傳"""
+    """处理图片上传"""
 ```
 
-**WebSocket 訊息類型**：
-- `connection_established`: 連接建立確認
-- `session_updated`: 會話內容更新
-- `submit_feedback`: 提交回饋數據
-- `feedback_received`: 回饋接收確認
-- `status_update`: 系統狀態更新
-- `error_occurred`: 錯誤通知
-- `command_result`: 命令執行結果
-- `image_uploaded`: 圖片上傳完成
+**WebSocket 消息类型**：
+- `connection_established`: 连接创建确认
+- `session_updated`: 会话内容更新
+- `submit_feedback`: 提交回馈数据
+- `feedback_received`: 回馈接收确认
+- `status_update`: 系统状态更新
+- `error_occurred`: 错误通知
+- `command_result`: 命令运行结果
+- `image_uploaded`: 图片上传完成
 
-**WebSocket 連接管理**：
+**WebSocket 连接管理**：
 ```python
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -558,118 +558,118 @@ async def websocket_endpoint(websocket: WebSocket):
         await handle_disconnect(websocket)
 ```
 
-## 🎨 第四層：前端交互層
+## 🎨 第四层：前端交互层
 
-### 新功能模組架構
+### 新功能模块架构
 
-#### 提示詞管理模組群組 (prompt/)
+#### 提示词管理模块群组 (prompt/)
 
-**模組結構**：
+**模块结构**：
 ```mermaid
 graph TB
-    subgraph "提示詞管理模組"
-        PM[prompt-manager.js<br/>核心管理器<br/>CRUD 操作]
-        PMO[prompt-modal.js<br/>彈窗組件<br/>編輯界面]
-        PSU[prompt-settings-ui.js<br/>設定頁面<br/>列表管理]
-        PIB[prompt-input-buttons.js<br/>輸入按鈕<br/>快速選擇]
+    subgraph "提示词管理模块"
+        PM[prompt-manager.js<br/>内核管理器<br/>CRUD 操作]
+        PMO[prompt-modal.js<br/>弹窗组件<br/>编辑界面]
+        PSU[prompt-settings-ui.js<br/>设置页面<br/>列表管理]
+        PIB[prompt-input-buttons.js<br/>输入按钮<br/>快速选择]
     end
 
-    PM -->|提供數據| PMO
-    PM -->|提供數據| PSU
-    PM -->|提供數據| PIB
-    PMO -->|編輯操作| PM
+    PM -->|提供数据| PMO
+    PM -->|提供数据| PSU
+    PM -->|提供数据| PIB
+    PMO -->|编辑操作| PM
     PSU -->|管理操作| PM
     PIB -->|使用操作| PM
 ```
 
-**核心功能**：
-- **PromptManager**: 提示詞的增刪改查、排序、自動提交標記
-- **PromptModal**: 新增/編輯提示詞的彈窗界面
-- **PromptSettingsUI**: 設定頁籤中的提示詞管理界面
-- **PromptInputButtons**: 回饋輸入區的快速選擇按鈕
+**内核功能**：
+- **PromptManager**: 提示词的增删改查、排序、自动提交标记
+- **PromptModal**: 添加/编辑提示词的弹窗界面
+- **PromptSettingsUI**: 设置页签中的提示词管理界面
+- **PromptInputButtons**: 回馈输入区的快速选择按钮
 
-#### 會話管理模組群組 (session/) - v2.4.3 重構增強
+#### 会话管理模块群组 (session/) - v2.4.3 重构增强
 
-**模組結構**：
+**模块结构**：
 ```mermaid
 graph TB
-    subgraph "會話管理模組（v2.4.3 重構）"
-        SM[session-manager.js<br/>會話控制器<br/>狀態管理]
-        SDM[session-data-manager.js<br/>數據管理器<br/>本地存儲增強]
-        SUR[session-ui-renderer.js<br/>UI 渲染器<br/>頁籤化設計]
-        SDM_MODAL[session-details-modal.js<br/>詳情彈窗<br/>會話詳細資訊]
+    subgraph "会话管理模块（v2.4.3 重构）"
+        SM[session-manager.js<br/>会话控制器<br/>状态管理]
+        SDM[session-data-manager.js<br/>数据管理器<br/>本地存储增强]
+        SUR[session-ui-renderer.js<br/>UI 渲染器<br/>页签化设计]
+        SDM_MODAL[session-details-modal.js<br/>详情弹窗<br/>会话详细信息]
     end
 
-    SM -->|數據操作| SDM
+    SM -->|数据操作| SDM
     SM -->|UI 渲染| SUR
-    SM -->|詳情顯示| SDM_MODAL
-    SDM -->|狀態回調| SM
-    SUR -->|用戶操作| SM
+    SM -->|详情显示| SDM_MODAL
+    SDM -->|状态回调| SM
+    SUR -->|用户操作| SM
     SDM_MODAL -->|查看操作| SM
 ```
 
-**v2.4.3 重構亮點**：
-- **從側邊欄遷移到頁籤**: 解決瀏覽器相容性問題
-- **本地歷史存儲**: 支援 72 小時可配置保存期限
-- **隱私控制**: 三級用戶訊息記錄設定（完整/基本/停用）
-- **數據管理**: 匯出和清理功能
-- **UI 重新設計**: 專門的渲染器和詳情彈窗
+**v2.4.3 重构亮点**：
+- **从侧边栏迁移到页签**: 解决浏览器兼容性问题
+- **本地历史存储**: 支持 72 小时可配置保存期限
+- **隐私控制**: 三级用户消息记录设置（完整/基本/停用）
+- **数据管理**: 导出和清理功能
+- **UI 重新设计**: 专门的渲染器和详情弹窗
 
-**核心功能**：
-- **SessionManager**: 當前會話的狀態管理和控制
-- **SessionDataManager**: 會話歷史記錄、統計數據和本地存儲管理
-- **SessionUIRenderer**: 專門的 UI 渲染器，負責會話列表和狀態顯示
-- **SessionDetailsModal**: 會話詳情彈窗，提供完整的會話資訊查看
+**内核功能**：
+- **SessionManager**: 当前会话的状态管理和控制
+- **SessionDataManager**: 会话历史记录、统计数据和本地存储管理
+- **SessionUIRenderer**: 专门的 UI 渲染器，负责会话列表和状态显示
+- **SessionDetailsModal**: 会话详情弹窗，提供完整的会话信息查看
 
-#### 音效通知模組群組 (audio/) - v2.4.3 新增
+#### 音效通知模块群组 (audio/) - v2.4.3 添加
 
-**模組結構**：
+**模块结构**：
 ```mermaid
 graph TB
-    subgraph "音效通知系統（v2.4.3 新增）"
+    subgraph "音效通知系统（v2.4.3 添加）"
         AM[audio-manager.js<br/>音效管理器<br/>播放控制]
-        ASU[audio-settings-ui.js<br/>設定界面<br/>音效配置]
-        DA[DefaultAudios<br/>內建音效<br/>Base64 編碼]
-        CA[CustomAudios<br/>自訂音效<br/>用戶上傳]
+        ASU[audio-settings-ui.js<br/>设置界面<br/>音效配置]
+        DA[DefaultAudios<br/>内置音效<br/>Base64 编码]
+        CA[CustomAudios<br/>自订音效<br/>用户上传]
     end
 
     subgraph "Web Audio API"
-        AUDIO[Audio 物件]
-        BASE64[Base64 音效數據]
+        AUDIO[Audio 对象]
+        BASE64[Base64 音效数据]
     end
 
     AM -->|管理界面| ASU
-    AM -->|內建音效| DA
-    AM -->|自訂音效| CA
+    AM -->|内置音效| DA
+    AM -->|自订音效| CA
     AM -->|播放控制| AUDIO
-    AUDIO -->|數據來源| BASE64
-    ASU -->|設定保存| SettingsManager
+    AUDIO -->|数据来源| BASE64
+    ASU -->|设置保存| SettingsManager
 ```
 
-**核心功能**：
-- **AudioManager**: 音效播放控制、音量管理、音效選擇
-- **AudioSettingsUI**: 音效設定界面、上傳管理、測試播放
-- **內建音效**: 經典提示音、通知鈴聲、輕柔鐘聲
-- **自訂音效**: 支援 MP3、WAV、OGG 格式上傳和管理
+**内核功能**：
+- **AudioManager**: 音效播放控制、音量管理、音效选择
+- **AudioSettingsUI**: 音效设置界面、上传管理、测试播放
+- **内置音效**: 经典提示音、通知铃声、轻柔钟声
+- **自订音效**: 支持 MP3、WAV、OGG 格式上传和管理
 
-**技術特性**：
-- **Web Audio API**: 使用原生 Audio 物件進行播放
-- **Base64 存儲**: 音效文件以 Base64 格式存儲在 localStorage
-- **音量控制**: 0-100% 可調節音量
-- **瀏覽器相容性**: 處理自動播放政策限制
+**技术特性**：
+- **Web Audio API**: 使用原生 Audio 对象进行播放
+- **Base64 存储**: 音效文档以 Base64 格式存储在 localStorage
+- **音量控制**: 0-100% 可调节音量
+- **浏览器兼容性**: 处理自动播放政策限制
 
-#### 智能記憶功能 - v2.4.3 新增
+#### 智能记忆功能 - v2.4.3 添加
 
-**輸入框高度管理**：
+**输入框高度管理**：
 ```mermaid
 graph TB
-    subgraph "高度管理系統"
+    subgraph "高度管理系统"
         THM[TextareaHeightManager<br/>高度管理器]
-        RO[ResizeObserver<br/>尺寸監控]
-        DEBOUNCE[防抖機制<br/>500ms 延遲]
+        RO[ResizeObserver<br/>尺寸监控]
+        DEBOUNCE[防抖机制<br/>500ms 延迟]
     end
 
-    subgraph "存儲機制"
+    subgraph "存储机制"
         SETTINGS[SettingsManager]
         HEIGHT_KEY[combinedFeedbackTextHeight]
     end
@@ -680,37 +680,37 @@ graph TB
     DEBOUNCE --> SETTINGS
     SETTINGS --> HEIGHT_KEY
 
-    THM -->|恢復高度| TEXTAREA
+    THM -->|恢复高度| TEXTAREA
 ```
 
-**一鍵複製功能**：
-- **專案路徑複製**: 點擊路徑文字即可複製到剪貼簿
-- **會話ID複製**: 點擊會話ID即可複製
-- **複製反饋**: 視覺提示複製成功狀態
-- **國際化支援**: 複製提示支援多語言
+**一键拷贝功能**：
+- **项目路径拷贝**: 点击路径文本即可拷贝到剪贴板
+- **会话ID拷贝**: 点击会话ID即可拷贝
+- **拷贝反馈**: 视觉提示拷贝成功状态
+- **国际化支持**: 拷贝提示支持多语言
 
-#### 自動提交功能整合
+#### 自动提交功能集成
 
-**整合架構**：
+**集成架构**：
 ```mermaid
 graph LR
-    subgraph "自動提交功能"
-        ASM[AutoSubmitManager<br/>倒數計時器<br/>狀態控制]
-        PM[PromptManager<br/>提示詞選擇<br/>自動標記]
-        SM[SettingsManager<br/>設定存儲<br/>配置管理]
+    subgraph "自动提交功能"
+        ASM[AutoSubmitManager<br/>倒数计时器<br/>状态控制]
+        PM[PromptManager<br/>提示词选择<br/>自动标记]
+        SM[SettingsManager<br/>设置存储<br/>配置管理]
     end
 
-    ASM -->|選擇提示詞| PM
-    ASM -->|保存設定| SM
-    PM -->|提供提示詞| ASM
-    SM -->|載入設定| ASM
+    ASM -->|选择提示词| PM
+    ASM -->|保存设置| SM
+    PM -->|提供提示词| ASM
+    SM -->|加载设置| ASM
 ```
 
-### templates/ - HTML 模板系統
+### templates/ - HTML 模板系统
 
-**模板結構**：
+**模板结构**：
 ```html
-<!-- feedback.html - 主回饋頁面 -->
+<!-- feedback.html - 主回馈页面 -->
 <!DOCTYPE html>
 <html lang="{{ current_language }}" id="html-root">
 <head>
@@ -721,73 +721,73 @@ graph LR
 </head>
 <body class="layout-{{ layout_mode }}">
     <div class="container">
-        <!-- 頁面頭部 -->
+        <!-- 页面头部 -->
         <header class="header">
             <div class="header-content">
                 <h1 class="title" data-i18n="app.title">MCP Feedback Enhanced</h1>
                 <div class="project-info">
-                    <span data-i18n="app.projectDirectory">專案目錄</span>: {{ project_directory }}
+                    <span data-i18n="app.projectDirectory">项目目录</span>: {{ project_directory }}
                 </div>
             </div>
         </header>
 
-        <!-- 主要內容區域 -->
+        <!-- 主要内容区域 -->
         <main class="main-content">
-            <!-- 標籤頁導航 -->
+            <!-- 标签页导航 -->
             <div class="tab-container">
                 <div class="tab-buttons">
-                    <button class="tab-button active" data-tab="combined" data-i18n="tabs.combined">📝 工作區</button>
-                    <button class="tab-button" data-tab="settings" data-i18n="tabs.settings">⚙️ 設定</button>
-                    <button class="tab-button" data-tab="about" data-i18n="tabs.about">ℹ️ 關於</button>
+                    <button class="tab-button active" data-tab="combined" data-i18n="tabs.combined">📝 工作区</button>
+                    <button class="tab-button" data-tab="settings" data-i18n="tabs.settings">⚙️ 设置</button>
+                    <button class="tab-button" data-tab="about" data-i18n="tabs.about">ℹ️ 关于</button>
                 </div>
             </div>
 
-            <!-- 標籤頁內容 -->
+            <!-- 标签页内容 -->
             <div class="tab-content active" id="combined-tab">
-                <!-- AI 摘要區域 -->
+                <!-- AI 摘要区域 -->
                 <section class="ai-summary-section">
                     <h2 data-i18n="tabs.summary">📋 AI 摘要</h2>
                     <div id="ai-summary" class="ai-summary-content"></div>
                 </section>
 
-                <!-- 回饋表單區域 -->
+                <!-- 回馈表单区域 -->
                 <section class="feedback-section">
-                    <h2 data-i18n="tabs.feedback">💬 回饋</h2>
+                    <h2 data-i18n="tabs.feedback">💬 回馈</h2>
                     <form id="feedback-form">
-                        <textarea id="feedback-text" placeholder="請輸入您的回饋..."></textarea>
+                        <textarea id="feedback-text" placeholder="请输入您的回馈..."></textarea>
                         <div class="form-actions">
-                            <button type="submit" data-i18n="buttons.submit">提交回饋</button>
+                            <button type="submit" data-i18n="buttons.submit">提交回馈</button>
                         </div>
                     </form>
                 </section>
 
-                <!-- 圖片上傳區域 -->
+                <!-- 图片上传区域 -->
                 <section class="image-upload-section">
-                    <h2 data-i18n="images.title">🖼️ 圖片上傳</h2>
+                    <h2 data-i18n="images.title">🖼️ 图片上传</h2>
                     <div id="image-upload-area" class="upload-area">
                         <input type="file" id="image-input" multiple accept="image/*">
-                        <div class="upload-prompt" data-i18n="images.dragDrop">拖拽圖片到此處或點擊選擇</div>
+                        <div class="upload-prompt" data-i18n="images.dragDrop">拖拽图片到此处或点击选择</div>
                     </div>
                     <div id="image-preview" class="image-preview"></div>
                 </section>
 
-                <!-- 命令執行區域 -->
+                <!-- 命令运行区域 -->
                 <section class="command-section">
                     <h2 data-i18n="tabs.commands">⚡ 命令</h2>
                     <div class="command-input-group">
-                        <input type="text" id="command-input" placeholder="輸入要執行的命令...">
-                        <button id="execute-command" data-i18n="commands.execute">執行</button>
+                        <input type="text" id="command-input" placeholder="输入要运行的命令...">
+                        <button id="execute-command" data-i18n="commands.execute">运行</button>
                     </div>
                     <div id="command-output" class="command-output"></div>
                 </section>
             </div>
         </main>
 
-        <!-- 狀態指示器 -->
+        <!-- 状态指示器 -->
         <footer class="footer">
             <div class="status-indicators">
                 <div id="connection-status" class="connection-indicator">
-                    <span data-i18n="status.connecting">連接中...</span>
+                    <span data-i18n="status.connecting">连接中...</span>
                 </div>
                 <div id="session-status" class="session-indicator">
                     <span data-i18n="status.waiting">等待中...</span>
@@ -796,7 +796,7 @@ graph LR
         </footer>
     </div>
 
-    <!-- JavaScript 模組載入 -->
+    <!-- JavaScript 模块加载 -->
     <script src="/static/js/i18n.js"></script>
     <script src="/static/js/modules/utils.js"></script>
     <script src="/static/js/modules/tab-manager.js"></script>
@@ -811,33 +811,33 @@ graph LR
 ```
 
 **模板特性**：
-- **Jinja2 模板引擎**: 支援變數替換和條件渲染
-- **響應式設計**: 適配桌面和移動設備
-- **國際化支援**: `data-i18n` 屬性自動翻譯
-- **模組化載入**: JavaScript 模組按需載入
-- **無障礙設計**: 支援鍵盤導航和螢幕閱讀器
+- **Jinja2 模板引擎**: 支持变量替换和条件渲染
+- **响应式设计**: 适配桌面和移动设备
+- **国际化支持**: `data-i18n` 属性自动翻译
+- **模块化加载**: JavaScript 模块按需加载
+- **无障碍设计**: 支持键盘导航和屏幕阅读器
 
-### static/js/ - JavaScript 模組系統
+### static/js/ - JavaScript 模块系统
 
-**模組化架構**：
+**模块化架构**：
 ```mermaid
 graph TD
-    subgraph "核心模組"
-        UTILS[utils.js<br/>工具函數]
-        I18N[i18n.js<br/>國際化]
+    subgraph "内核模块"
+        UTILS[utils.js<br/>工具函数]
+        I18N[i18n.js<br/>国际化]
     end
 
-    subgraph "功能模組"
-        TAB[tab-manager.js<br/>標籤頁管理]
+    subgraph "功能模块"
+        TAB[tab-manager.js<br/>标签页管理]
         WS[websocket-manager.js<br/>WebSocket 通信]
-        IMG[image-handler.js<br/>圖片處理]
-        SETTINGS[settings-manager.js<br/>設定管理]
+        IMG[image-handler.js<br/>图片处理]
+        SETTINGS[settings-manager.js<br/>设置管理]
         UI[ui-manager.js<br/>UI 控制]
-        REFRESH[auto-refresh-manager.js<br/>自動刷新]
+        REFRESH[auto-refresh-manager.js<br/>自动刷新]
     end
 
-    subgraph "主應用"
-        APP[app.js<br/>主應用程式]
+    subgraph "主应用"
+        APP[app.js<br/>主应用程序]
     end
 
     UTILS --> TAB
@@ -852,16 +852,16 @@ graph TD
     REFRESH --> APP
 ```
 
-**主要模組說明**：
+**主要模块说明**：
 
-**app.js - 主應用程式**：
+**app.js - 主应用程序**：
 ```javascript
 class FeedbackApp {
     constructor(sessionId) {
         this.sessionId = sessionId;
         this.currentSessionId = null;
 
-        // 模組管理器
+        // 模块管理器
         this.tabManager = null;
         this.webSocketManager = null;
         this.imageHandler = null;
@@ -873,16 +873,16 @@ class FeedbackApp {
     }
 
     async init() {
-        // 等待國際化系統
+        // 等待国际化系统
         await this.waitForI18n();
 
         // 初始化管理器
         await this.initializeManagers();
 
-        // 設置事件監聽器
+        // 设置事件监听器
         await this.setupEventListeners();
 
-        // 設置清理處理器
+        // 设置清理处理器
         await this.setupCleanupHandlers();
 
         this.isInitialized = true;
@@ -917,7 +917,7 @@ class WebSocketManager {
 }
 ```
 
-**image-handler.js - 圖片處理**：
+**image-handler.js - 图片处理**：
 ```javascript
 class ImageHandler {
     constructor(app) {
@@ -936,14 +936,14 @@ class ImageHandler {
     }
 
     async compressImage(file) {
-        // 圖片壓縮邏輯
+        // 图片压缩逻辑
         return new Promise((resolve) => {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             const img = new Image();
 
             img.onload = () => {
-                // 壓縮處理
+                // 压缩处理
                 resolve(canvas.toBlob());
             };
 
@@ -953,32 +953,32 @@ class ImageHandler {
 }
 ```
 
-**前端特性總結**：
-- **模組化設計**: 清晰的職責分離和依賴管理
-- **響應式 UI**: 適配不同螢幕尺寸和設備
-- **實時通信**: WebSocket 雙向數據同步
-- **圖片處理**: 自動壓縮和格式轉換
-- **國際化**: 動態語言切換和本地化
-- **錯誤處理**: 優雅的錯誤恢復機制
-- **性能優化**: 延遲載入和資源快取
-- **無障礙支援**: 鍵盤導航和螢幕閱讀器支援
+**前端特性总结**：
+- **模块化设计**: 清晰的职责分离和依赖管理
+- **响应式 UI**: 适配不同屏幕尺寸和设备
+- **实时通信**: WebSocket 双向数据同步
+- **图片处理**: 自动压缩和格式转换
+- **国际化**: 动态语言切换和本地化
+- **错误处理**: 优雅的错误恢复机制
+- **性能优化**: 延迟加载和资源缓存
+- **无障碍支持**: 键盘导航和屏幕阅读器支持
 
-### static/css/ - 樣式系統（v2.4.3 擴展）
+### static/css/ - 样式系统（v2.4.3 扩展）
 
-**樣式文件結構**：
+**样式文档结构**：
 ```
 static/css/
-├── styles.css                  # 主樣式文件
-├── prompt-management.css       # 提示詞管理樣式
-├── session-management.css      # 會話管理樣式
-└── audio-management.css        # 音效管理樣式（v2.4.3 新增）
+├── styles.css                  # 主样式文档
+├── prompt-management.css       # 提示词管理样式
+├── session-management.css      # 会话管理样式
+└── audio-management.css        # 音效管理样式（v2.4.3 添加）
 ```
 
-**v2.4.3 新增樣式特性**：
+**v2.4.3 添加样式特性**：
 
-**audio-management.css - 音效管理樣式**：
+**audio-management.css - 音效管理样式**：
 ```css
-/* 音效管理區塊樣式 */
+/* 音效管理区块样式 */
 .audio-management-section {
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
@@ -988,7 +988,7 @@ static/css/
     transition: all 0.3s ease;
 }
 
-/* 音效設定控制項 */
+/* 音效设置控制项 */
 .audio-setting-item {
     display: flex;
     justify-content: space-between;
@@ -998,7 +998,7 @@ static/css/
     border-bottom: 1px solid var(--border-color);
 }
 
-/* 音量控制滑桿 */
+/* 音量控制滑杆 */
 .audio-volume-slider {
     width: 120px;
     height: 6px;
@@ -1007,7 +1007,7 @@ static/css/
     outline: none;
 }
 
-/* 自訂音效列表 */
+/* 自订音效列表 */
 .audio-custom-item {
     display: flex;
     justify-content: space-between;
@@ -1020,9 +1020,9 @@ static/css/
 }
 ```
 
-**session-management.css - 會話管理樣式增強**：
+**session-management.css - 会话管理样式增强**：
 ```css
-/* v2.4.3 頁籤化設計 */
+/* v2.4.3 页签化设计 */
 .session-tab-content {
     padding: 20px;
     background: var(--bg-primary);
@@ -1030,7 +1030,7 @@ static/css/
     margin-top: 16px;
 }
 
-/* 會話卡片樣式 */
+/* 会话卡片样式 */
 .session-card {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
@@ -1045,7 +1045,7 @@ static/css/
     box-shadow: 0 2px 8px rgba(0, 122, 204, 0.1);
 }
 
-/* 一鍵複製按鈕樣式 */
+/* 一键拷贝按钮样式 */
 .copy-button {
     background: transparent;
     border: none;
@@ -1061,22 +1061,22 @@ static/css/
 }
 ```
 
-**響應式設計增強**：
-- **移動設備優化**: 音效控制項在小螢幕下垂直排列
-- **觸控友好**: 按鈕和滑桿適配觸控操作
-- **視覺反饋**: 懸停和點擊狀態的視覺提示
-- **深色主題**: 完整的深色主題支援
+**响应式设计增强**：
+- **移动设备优化**: 音效控制项在小屏幕下垂直排列
+- **触摸友好**: 按钮和滑杆适配触摸操作
+- **视觉反馈**: 悬停和点击状态的视觉提示
+- **深色主题**: 完整的深色主题支持
 
-## 🛠️ 工具層組件
+## 🛠️ 工具层组件
 
-### utils/error_handler.py - 錯誤處理框架
+### utils/error_handler.py - 错误处理框架
 
-**統一錯誤處理**：
+**统一错误处理**：
 ```python
 class ErrorHandler:
     @staticmethod
     def handle_error(error_type: ErrorType, error: Exception, context: str = "") -> dict:
-        """統一錯誤處理入口"""
+        """统一错误处理入口"""
         error_info = {
             "type": error_type.value,
             "message": str(error),
@@ -1085,8 +1085,8 @@ class ErrorHandler:
             "suggestions": ErrorHandler._get_suggestions(error_type)
         }
 
-        # 記錄錯誤日誌
-        debug_log(f"錯誤處理: {error_info}")
+        # 记录错误日志
+        debug_log(f"错误处理: {error_info}")
 
         return error_info
 
@@ -1098,9 +1098,9 @@ class ErrorType(Enum):
     USER_ERROR = "user_error"
 ```
 
-### utils/memory_monitor.py - 記憶體監控
+### utils/memory_monitor.py - 内存监控
 
-**資源監控**：
+**资源监控**：
 ```python
 class MemoryMonitor:
     def __init__(self):
@@ -1108,25 +1108,25 @@ class MemoryMonitor:
         self.baseline_memory = self.get_memory_usage()
 
     def get_memory_usage(self) -> dict:
-        """獲取當前記憶體使用情況"""
+        """获取当前内存使用情况"""
         memory_info = self.process.memory_info()
         return {
-            "rss": memory_info.rss,  # 實際記憶體使用
-            "vms": memory_info.vms,  # 虛擬記憶體使用
+            "rss": memory_info.rss,  # 实际内存使用
+            "vms": memory_info.vms,  # 虚拟内存使用
             "percent": self.process.memory_percent(),
             "available": psutil.virtual_memory().available
         }
 
     def check_memory_threshold(self, threshold_mb: int = 100) -> bool:
-        """檢查記憶體使用是否超過閾值"""
+        """检查内存使用是否超过阈值"""
         current_memory = self.get_memory_usage()
         memory_mb = current_memory["rss"] / 1024 / 1024
         return memory_mb > threshold_mb
 ```
 
-### utils/resource_manager.py - 資源管理
+### utils/resource_manager.py - 资源管理
 
-**生命週期管理**：
+**生命周期管理**：
 ```python
 class ResourceManager:
     def __init__(self):
@@ -1135,42 +1135,42 @@ class ResourceManager:
         self.cleanup_callbacks: List[Callable] = []
 
     def register_temp_file(self, file_path: Path):
-        """註冊臨時文件以便清理"""
+        """注册临时文档以便清理"""
         self.temp_files.append(file_path)
 
     def register_process(self, process: subprocess.Popen):
-        """註冊進程以便清理"""
+        """注册进程以便清理"""
         self.active_processes.append(process)
 
     def cleanup_all(self):
-        """清理所有註冊的資源"""
-        # 清理臨時文件
+        """清理所有注册的资源"""
+        # 清理临时文档
         for file_path in self.temp_files:
             try:
                 if file_path.exists():
                     file_path.unlink()
             except Exception as e:
-                debug_log(f"清理臨時文件失敗: {e}")
+                debug_log(f"清理临时文档失败: {e}")
 
-        # 終止進程
+        # 终止进程
         for process in self.active_processes:
             try:
                 process.terminate()
                 process.wait(timeout=5)
             except Exception as e:
-                debug_log(f"終止進程失敗: {e}")
+                debug_log(f"终止进程失败: {e}")
 ```
 
-### utils/browser.py - 瀏覽器控制
+### utils/browser.py - 浏览器控制
 
-**智能瀏覽器開啟**：
+**智能浏览器打开**：
 ```python
 class BrowserOpener:
     @staticmethod
     def open_browser(url: str) -> bool:
-        """智能開啟瀏覽器，支援多種環境"""
+        """智能打开浏览器，支持多种环境"""
         try:
-            # 檢測運行環境
+            # 检测运行环境
             environment = detect_environment()
 
             if environment == "local":
@@ -1183,26 +1183,26 @@ class BrowserOpener:
                 return BrowserOpener._open_fallback(url)
 
         except Exception as e:
-            debug_log(f"開啟瀏覽器失敗: {e}")
+            debug_log(f"打开浏览器失败: {e}")
             return False
 
     @staticmethod
     def _open_local(url: str) -> bool:
-        """本地環境開啟瀏覽器"""
+        """本地环境打开浏览器"""
         webbrowser.open(url)
         return True
 
     @staticmethod
     def _open_ssh(url: str) -> bool:
-        """SSH 環境處理"""
-        # 提供 SSH 隧道建立指引
-        print(f"請在本地終端執行: ssh -L 8765:127.0.0.1:8765 user@host")
-        print(f"然後在本地瀏覽器開啟: {url}")
+        """SSH 环境处理"""
+        # 提供 SSH 隧道创建指引
+        print(f"请在本地终端运行: ssh -L 8765:127.0.0.1:8765 user@host")
+        print(f"然后在本地浏览器打开: {url}")
         return True
 
     @staticmethod
     def _open_wsl(url: str) -> bool:
-        """WSL 環境處理"""
+        """WSL 环境处理"""
         try:
             subprocess.run(["cmd.exe", "/c", "start", url], check=True)
             return True
@@ -1210,9 +1210,9 @@ class BrowserOpener:
             return BrowserOpener._open_fallback(url)
 ```
 
-### utils/port_manager.py - 埠管理
+### utils/port_manager.py - 端口管理
 
-**動態埠分配**：
+**动态端口分配**：
 ```python
 class PortManager:
     def __init__(self, start_port: int = 8765, end_port: int = 8865):
@@ -1221,15 +1221,15 @@ class PortManager:
         self.allocated_ports: Set[int] = set()
 
     def find_available_port(self) -> int:
-        """尋找可用埠"""
+        """寻找可用端口"""
         for port in range(self.start_port, self.end_port + 1):
             if self.is_port_available(port):
                 self.allocated_ports.add(port)
                 return port
-        raise RuntimeError("無可用埠")
+        raise RuntimeError("无可用端口")
 
     def is_port_available(self, port: int) -> bool:
-        """檢查埠是否可用"""
+        """检查端口是否可用"""
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                 sock.bind(('127.0.0.1', port))
@@ -1238,25 +1238,25 @@ class PortManager:
             return False
 
     def release_port(self, port: int):
-        """釋放埠"""
+        """释放端口"""
         self.allocated_ports.discard(port)
 ```
 
-### utils/session_cleanup_manager.py - 會話清理
+### utils/session_cleanup_manager.py - 会话清理
 
-**自動清理機制**：
+**自动清理机制**：
 ```mermaid
 graph TD
-    START[啟動清理管理器] --> TIMER[設置定時器]
-    TIMER --> CHECK[檢查會話狀態]
-    CHECK --> ACTIVE{會話活躍?}
-    ACTIVE -->|是| TIMEOUT{超時檢查}
-    ACTIVE -->|否| SKIP[跳過清理]
-    TIMEOUT -->|超時| CLEANUP[執行清理]
-    TIMEOUT -->|未超時| WAIT[等待下次檢查]
-    CLEANUP --> WEBSOCKET[關閉 WebSocket]
-    WEBSOCKET --> RESOURCES[清理資源]
-    RESOURCES --> MEMORY[釋放記憶體]
+    START[启动清理管理器] --> TIMER[设置定时器]
+    TIMER --> CHECK[检查会话状态]
+    CHECK --> ACTIVE{会话活跃?}
+    ACTIVE -->|是| TIMEOUT{超时检查}
+    ACTIVE -->|否| SKIP[跳过清理]
+    TIMEOUT -->|超时| CLEANUP[运行清理]
+    TIMEOUT -->|未超时| WAIT[等待下次检查]
+    CLEANUP --> WEBSOCKET[关闭 WebSocket]
+    WEBSOCKET --> RESOURCES[清理资源]
+    RESOURCES --> MEMORY[释放内存]
     MEMORY --> NOTIFY[通知清理完成]
     NOTIFY --> WAIT
     SKIP --> WAIT
@@ -1267,107 +1267,107 @@ graph TD
 ```
 
 **清理策略**：
-- **定時檢查**: 每 30 秒檢查一次會話狀態
-- **超時清理**: 會話超時自動觸發清理
-- **資源回收**: WebSocket 連接、進程、記憶體
-- **優雅關閉**: 確保資源正確釋放
-- **錯誤恢復**: 清理失敗時的備用方案
+- **定时检查**: 每 30 秒检查一次会话状态
+- **超时清理**: 会话超时自动触发清理
+- **资源回收**: WebSocket 连接、进程、内存
+- **优雅关闭**: 确保资源正确释放
+- **错误恢复**: 清理失败时的备用方案
 
-### utils/compression_*.py - 壓縮工具
+### utils/compression_*.py - 压缩工具
 
-**數據壓縮優化**：
-- **圖片壓縮**: 自動壓縮上傳圖片至 1MB 以下
-- **JSON 壓縮**: 大型 JSON 數據的 gzip 壓縮
-- **傳輸優化**: WebSocket 消息的選擇性壓縮
-- **快取機制**: 壓縮結果快取避免重複處理
+**数据压缩优化**：
+- **图片压缩**: 自动压缩上传图片至 1MB 以下
+- **JSON 压缩**: 大型 JSON 数据的 gzip 压缩
+- **传输优化**: WebSocket 消息的选择性压缩
+- **缓存机制**: 压缩结果缓存避免重复处理
 
-## 🧪 測試架構
+## 🧪 测试架构
 
-### 測試組織結構
+### 测试组织结构
 
 ```
 tests/
-├── unit/                    # 單元測試
+├── unit/                    # 单元测试
 │   ├── test_error_handler.py
 │   ├── test_memory_monitor.py
 │   ├── test_port_manager.py
 │   └── test_web_ui.py
-├── integration/             # 集成測試
+├── integration/             # 集成测试
 │   ├── test_mcp_workflow.py
 │   ├── test_web_integration.py
 │   └── test_i18n_integration.py
-├── helpers/                 # 測試輔助工具
+├── helpers/                 # 测试辅助工具
 │   ├── mcp_client.py
 │   └── test_utils.py
-├── fixtures/                # 測試數據
+├── fixtures/                # 测试数据
 │   └── test_data.py
 └── conftest.py             # pytest 配置
 ```
 
-### 測試策略
+### 测试策略
 
-**單元測試**：
-- 每個工具模組的獨立測試
-- 數據模型的驗證測試
-- 錯誤處理機制測試
-- 國際化功能測試
+**单元测试**：
+- 每个工具模块的独立测试
+- 数据模型的验证测试
+- 错误处理机制测试
+- 国际化功能测试
 
-**集成測試**：
+**集成测试**：
 - MCP 工具完整工作流程
-- Web UI 與後端交互
-- WebSocket 通信測試
-- 多語言切換測試
+- Web UI 与后端交互
+- WebSocket 通信测试
+- 多语言切换测试
 
-**性能測試**：
-- 記憶體使用監控
-- 會話處理性能
-- 並發連接測試
-- 資源清理效率
+**性能测试**：
+- 内存使用监控
+- 会话处理性能
+- 并发连接测试
+- 资源清理效率
 
-## 🔧 開發工具鏈
+## 🔧 开发工具链
 
-### 代碼品質工具
+### 代码品质工具
 
 **Ruff (Linting + Formatting)**：
-- 代碼風格檢查和自動修復
-- 安全漏洞檢測
-- 導入排序和優化
-- 複雜度控制
+- 代码风格检查和自动修复
+- 安全漏洞检测
+- 导入排序和优化
+- 复杂度控制
 
-**mypy (類型檢查)**：
-- 靜態類型檢查
-- 漸進式類型註解
-- 第三方庫類型支援
-- 錯誤預防
+**mypy (类型检查)**：
+- 静态类型检查
+- 渐进式类型注解
+- 第三方库类型支持
+- 错误预防
 
-**pre-commit (提交檢查)**：
-- 提交前自動檢查
-- 代碼格式化
-- 測試執行
-- 文檔更新
+**pre-commit (提交检查)**：
+- 提交前自动检查
+- 代码格式化
+- 测试运行
+- 文档更新
 
-### 依賴管理
+### 依赖管理
 
-**uv (現代 Python 包管理)**：
-- 快速依賴解析
-- 鎖定文件管理
-- 開發環境隔離
-- 跨平台支援
+**uv (现代 Python 包管理)**：
+- 快速依赖解析
+- 锁定文档管理
+- 开发环境隔离
+- 跨平台支持
 
 ---
 
-## 📚 相關文檔
+## 📚 相关文档
 
-- **[系統架構總覽](./system-overview.md)** - 了解整體架構設計理念
-- **[交互流程文檔](./interaction-flows.md)** - 詳細的用戶交互和系統流程
-- **[API 參考文檔](./api-reference.md)** - 完整的 API 端點和參數說明
-- **[部署指南](./deployment-guide.md)** - 環境配置和部署最佳實踐
+- **[系统架构总览](./system-overview.md)** - 了解整体架构设计理念
+- **[交互流程文档](./interaction-flows.md)** - 详细的用户交互和系统流程
+- **[API 参考文档](./api-reference.md)** - 完整的 API 端点和参数说明
+- **[部署指南](./deployment-guide.md)** - 环境配置和部署最佳实践
 
 ---
 
 **版本**: 2.4.3
-**最後更新**: 2025年6月14日
-**維護者**: Minidoracat
-**架構類型**: Web-Only 四層架構
-**v2.4.3 新功能**: 音效通知系統、會話管理重構、智能記憶功能
-**技術棧**: Python 3.11+, FastAPI, FastMCP, WebSocket, Web Audio API
+**最后更新**: 2025年6月14日
+**维护者**: Minidoracat
+**架构类型**: Web-Only 四层架构
+**v2.4.3 新功能**: 音效通知系统、会话管理重构、智能记忆功能
+**技术栈**: Python 3.11+, FastAPI, FastMCP, WebSocket, Web Audio API

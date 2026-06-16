@@ -1,23 +1,23 @@
 /**
- * MCP Feedback Enhanced - 時間處理工具模組
+ * MCP Feedback Enhanced - 时间处理工具模块
  * ========================================
  * 
- * 提供時間格式化、計算和顯示功能
+ * 提供时间格式化、计算和显示功能
  */
 
 (function() {
     'use strict';
 
-    // 確保命名空間存在
+    // 确保命名空间存在
     window.MCPFeedback = window.MCPFeedback || {};
     window.MCPFeedback.Utils = window.MCPFeedback.Utils || {};
 
     /**
-     * 時間工具類
+     * 时间工具类
      */
     const TimeUtils = {
         /**
-         * 格式化時間戳為可讀時間
+         * 格式化时间戳为可读时间
          */
         formatTimestamp: function(timestamp, options) {
             options = options || {};
@@ -25,7 +25,7 @@
             if (!timestamp) return '未知';
 
             try {
-                // 處理時間戳格式（毫秒轉秒）
+                // 处理时间戳格式（毫秒转秒）
                 let normalizedTimestamp = timestamp;
                 if (timestamp > 1e12) {
                     normalizedTimestamp = timestamp / 1000;
@@ -33,11 +33,11 @@
 
                 const date = new Date(normalizedTimestamp * 1000);
                 if (isNaN(date.getTime())) {
-                    return '無效時間';
+                    return '无效时间';
                 }
 
                 if (options.format === 'time') {
-                    // 只返回時間部分
+                    // 只返回时间部分
                     return date.toLocaleTimeString();
                 } else if (options.format === 'date') {
                     // 只返回日期部分
@@ -57,13 +57,13 @@
                     return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
                 }
             } catch (error) {
-                console.warn('時間格式化失敗:', timestamp, error);
-                return '格式錯誤';
+                console.warn('时间格式化失败:', timestamp, error);
+                return '格式错误';
             }
         },
 
         /**
-         * 格式化持續時間（秒）- 支援國際化
+         * 格式化持续时间（秒）- 支持国际化
          */
         formatDuration: function(seconds) {
             if (!seconds || seconds < 0) {
@@ -89,29 +89,29 @@
         },
 
         /**
-         * 獲取時間單位文字（支援國際化）
+         * 获取时间单位文本（支持国际化）
          */
         getTimeUnitText: function(unit) {
             if (window.i18nManager && typeof window.i18nManager.t === 'function') {
                 return window.i18nManager.t(`timeUnits.${unit}`, unit);
             }
 
-            // 回退到預設值（繁體中文）
+            // 回退到默认值（繁体中文）
             const fallbackUnits = {
                 'seconds': '秒',
-                'minutes': '分鐘',
-                'hours': '小時',
+                'minutes': '分钟',
+                'hours': '小时',
                 'days': '天',
                 'ago': '前',
-                'justNow': '剛剛',
-                'about': '約'
+                'justNow': '刚刚',
+                'about': '约'
             };
 
             return fallbackUnits[unit] || unit;
         },
 
         /**
-         * 格式化相對時間（多久之前）- 支援國際化
+         * 格式化相对时间（多久之前）- 支持国际化
          */
         formatRelativeTime: function(timestamp) {
             if (!timestamp) return '未知';
@@ -144,13 +144,13 @@
                     return `${days}${daysText}${agoText}`;
                 }
             } catch (error) {
-                console.warn('相對時間計算失敗:', timestamp, error);
-                return '計算錯誤';
+                console.warn('相对时间计算失败:', timestamp, error);
+                return '计算错误';
             }
         },
 
         /**
-         * 計算經過時間（從指定時間到現在）
+         * 计算经过时间（从指定时间到现在）
          */
         calculateElapsedTime: function(startTimestamp) {
             if (!startTimestamp) return 0;
@@ -164,13 +164,13 @@
                 const now = Date.now() / 1000;
                 return Math.max(0, now - normalizedTimestamp);
             } catch (error) {
-                console.warn('經過時間計算失敗:', startTimestamp, error);
+                console.warn('经过时间计算失败:', startTimestamp, error);
                 return 0;
             }
         },
 
         /**
-         * 格式化經過時間為 MM:SS 格式
+         * 格式化经过时间为 MM:SS 格式
          */
         formatElapsedTime: function(startTimestamp) {
             const elapsed = this.calculateElapsedTime(startTimestamp);
@@ -180,26 +180,26 @@
         },
 
         /**
-         * 獲取當前時間戳（秒）
+         * 获取当前时间戳（秒）
          */
         getCurrentTimestamp: function() {
             return Math.floor(Date.now() / 1000);
         },
 
         /**
-         * 獲取當前時間戳（毫秒）
+         * 获取当前时间戳（毫秒）
          */
         getCurrentTimestampMs: function() {
             return Date.now();
         },
 
         /**
-         * 檢查時間戳是否有效
+         * 检查时间戳是否有效
          */
         isValidTimestamp: function(timestamp) {
             if (!timestamp || typeof timestamp !== 'number') return false;
             
-            // 檢查是否在合理範圍內（1970年到2100年）
+            // 检查是否在合理范围内（1970年到2100年）
             const minTimestamp = 0;
             const maxTimestamp = 4102444800; // 2100年1月1日
             
@@ -212,7 +212,7 @@
         },
 
         /**
-         * 標準化時間戳（統一轉換為秒）
+         * 标准化时间戳（统一转换为秒）
          */
         normalizeTimestamp: function(timestamp) {
             if (!this.isValidTimestamp(timestamp)) return null;
@@ -224,7 +224,7 @@
         },
 
         /**
-         * 創建倒計時器
+         * 创建倒计时器
          */
         createCountdown: function(endTimestamp, callback, options) {
             options = options || {};
@@ -247,7 +247,7 @@
         },
 
         /**
-         * 格式化倒計時顯示
+         * 格式化倒计时显示
          */
         formatCountdown: function(remainingSeconds) {
             if (remainingSeconds <= 0) return '00:00';
@@ -258,7 +258,7 @@
         },
 
         /**
-         * 獲取今天的開始時間戳
+         * 获取今天的开始时间戳
          */
         getTodayStartTimestamp: function() {
             const today = new Date();
@@ -267,7 +267,7 @@
         },
 
         /**
-         * 創建自動提交倒計時器
+         * 创建自动提交倒计时器
          */
         createAutoSubmitCountdown: function(timeoutSeconds, onTick, onComplete, options) {
             options = options || {};
@@ -302,7 +302,7 @@
                         }
                     }, interval);
 
-                    // 立即觸發第一次 tick
+                    // 立即触发第一次 tick
                     if (onTick) {
                         onTick(remainingTime, false);
                     }
@@ -358,7 +358,7 @@
         },
 
         /**
-         * 格式化自動提交倒計時顯示
+         * 格式化自动提交倒计时显示
          */
         formatAutoSubmitCountdown: function(remainingSeconds) {
             if (remainingSeconds <= 0) return '00:00';
@@ -375,26 +375,26 @@
         },
 
         /**
-         * 檢查時間戳是否是今天
+         * 检查时间戳是否是今天
          */
         isToday: function(timestamp) {
             if (!this.isValidTimestamp(timestamp)) return false;
             
             const normalizedTimestamp = this.normalizeTimestamp(timestamp);
             const todayStart = this.getTodayStartTimestamp();
-            const todayEnd = todayStart + 86400; // 24小時後
+            const todayEnd = todayStart + 86400; // 24小时后
             
             return normalizedTimestamp >= todayStart && normalizedTimestamp < todayEnd;
         },
 
         /**
-         * 估算會話持續時間（用於歷史會話）- 支援國際化
+         * 估算会话持续时间（用于历史会话）- 支持国际化
          */
         estimateSessionDuration: function(sessionData) {
-            // 基礎時間 2 分鐘
+            // 基础时间 2 分钟
             let estimatedMinutes = 2;
 
-            // 根據摘要長度調整
+            // 根据摘要长度调整
             if (sessionData.summary) {
                 const summaryLength = sessionData.summary.length;
                 if (summaryLength > 100) {
@@ -402,14 +402,14 @@
                 }
             }
 
-            // 根據會話 ID 的哈希值增加隨機性
+            // 根据会话 ID 的哈希值增加随机性
             if (sessionData.session_id) {
                 const hash = this.simpleHash(sessionData.session_id);
-                const variation = (hash % 5) + 1; // 1-5 分鐘的變化
+                const variation = (hash % 5) + 1; // 1-5 分钟的变化
                 estimatedMinutes += variation;
             }
 
-            // 限制在合理範圍內
+            // 限制在合理范围内
             estimatedMinutes = Math.max(1, Math.min(estimatedMinutes, 15));
 
             const aboutText = this.getTimeUnitText('about');
@@ -418,23 +418,23 @@
         },
 
         /**
-         * 簡單哈希函數
+         * 简单哈希函数
          */
         simpleHash: function(str) {
             let hash = 0;
             for (let i = 0; i < str.length; i++) {
                 const char = str.charCodeAt(i);
                 hash = ((hash << 5) - hash) + char;
-                hash = hash & hash; // 轉換為 32 位整數
+                hash = hash & hash; // 转换为 32 位整数
             }
             return Math.abs(hash);
         }
     };
 
-    // 將 TimeUtils 加入命名空間
+    // 将 TimeUtils 加入命名空间
     window.MCPFeedback.TimeUtils = TimeUtils;
-    window.MCPFeedback.Utils.Time = TimeUtils; // 保持向後相容
+    window.MCPFeedback.Utils.Time = TimeUtils; // 保持向后兼容
 
-    console.log('✅ TimeUtils 模組載入完成');
+    console.log('✅ TimeUtils 模块加载完成');
 
 })();

@@ -10,37 +10,27 @@
 
 ## 🎯 核心概念
 
-这是一个 [MCP 服务器](https://modelcontextprotocol.io/)，建立**反馈导向的开发工作流程**，提供**Web UI 和桌面应用程序**双重选择，完美适配本地、**SSH 远程开发环境**与 **WSL (Windows Subsystem for Linux) 环境**。通过引导 AI 与用户确认而非进行推测性操作，可将多次工具调用合并为单次反馈导向请求，大幅节省平台成本并提升开发效率。
-
-**🌐 双重界面架构优势：**
-- 🖥️ **桌面应用程序**：原生跨平台桌面体验，支持 Windows、macOS、Linux
-- 🌐 **Web UI 界面**：无需 GUI 依赖，适合远程和 WSL 环境
-- 🔧 **灵活部署**：根据环境需求选择最适合的界面模式
-- 📦 **统一功能**：两种界面提供完全相同的功能体验
-
-**🖥️ 桌面应用程序：** v2.5.0 新增跨平台桌面应用程序支持，基于 Tauri 框架，支持 Windows、macOS、Linux 三大平台，提供原生桌面体验。
+这是一个 [MCP 服务器](https://modelcontextprotocol.io/)，创建**反馈导向的开发工作流程**，提供 **Web UI** 界面，完美适配本地、**SSH 远程开发环境**与 **WSL (Windows Subsystem for Linux) 环境**。通过引导 AI 与用户确认而非进行推测性操作，可将多次工具调用合并为单次反馈导向请求，大幅节省平台成本并提升开发效率。
 
 **支持平台：** [Cursor](https://www.cursor.com) | [Cline](https://cline.bot) | [Windsurf](https://windsurf.com) | [Augment](https://www.augmentcode.com) | [Trae](https://www.trae.ai)
 
 ### 🔄 工作流程
 1. **AI 调用** → `feedback-angel` 工具
-2. **界面启动** → 自动打开桌面应用程序或浏览器界面（根据配置）
-3. **智能交互** → 提示词选择、文字输入、图片上传、自动提交
+2. **界面启动** → 自动打开浏览器界面
+3. **智能交互** → 提示词选择、文本输入、图片上传、自动提交
 4. **即时反馈** → WebSocket 连接即时传递信息给 AI
 5. **会话追踪** → 自动记录会话历史与统计
 6. **流程继续** → AI 根据反馈调整行为或结束任务
 
 ## 🌟 主要功能
 
-### 🖥️ 双重界面支持
-- **桌面应用程序**：基于 Tauri 的跨平台原生应用，支持 Windows、macOS、Linux
-- **Web UI 界面**：轻量级浏览器界面，适合远程和 WSL 环境
+### 🌐 Web UI 界面
+- **轻量级浏览器界面**：适合本地、远程和 WSL 环境
 - **环境自动检测**：智能识别 SSH Remote、WSL 等特殊环境
-- **统一功能体验**：两种界面提供完全相同的功能
 
 ### 📝 智能工作流程
 - **提示词管理**：常用提示词的 CRUD 操作、使用统计、智能排序
-- **自动定时提交**：1-86400 秒弹性计时器，支持暂停、恢复、取消，新增暂停/开始按钮控制
+- **自动定时提交**：1-86400 秒弹性计时器，支持暂停、恢复、取消，添加暂停/开始按钮控制
 - **自动执行命令**（v2.6.0）：新建会话和提交后可自动执行预设命令，提升开发效率
 - **会话管理追踪**：本地文件存储、隐私控制、历史导出（支持 JSON、CSV、Markdown 格式）、即时统计、弹性超时设定
 - **连接监控**：WebSocket 状态监控、自动重连、品质指示
@@ -51,7 +41,7 @@
 - **音效通知**：内建多种音效、支持自定义音效上传、音量控制
 - **系统通知**（v2.6.0）：重要事件（如自动提交、会话超时等）的系统级即时提醒
 - **智能记忆**：输入框高度记忆、一键复制、设置持久化
-- **多语言支持**：简体中文、英文、繁体中文，即时切换
+- **多语言支持**：繁体中文、英文、简体中文，即时切换
 
 ### 🖼️ 图片与媒体
 - **全格式支持**：PNG、JPG、JPEG、GIF、BMP、WebP
@@ -60,7 +50,7 @@
 
 ## 🌐 界面预览
 
-### Web UI 界面（v2.5.0 - 支持桌面应用程序）
+### Web UI 界面
 
 <div align="center">
   <img src="docs/zh-CN/images/web1.png" width="400" alt="Web UI 主界面 - 提示词管理与自动提交" />
@@ -75,15 +65,7 @@
 
 </details>
 
-*Web UI 界面 - 支持桌面应用程序和 Web 界面，提供提示词管理、自动提交、会话追踪等智能功能*
-
-### 桌面应用程序界面（v2.5.0 新功能）
-
-<div align="center">
-  <img src="docs/zh-CN/images/desktop1.png" width="600" alt="桌面应用程序 - 原生跨平台桌面体验" />
-</div>
-
-*桌面应用程序 - 基于 Tauri 框架的原生跨平台桌面应用，支持 Windows、macOS、Linux，提供与 Web UI 完全相同的功能*
+*Web UI 界面 - 提供提示词管理、自动提交、会话追踪等智能功能*
 
 **快捷键支持**
 - `Ctrl+Enter`（Windows/Linux）/ `Cmd+Enter`（macOS）：提交反馈（主键盘与数字键盘皆支持）
@@ -133,29 +115,7 @@ pip install uv
 }
 ```
 
-**桌面应用程序配置**（v2.5.0 新功能 - 使用原生桌面应用程序）：
-```json
-{
-  "mcpServers": {
-    "feedback-angel": {
-      "command": "uvx",
-      "args": ["feedback-angel@latest"],
-      "timeout": 600,
-      "env": {
-        "MCP_DESKTOP_MODE": "true",
-        "MCP_WEB_HOST": "127.0.0.1",
-        "MCP_WEB_PORT": "8765",
-        "MCP_DEBUG": "false"
-      },
-      "autoApprove": ["interactive_feedback"]
-    }
-  }
-}
-```
-
-**配置文件示例**：
-- 桌面模式：[examples/mcp-config-desktop.json](examples/mcp-config-desktop.json)
-- Web 模式：[examples/mcp-config-web.json](examples/mcp-config-web.json)
+**配置文件示例**：[examples/mcp-config-web.json](examples/mcp-config-web.json)
 
 ### 3. 设置提示工程
 为了获得最佳效果，请在 AI 助手中添加以下规则：
@@ -174,8 +134,9 @@ pip install uv
 | `MCP_DEBUG` | 调试模式 | `true`/`false` | `false` |
 | `MCP_WEB_HOST` | Web UI 主机绑定 | IP 地址或主机名 | `127.0.0.1` |
 | `MCP_WEB_PORT` | Web UI 端口 | `1024-65535` | `8765` |
-| `MCP_DESKTOP_MODE` | 桌面应用程序模式 | `true`/`false` | `false` |
 | `MCP_LANGUAGE` | 强制指定界面语言 | `zh-TW`/`zh-CN`/`en` | 自动检测 |
+| `MCP_IMAGE_DIR` | 图片文件存储目录（启用文件模式） | 文件路径 | 未设置（base64 模式） |
+| `MCP_IMAGE_MODE` | AI 图片引用方式（文件模式下） | `filepath`/`url` | `filepath` |
 
 **`MCP_WEB_HOST` 说明**：
 - `127.0.0.1`（默认）：仅本地访问，安全性较高
@@ -194,6 +155,16 @@ pip install uv
   4. 系统默认语言
   5. 回退到默认语言（繁体中文）
 
+**`MCP_IMAGE_DIR` 说明**：
+- 未设置（默认）：图片使用 base64 编码处理（原始行为）
+- 设置为目录路径：启用文件存储模式 - 图片保存到磁盘而非 base64
+- 路径无效时回退到系统临时目录
+- 新会话创建时自动清理旧会话图片
+
+**`MCP_IMAGE_MODE` 说明**（仅在 `MCP_IMAGE_DIR` 设置时生效）：
+- `filepath`（默认）：AI 收到本地文件路径（使用 Read 工具查看图片）
+- `url`：AI 收到 HTTP URL（使用 WebFetch 工具查看图片）
+
 ### 测试选项
 ```bash
 # 版本查询
@@ -201,7 +172,6 @@ uvx feedback-angel@latest version       # 检查版本
 
 # 界面测试
 uvx feedback-angel@latest test --web    # 测试 Web UI (自动持续运行)
-uvx feedback-angel@latest test --desktop # 测试桌面应用程序 (v2.5.0 新功能)
 
 # 调试模式
 MCP_DEBUG=true uvx feedback-angel@latest test
@@ -224,18 +194,10 @@ uv sync
 # 功能测试
 make test-func                                           # 标准功能测试
 make test-web                                            # Web UI 测试 (持续运行)
-make test-desktop-func                                   # 桌面应用功能测试
 
 # 或直接使用指令
 uv run python -m mcp_feedback_enhanced test              # 标准功能测试
 uvx --no-cache --with-editable . feedback-angel test --web   # Web UI 测试 (持续运行)
-uvx --no-cache --with-editable . feedback-angel test --desktop # 桌面应用测试
-
-# 桌面应用构建 (v2.5.0 新功能)
-make build-desktop                                       # 构建桌面应用 (debug 模式)
-make build-desktop-release                               # 构建桌面应用 (release 模式)
-make test-desktop                                        # 测试桌面应用
-make clean-desktop                                       # 清理桌面构建产物
 
 # 单元测试
 make test                                                # 运行所有单元测试
@@ -260,8 +222,8 @@ make quick-check                                        # 快速检查并自动�
 ### 最新版本亮点（v2.6.0）
 - 🚀 **自动执行命令**: 新建会话和提交后可自动执行预设命令，提升工作效率
 - 📊 **会话导出功能**: 支持将会话记录导出为多种格式，方便分享和存档
-- ⏸️ **自动提交控制**: 新增暂停和开始按钮，让用户更好控制自动提交时机
-- 🔔 **系统通知**: 新增系统级通知功能，重要事件即时提醒
+- ⏸️ **自动提交控制**: 添加暂停和开始按钮，让用户更好控制自动提交时机
+- 🔔 **系统通知**: 添加系统级通知功能，重要事件即时提醒
 - ⏱️ **会话超时机制优化**: 重新设计会话管理，提供更弹性的设置选项
 - 🌏 **多语系强化**: 重构多语系架构，通知系统也完整支持多语言
 - 🎨 **界面简化**: 大幅简化用户界面，提升使用体验
@@ -311,29 +273,9 @@ A: 请确认 MCP 工具状态为绿灯。**解决方法**：反复开关 MCP 工
 A: **解决方法**：完全关闭并重新启动 VS Code 或 Cursor，重新打开项目。
 
 ### 🔧 一般问题
-**Q: 如何使用桌面应用程序？**
-A: v2.5.0 新增跨平台桌面应用程序支持。在 MCP 配置中设定 `"MCP_DESKTOP_MODE": "true"` 即可启用：
-```json
-{
-  "mcpServers": {
-    "feedback-angel": {
-      "command": "uvx",
-      "args": ["feedback-angel@latest"],
-      "timeout": 600,
-      "env": {
-        "MCP_DESKTOP_MODE": "true",
-        "MCP_WEB_PORT": "8765"
-      },
-      "autoApprove": ["interactive_feedback"]
-    }
-  }
-}
-```
-**配置文件示例**：[examples/mcp-config-desktop.json](examples/mcp-config-desktop.json)
-
 **Q: 如何使用旧版 PyQt6 GUI 界面？**
 A: v2.4.0 版本已完全移除 PyQt6 GUI 依赖。如需使用旧版 GUI，请指定 v2.3.0 或更早版本：`uvx feedback-angel@2.3.0`
-**注意**：旧版本不包含新功能（提示词管理、自动提交、会话管理、桌面应用程序等）。
+**注意**：旧版本不包含新功能（提示词管理、自动提交、会话管理等）。
 
 **Q: 出现 "Unexpected token 'D'" 错误**
 A: 调试输出干扰。设置 `MCP_DEBUG=false` 或移除该环境变量。
@@ -372,7 +314,7 @@ uv cache clean
 
 **Q: AI 模型无法解析图片**
 A: 各种 AI 模型（包括 Gemini Pro 2.5、Claude 等）在图片解析上可能存在不稳定性，表现为有时能正确识别、有时无法解析上传的图片内容。这是 AI 视觉理解技术的已知限制。建议：
-1. 确保图片质量良好（高对比度、清晰文字）
+1. 确保图片质量良好（高对比度、清晰文本）
 2. 多尝试几次上传，通常重试可以成功
 3. 如持续无法解析，可尝试调整图片大小或格式
 
@@ -402,13 +344,13 @@ A: 各种 AI 模型（包括 Gemini Pro 2.5、Claude 等）在图片解析上可
 **fireinice** - [GitHub @fireinice](https://github.com/fireinice)
 - 📝 工具文档优化 (LLM 指令移至 docstring) ([PR #105](https://github.com/hefy2027/feedback-angel/pull/105))
 
-### 社群支援
+### 社群支持
 - **Discord：** [https://discord.gg/Gur2V67](https://discord.gg/Gur2V67)
 - **Issues：** [GitHub Issues](https://github.com/hefy2027/feedback-angel/issues)
 
 ## 📄 授权
 
-MIT 授权条款 - 详见 [LICENSE](LICENSE) 档案
+MIT 授权条款 - 详见 [LICENSE](LICENSE) 文件
 
 ## 📈 Star History
 

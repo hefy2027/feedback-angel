@@ -1,100 +1,100 @@
-# 系統架構總覽
+# 系统架构总览
 
-## 🏗️ 整體架構設計
+## 🏗️ 整体架构设计
 
-MCP Feedback Enhanced 採用**單一活躍會話 + 持久化 Web UI**的創新架構設計，實現 AI 助手與用戶之間的高效、無縫交互體驗。
+MCP Feedback Enhanced 采用**单一活跃会话 + 持久化 Web UI**的创新架构设计，实现 AI 助手与用户之间的高效、无缝交互体验。
 
-### 核心設計理念
+### 内核设计理念
 
-- **Web-Only 架構**：完全基於 Web 技術，已移除所有 Electron 桌面應用功能
-- **四層架構設計**：清晰的層次分離，便於維護和擴展
-- **智能環境檢測**：自動識別本地、SSH Remote、WSL 環境並優化配置
-- **單一活躍會話**：替代傳統多會話管理，提升性能和用戶體驗
-- **模組化設計**：每層職責明確，支援獨立開發和測試
+- **Web-Only 架构**：完全基于 Web 技术，已移除所有 Electron 桌面应用功能
+- **四层架构设计**：清晰的层次分离，便于维护和扩展
+- **智能环境检测**：自动识别本地、SSH Remote、WSL 环境并优化配置
+- **单一活跃会话**：替代传统多会话管理，提升性能和用户体验
+- **模块化设计**：每层职责明确，支持独立开发和测试
 
-### 技術棧概覽
+### 技术栈概览
 
-**後端技術**：
-- Python 3.11+ (核心語言)
-- FastMCP 2.0+ (MCP 協議實現)
+**后端技术**：
+- Python 3.11+ (内核语言)
+- FastMCP 2.0+ (MCP 协议实现)
 - FastAPI 0.115+ (Web 框架)
-- uvicorn 0.30+ (ASGI 服務器)
-- WebSocket (實時通信)
+- uvicorn 0.30+ (ASGI 服务器)
+- WebSocket (实时通信)
 
-**前端技術**：
-- HTML5 + CSS3 (現代化 UI)
-- JavaScript ES6+ (模組化架構)
-- WebSocket API (雙向通信)
-- Web Audio API (音效通知系統)
-- localStorage API (本地數據存儲)
-- ResizeObserver API (元素尺寸監控)
-- 響應式設計 (多設備支援)
+**前端技术**：
+- HTML5 + CSS3 (现代化 UI)
+- JavaScript ES6+ (模块化架构)
+- WebSocket API (双向通信)
+- Web Audio API (音效通知系统)
+- localStorage API (本地数据存储)
+- ResizeObserver API (元素尺寸监控)
+- 响应式设计 (多设备支持)
 
-**開發工具**：
-- pytest + pytest-asyncio (測試框架)
-- Ruff + mypy (代碼品質)
-- pre-commit (提交檢查)
-- uv (依賴管理)
+**开发工具**：
+- pytest + pytest-asyncio (测试框架)
+- Ruff + mypy (代码品质)
+- pre-commit (提交检查)
+- uv (依赖管理)
 
-### 系統整體架構圖
+### 系统整体架构图
 
 ```mermaid
 graph TB
-    subgraph "AI 助手環境"
+    subgraph "AI 助手环境"
         AI[AI 助手<br/>Cursor/Claude/Windsurf/Augment]
     end
 
-    subgraph "MCP Feedback Enhanced - 四層架構"
-        subgraph "第一層：MCP 服務層"
-            SERVER[server.py<br/>MCP 服務器]
-            TOOL[interactive_feedback<br/>核心工具]
-            I18N[i18n.py<br/>國際化支援]
-            DEBUG[debug.py<br/>統一調試]
+    subgraph "MCP Feedback Enhanced - 四层架构"
+        subgraph "第一层：MCP 服务层"
+            SERVER[server.py<br/>MCP 服务器]
+            TOOL[interactive_feedback<br/>内核工具]
+            I18N[i18n.py<br/>国际化支持]
+            DEBUG[debug.py<br/>统一调试]
         end
 
-        subgraph "第二層：Web UI 管理層"
-            MANAGER[WebUIManager<br/>單例管理器]
-            SESSION[WebFeedbackSession<br/>會話模型]
-            MODELS[數據模型<br/>FeedbackResult/SessionStatus]
+        subgraph "第二层：Web UI 管理层"
+            MANAGER[WebUIManager<br/>单例管理器]
+            SESSION[WebFeedbackSession<br/>会话模型]
+            MODELS[数据模型<br/>FeedbackResult/SessionStatus]
         end
 
-        subgraph "第三層：Web 服務層"
-            FASTAPI[FastAPI 應用<br/>main.py]
-            ROUTES[路由處理<br/>main_routes.py]
-            WS[WebSocket 通信<br/>實時雙向通信]
+        subgraph "第三层：Web 服务层"
+            FASTAPI[FastAPI 应用<br/>main.py]
+            ROUTES[路由处理<br/>main_routes.py]
+            WS[WebSocket 通信<br/>实时双向通信]
         end
 
-        subgraph "第四層：前端交互層"
+        subgraph "第四层：前端交互层"
             HTML[HTML 模板<br/>feedback.html/index.html]
-            JS[JavaScript 模組<br/>app.js + 功能模組]
-            CSS[樣式系統<br/>響應式設計]
-            PROMPT[提示詞管理<br/>PromptManager + UI 組件]
-            SESSION_MGR[會話管理<br/>SessionManager + 歷史追蹤<br/>v2.4.3 重構增強]
-            AUTO_SUBMIT[自動提交<br/>AutoSubmitManager + 倒數計時]
-            AUDIO_MGR[音效通知系統<br/>AudioManager + 自訂音效<br/>v2.4.3 新增]
-            MEMORY_MGR[智能記憶功能<br/>高度管理 + 一鍵複製<br/>v2.4.3 新增]
+            JS[JavaScript 模块<br/>app.js + 功能模块]
+            CSS[样式系统<br/>响应式设计]
+            PROMPT[提示词管理<br/>PromptManager + UI 组件]
+            SESSION_MGR[会话管理<br/>SessionManager + 历史追踪<br/>v2.4.3 重构增强]
+            AUTO_SUBMIT[自动提交<br/>AutoSubmitManager + 倒数计时]
+            AUDIO_MGR[音效通知系统<br/>AudioManager + 自订音效<br/>v2.4.3 添加]
+            MEMORY_MGR[智能记忆功能<br/>高度管理 + 一键拷贝<br/>v2.4.3 添加]
         end
 
-        subgraph "工具層"
-            UTILS[工具模組<br/>error_handler/memory_monitor]
-            BROWSER[瀏覽器控制<br/>智能開啟]
-            NETWORK[網路工具<br/>埠管理]
-            CLEANUP[資源管理<br/>會話清理]
+        subgraph "工具层"
+            UTILS[工具模块<br/>error_handler/memory_monitor]
+            BROWSER[浏览器控制<br/>智能打开]
+            NETWORK[网络工具<br/>端口管理]
+            CLEANUP[资源管理<br/>会话清理]
         end
     end
 
-    subgraph "用戶環境"
-        BROWSER_UI[Web 瀏覽器]
-        USER[用戶互動<br/>文字/圖片/命令]
+    subgraph "用户环境"
+        BROWSER_UI[Web 浏览器]
+        USER[用户交互<br/>文本/图片/命令]
     end
 
-    subgraph "運行環境"
-        LOCAL[本地環境]
+    subgraph "运行环境"
+        LOCAL[本地环境]
         SSH[SSH Remote]
-        WSL[WSL 環境]
+        WSL[WSL 环境]
     end
 
-    AI -->|MCP 協議| SERVER
+    AI -->|MCP 协议| SERVER
     SERVER --> TOOL
     TOOL --> MANAGER
     MANAGER --> SESSION
@@ -106,7 +106,7 @@ graph TB
     WS -->|HTTP/WebSocket| BROWSER_UI
     BROWSER_UI --> USER
 
-    %% 新功能模組連接
+    %% 新功能模块连接
     JS --> PROMPT
     JS --> SESSION_MGR
     JS --> AUTO_SUBMIT
@@ -125,283 +125,283 @@ graph TB
     NETWORK --> FASTAPI
     CLEANUP --> SESSION
 
-    LOCAL -.->|環境檢測| MANAGER
-    SSH -.->|環境檢測| MANAGER
-    WSL -.->|環境檢測| MANAGER
+    LOCAL -.->|环境检测| MANAGER
+    SSH -.->|环境检测| MANAGER
+    WSL -.->|环境检测| MANAGER
 
-    USER -->|回饋提交| WS
+    USER -->|回馈提交| WS
     MODELS --> SESSION
 ```
 
-## 🎯 核心設計理念
+## 🎯 内核设计理念
 
-### 1. Web-Only 架構優勢
+### 1. Web-Only 架构优势
 
-**完全移除桌面應用依賴**：
-- 無需安裝 Electron 或其他桌面應用框架
-- 減少系統資源佔用和安全風險
-- 支援所有具備現代瀏覽器的環境
-- 簡化部署和維護流程
+**完全移除桌面应用依赖**：
+- 无需安装 Electron 或其他桌面应用框架
+- 减少系统资源占用和安全风险
+- 支持所有具备现代浏览器的环境
+- 简化部署和维护流程
 
-**跨平台統一體驗**：
-- Windows、macOS、Linux 完全一致的用戶介面
-- SSH Remote 和 WSL 環境無縫支援
-- 響應式設計適應不同螢幕尺寸
-- 無需平台特定的配置或調整
+**跨平台统一体验**：
+- Windows、macOS、Linux 完全一致的用户接口
+- SSH Remote 和 WSL 环境无缝支持
+- 响应式设计适应不同屏幕尺寸
+- 无需平台特定的配置或调整
 
-### 2. 四層架構設計
+### 2. 四层架构设计
 
-**第一層 - MCP 服務層**：
-- 實現 MCP 協議標準
-- 提供 `interactive_feedback` 核心工具
-- 統一的國際化和調試支援
-- 錯誤處理和日誌記錄
+**第一层 - MCP 服务层**：
+- 实现 MCP 协议标准
+- 提供 `interactive_feedback` 内核工具
+- 统一的国际化和调试支持
+- 错误处理和日志记录
 
-**第二層 - Web UI 管理層**：
-- 單例模式的 WebUIManager
-- 會話生命週期管理
-- 數據模型和狀態管理
-- 瀏覽器智能控制
+**第二层 - Web UI 管理层**：
+- 单例模式的 WebUIManager
+- 会话生命周期管理
+- 数据模型和状态管理
+- 浏览器智能控制
 
-**第三層 - Web 服務層**：
+**第三层 - Web 服务层**：
 - FastAPI 高性能 Web 框架
-- RESTful API 和 WebSocket 支援
-- 路由處理和中間件
-- 靜態資源服務
+- RESTful API 和 WebSocket 支持
+- 路由处理和中间件
+- 静态资源服务
 
-**第四層 - 前端交互層**：
-- 模組化 JavaScript 架構
-- 響應式 HTML/CSS 設計
-- 實時 WebSocket 通信
-- 豐富的用戶交互功能
-- **提示詞管理系統**：常用提示詞的 CRUD 操作和快速選擇
-- **會話管理功能**：會話歷史追蹤和統計分析（v2.4.3 重構增強）
-- **自動提交機制**：倒數計時器和自動回饋提交
-- **音效通知系統**：智能音效提醒和自訂音效管理（v2.4.3 新增）
-- **智能記憶功能**：輸入框高度記憶和一鍵複製（v2.4.3 新增）
+**第四层 - 前端交互层**：
+- 模块化 JavaScript 架构
+- 响应式 HTML/CSS 设计
+- 实时 WebSocket 通信
+- 丰富的用户交互功能
+- **提示词管理系统**：常用提示词的 CRUD 操作和快速选择
+- **会话管理功能**：会话历史追踪和统计分析（v2.4.3 重构增强）
+- **自动提交机制**：倒数计时器和自动回馈提交
+- **音效通知系统**：智能音效提醒和自订音效管理（v2.4.3 添加）
+- **智能记忆功能**：输入框高度记忆和一键拷贝（v2.4.3 添加）
 
-### 3. 單一活躍會話模式
+### 3. 单一活跃会话模式
 ```mermaid
 stateDiagram-v2
-    [*] --> NoSession: 系統啟動
-    NoSession --> ActiveSession: AI 首次調用
-    ActiveSession --> SessionUpdated: AI 再次調用
-    SessionUpdated --> ActiveSession: 會話切換完成
-    ActiveSession --> Cleanup: 超時或手動清理
-    Cleanup --> NoSession: 資源釋放
+    [*] --> NoSession: 系统启动
+    NoSession --> ActiveSession: AI 首次调用
+    ActiveSession --> SessionUpdated: AI 再次调用
+    SessionUpdated --> ActiveSession: 会话切换完成
+    ActiveSession --> Cleanup: 超时或手动清理
+    Cleanup --> NoSession: 资源释放
 
     note right of ActiveSession
-        只維護一個活躍會話
-        提升性能和用戶體驗
+        只维护一个活跃会话
+        提升性能和用户体验
     end note
 ```
 
-### 4. 持久化 Web UI 架構
+### 4. 持久化 Web UI 架构
 
-**智能會話管理**：
-- **瀏覽器標籤頁保持**: 避免重複開啟瀏覽器視窗
-- **WebSocket 連接復用**: 減少連接建立開銷和延遲
-- **狀態無縫切換**: 從 SUBMITTED → WAITING 自動轉換
-- **內容局部更新**: 只更新必要的 UI 元素，保持用戶操作狀態
+**智能会话管理**：
+- **浏览器标签页保持**: 避免重复打开浏览器窗口
+- **WebSocket 连接复用**: 减少连接创建开销和延迟
+- **状态无缝切换**: 从 SUBMITTED → WAITING 自动转换
+- **内容局部更新**: 只更新必要的 UI 元素，保持用户操作状态
 
-**會話持久性**：
-- 支援 AI 助手多次循環調用
-- 會話狀態在調用間保持
-- 自動超時清理機制
-- 記憶體使用優化
+**会话持久性**：
+- 支持 AI 助手多次循环调用
+- 会话状态在调用间保持
+- 自动超时清理机制
+- 内存使用优化
 
-### 5. 國際化與本地化
+### 5. 国际化与本地化
 
-**多語言支援**：
-- 繁體中文、簡體中文、英文
-- 系統語言自動檢測
-- 用戶偏好設定保存
-- 動態語言切換
+**多语言支持**：
+- 繁体中文、简体中文、英文
+- 系统语言自动检测
+- 用户偏好设置保存
+- 动态语言切换
 
 **本地化特性**：
-- 文化適應的日期時間格式
-- 本地化的錯誤訊息
-- 地區特定的 UI 佈局
-- 字體和排版優化
+- 文化适应的日期时间格式
+- 本地化的错误消息
+- 地区特定的 UI 布局
+- 字体和排版优化
 
-### 3. 智能環境檢測
+### 3. 智能环境检测
 ```mermaid
 flowchart TD
-    START[啟動檢測] --> LOCAL{本地環境?}
-    LOCAL -->|是| DIRECT[直接開啟瀏覽器]
-    LOCAL -->|否| REMOTE{SSH 遠程?}
-    REMOTE -->|是| TUNNEL[建立 SSH 隧道]
-    REMOTE -->|否| WSL{WSL 環境?}
-    WSL -->|是| WSLOPEN[WSL 瀏覽器開啟]
+    START[启动检测] --> LOCAL{本地环境?}
+    LOCAL -->|是| DIRECT[直接打开浏览器]
+    LOCAL -->|否| REMOTE{SSH 远程?}
+    REMOTE -->|是| TUNNEL[创建 SSH 隧道]
+    REMOTE -->|否| WSL{WSL 环境?}
+    WSL -->|是| WSLOPEN[WSL 浏览器打开]
     WSL -->|否| FALLBACK[回退模式]
 
-    DIRECT --> SUCCESS[成功啟動]
+    DIRECT --> SUCCESS[成功启动]
     TUNNEL --> SUCCESS
     WSLOPEN --> SUCCESS
     FALLBACK --> SUCCESS
 ```
 
-## 🔧 技術亮點
+## 🔧 技术亮点
 
-### 1. 創新的會話管理架構
+### 1. 创新的会话管理架构
 
-**單一活躍會話設計**：
+**单一活跃会话设计**：
 ```python
-# 傳統多會話設計 (已棄用)
+# 传统多会话设计 (已弃用)
 self.sessions: Dict[str, WebFeedbackSession] = {}
 
-# 創新單一活躍會話設計
+# 创新单一活跃会话设计
 self.current_session: Optional[WebFeedbackSession] = None
-self.global_active_tabs: Dict[str, dict] = {}  # 全局標籤頁狀態
+self.global_active_tabs: Dict[str, dict] = {}  # 全局标签页状态
 ```
 
-**會話生命週期管理**：
-- 自動會話創建和清理
-- 超時檢測和資源回收
-- 狀態持久化和恢復
-- 併發安全的會話操作
+**会话生命周期管理**：
+- 自动会话创建和清理
+- 超时检测和资源回收
+- 状态持久化和恢复
+- 并发安全的会话操作
 
-### 2. 智能環境檢測與適配
+### 2. 智能环境检测与适配
 
-**環境自動識別**：
-- 本地開發環境檢測
-- SSH Remote 環境識別
-- WSL 子系統檢測
-- 容器化環境支援
+**环境自动识别**：
+- 本地开发环境检测
+- SSH Remote 环境识别
+- WSL 子系统检测
+- 容器化环境支持
 
-**瀏覽器智能開啟**：
-- **活躍標籤頁檢測**: 避免重複開啟瀏覽器視窗
-- **跨平台支援**: Windows, macOS, Linux 自動適配
-- **環境感知**: SSH/WSL 環境特殊處理
-- **錯誤恢復**: 開啟失敗時的備用方案
+**浏览器智能打开**：
+- **活跃标签页检测**: 避免重复打开浏览器窗口
+- **跨平台支持**: Windows, macOS, Linux 自动适配
+- **环境感知**: SSH/WSL 环境特殊处理
+- **错误恢复**: 打开失败时的备用方案
 
-### 3. 高性能實時通信
+### 3. 高性能实时通信
 
-**WebSocket 雙向通信**：
-- 前後端狀態實時同步
-- 低延遲消息傳遞
-- 自動重連機制
-- 心跳檢測保持連接
+**WebSocket 双向通信**：
+- 前后端状态实时同步
+- 低延迟消息传递
+- 自动重连机制
+- 心跳检测保持连接
 
-**狀態管理優化**：
-- **會話更新通知**: 立即推送會話變更
-- **增量更新**: 只傳輸變更的數據
-- **狀態快照**: 支援狀態回滾和恢復
-- **錯誤處理**: 連接斷線自動重連
+**状态管理优化**：
+- **会话更新通知**: 立即推送会话变更
+- **增量更新**: 只传输变更的数据
+- **状态快照**: 支持状态回滚和恢复
+- **错误处理**: 连接断线自动重连
 
-### 4. 模組化前端架構
+### 4. 模块化前端架构
 
-**JavaScript 模組系統**：
+**JavaScript 模块系统**：
 ```javascript
-// 模組化載入順序
+// 模块化加载顺序
 utils → tab-manager → websocket-manager →
 image-handler → settings-manager → ui-manager →
 auto-refresh-manager → app
 ```
 
-**功能模組分離**：
-- 標籤頁管理 (tab-manager.js)
+**功能模块分离**：
+- 标签页管理 (tab-manager.js)
 - WebSocket 通信 (websocket-manager.js)
-- 圖片處理 (image-handler.js)
-- 設定管理 (settings-manager.js)
+- 图片处理 (image-handler.js)
+- 设置管理 (settings-manager.js)
 - UI 控制 (ui-manager.js)
-- 自動刷新 (auto-refresh-manager.js)
-- **提示詞管理模組群組**：
-  - prompt-manager.js (核心管理器)
-  - prompt-modal.js (編輯彈窗)
-  - prompt-settings-ui.js (設定界面)
-  - prompt-input-buttons.js (快速選擇按鈕)
-- **會話管理模組群組（v2.4.3 重構增強）**：
-  - session-manager.js (會話控制器)
-  - session-data-manager.js (數據管理器，新增本地存儲)
-  - session-ui-renderer.js (UI 渲染器，頁籤化設計)
-  - session-details-modal.js (詳情彈窗)
-- **音效通知模組群組（v2.4.3 新增）**：
+- 自动刷新 (auto-refresh-manager.js)
+- **提示词管理模块群组**：
+  - prompt-manager.js (内核管理器)
+  - prompt-modal.js (编辑弹窗)
+  - prompt-settings-ui.js (设置界面)
+  - prompt-input-buttons.js (快速选择按钮)
+- **会话管理模块群组（v2.4.3 重构增强）**：
+  - session-manager.js (会话控制器)
+  - session-data-manager.js (数据管理器，添加本地存储)
+  - session-ui-renderer.js (UI 渲染器，页签化设计)
+  - session-details-modal.js (详情弹窗)
+- **音效通知模块群组（v2.4.3 添加）**：
   - audio-manager.js (音效管理器)
-  - audio-settings-ui.js (音效設定界面)
-- **智能記憶功能（v2.4.3 新增）**：
-  - textarea-height-manager.js (輸入框高度管理)
-  - 一鍵複製功能整合在各 UI 組件中
-- **自動提交功能**：
-  - 整合在 app.js 中的 AutoSubmitManager
-  - 與提示詞管理和設定管理的深度整合
+  - audio-settings-ui.js (音效设置界面)
+- **智能记忆功能（v2.4.3 添加）**：
+  - textarea-height-manager.js (输入框高度管理)
+  - 一键拷贝功能集成在各 UI 组件中
+- **自动提交功能**：
+  - 集成在 app.js 中的 AutoSubmitManager
+  - 与提示词管理和设置管理的深度集成
 
-## 📊 性能特性與優化
+## 📊 性能特性与优化
 
-### 資源使用優化
+### 资源使用优化
 
-**記憶體管理**：
-- **單一會話模式**: 相比傳統多會話減少 60% 記憶體使用
-- **智能垃圾回收**: 自動清理過期會話和臨時資源
-- **記憶體監控**: 實時監控記憶體使用情況
-- **資源池化**: 重用常用對象減少分配開銷
+**内存管理**：
+- **单一会话模式**: 相比传统多会话减少 60% 内存使用
+- **智能垃圾回收**: 自动清理过期会话和临时资源
+- **内存监控**: 实时监控内存使用情况
+- **资源池化**: 重用常用对象减少分配开销
 
-**網路性能**：
-- **連接復用**: WebSocket 連接保持，減少建立開銷
-- **數據壓縮**: 自動壓縮大型數據傳輸
-- **批量操作**: 合併多個小請求減少網路往返
-- **快取策略**: 靜態資源和翻譯文件快取
+**网络性能**：
+- **连接复用**: WebSocket 连接保持，减少创建开销
+- **数据压缩**: 自动压缩大型数据传输
+- **批量操作**: 合并多个小请求减少网络往返
+- **缓存策略**: 静态资源和翻译文档缓存
 
-**啟動性能**：
-- **延遲載入**: 按需載入 JavaScript 模組
-- **預載入優化**: 關鍵資源優先載入
-- **並行初始化**: 多個組件並行啟動
-- **快速響應**: 首屏渲染時間 < 500ms
+**启动性能**：
+- **延迟加载**: 按需加载 JavaScript 模块
+- **预加载优化**: 关键资源优先加载
+- **并行初始化**: 多个组件并行启动
+- **快速响应**: 首屏渲染时间 < 500ms
 
-### 用戶體驗提升
+### 用户体验提升
 
-**交互響應性**：
-- **零等待切換**: 會話更新無需重新載入頁面
-- **即時反饋**: 用戶操作立即響應
-- **平滑動畫**: CSS3 動畫提升視覺體驗
-- **鍵盤快捷鍵**: 提升操作效率
+**交互响应性**：
+- **零等待切换**: 会话更新无需重新加载页面
+- **即时反馈**: 用户操作立即响应
+- **平滑动画**: CSS3 动画提升视觉体验
+- **键盘快捷键**: 提升操作效率
 
-**連續工作流程**：
-- **連續交互**: 支援 AI 助手多次循環調用
-- **狀態保持**: 用戶輸入和設定在會話間保持
-- **自動聚焦**: 新會話自動聚焦到輸入框
-- **智能預填**: 根據上下文預填常用內容
+**连续工作流程**：
+- **连续交互**: 支持 AI 助手多次循环调用
+- **状态保持**: 用户输入和设置在会话间保持
+- **自动聚焦**: 新会话自动聚焦到输入框
+- **智能预填**: 根据上下文预填常用内容
 
-**視覺與反饋**：
-- **實時狀態指示**: 連接狀態、處理進度即時顯示
-- **進度條**: 長時間操作顯示進度
-- **錯誤提示**: 友善的錯誤訊息和解決建議
-- **成功確認**: 操作完成的明確視覺反饋
+**视觉与反馈**：
+- **实时状态指示**: 连接状态、处理进度即时显示
+- **进度条**: 长时间操作显示进度
+- **错误提示**: 友善的错误消息和解决建议
+- **成功确认**: 操作完成的明确视觉反馈
 
-### 可靠性保證
+### 可靠性保证
 
-**錯誤處理**：
-- **優雅降級**: 功能失效時提供備用方案
-- **自動重試**: 網路錯誤自動重試機制
-- **錯誤恢復**: 從錯誤狀態自動恢復
-- **日誌記錄**: 詳細的錯誤日誌便於調試
+**错误处理**：
+- **优雅降级**: 功能失效时提供备用方案
+- **自动重试**: 网络错误自动重试机制
+- **错误恢复**: 从错误状态自动恢复
+- **日志记录**: 详细的错误日志便于调试
 
-**穩定性措施**：
-- **超時保護**: 防止長時間無響應
-- **資源限制**: 防止資源耗盡
-- **併發控制**: 安全的多執行緒操作
-- **數據驗證**: 嚴格的輸入驗證和清理
+**稳定性措施**：
+- **超时保护**: 防止长时间无响应
+- **资源限制**: 防止资源耗尽
+- **并发控制**: 安全的多线程操作
+- **数据验证**: 严格的输入验证和清理
 
-## 🆕 v2.4.3 版本新功能架構
+## 🆕 v2.4.3 版本新功能架构
 
-### 1. 音效通知系統架構
+### 1. 音效通知系统架构
 
-**系統組成**：
+**系统组成**：
 ```mermaid
 graph TB
-    subgraph "音效通知系統"
+    subgraph "音效通知系统"
         AM[AudioManager<br/>音效管理器]
-        ASU[AudioSettingsUI<br/>設定界面]
-        DA[DefaultAudios<br/>內建音效]
-        CA[CustomAudios<br/>自訂音效]
+        ASU[AudioSettingsUI<br/>设置界面]
+        DA[DefaultAudios<br/>内置音效]
+        CA[CustomAudios<br/>自订音效]
     end
 
     subgraph "Web Audio API"
-        AUDIO[Audio 物件]
-        BASE64[Base64 音效數據]
+        AUDIO[Audio 对象]
+        BASE64[Base64 音效数据]
     end
 
-    subgraph "設定存儲"
+    subgraph "设置存储"
         LS[localStorage]
         SM[SettingsManager]
     end
@@ -414,55 +414,55 @@ graph TB
     ASU --> SM
     SM --> LS
 
-    WS[WebSocket] -->|會話更新事件| AM
+    WS[WebSocket] -->|会话更新事件| AM
     AM -->|播放通知| AUDIO
 ```
 
-**核心特性**：
-- **內建音效**: 經典提示音、通知鈴聲、輕柔鐘聲
-- **自訂音效**: 支援 MP3、WAV、OGG 格式上傳
-- **音量控制**: 0-100% 可調節音量
-- **測試播放**: 即時測試音效效果
-- **設定持久化**: 音效偏好自動保存
+**内核特性**：
+- **内置音效**: 经典提示音、通知铃声、轻柔钟声
+- **自订音效**: 支持 MP3、WAV、OGG 格式上传
+- **音量控制**: 0-100% 可调节音量
+- **测试播放**: 即时测试音效效果
+- **设置持久化**: 音效偏好自动保存
 
-### 2. 會話管理重構架構
+### 2. 会话管理重构架构
 
-**從側邊欄到頁籤的遷移**：
+**从侧边栏到页签的迁移**：
 ```mermaid
 graph LR
-    subgraph "v2.4.2 設計"
-        SIDEBAR[左側邊欄<br/>會話管理]
-        COMPAT[瀏覽器相容性問題<br/>小視窗按鈕無法點擊]
+    subgraph "v2.4.2 设计"
+        SIDEBAR[左侧边栏<br/>会话管理]
+        COMPAT[浏览器兼容性问题<br/>小窗口按钮无法点击]
     end
 
-    subgraph "v2.4.3 重構"
-        TAB[獨立頁籤<br/>會話管理]
-        ENHANCED[增強功能<br/>本地存儲 + 隱私控制]
+    subgraph "v2.4.3 重构"
+        TAB[独立页签<br/>会话管理]
+        ENHANCED[增强功能<br/>本地存储 + 隐私控制]
     end
 
-    SIDEBAR -->|重構| TAB
-    COMPAT -->|解決| ENHANCED
+    SIDEBAR -->|重构| TAB
+    COMPAT -->|解决| ENHANCED
 ```
 
-**新增功能模組**：
-- **session-ui-renderer.js**: 專門的 UI 渲染器
-- **session-details-modal.js**: 會話詳情彈窗
-- **本地歷史存儲**: 支援 72 小時可配置保存期限
-- **隱私控制**: 三級用戶訊息記錄設定
-- **數據管理**: 匯出和清理功能
+**添加功能模块**：
+- **session-ui-renderer.js**: 专门的 UI 渲染器
+- **session-details-modal.js**: 会话详情弹窗
+- **本地历史存储**: 支持 72 小时可配置保存期限
+- **隐私控制**: 三级用户消息记录设置
+- **数据管理**: 导出和清理功能
 
-### 3. 智能記憶功能架構
+### 3. 智能记忆功能架构
 
-**輸入框高度管理**：
+**输入框高度管理**：
 ```mermaid
 graph TB
-    subgraph "高度管理系統"
+    subgraph "高度管理系统"
         THM[TextareaHeightManager<br/>高度管理器]
-        RO[ResizeObserver<br/>尺寸監控]
-        DEBOUNCE[防抖機制<br/>500ms 延遲]
+        RO[ResizeObserver<br/>尺寸监控]
+        DEBOUNCE[防抖机制<br/>500ms 延迟]
     end
 
-    subgraph "存儲機制"
+    subgraph "存储机制"
         SETTINGS[SettingsManager]
         HEIGHT_KEY[combinedFeedbackTextHeight]
     end
@@ -473,51 +473,51 @@ graph TB
     DEBOUNCE --> SETTINGS
     SETTINGS --> HEIGHT_KEY
 
-    THM -->|恢復高度| TEXTAREA
+    THM -->|恢复高度| TEXTAREA
 ```
 
-**一鍵複製功能**：
-- **專案路徑複製**: 點擊路徑文字即可複製
-- **會話ID複製**: 點擊會話ID即可複製
-- **複製反饋**: 視覺提示複製成功
-- **國際化支援**: 複製提示支援多語言
+**一键拷贝功能**：
+- **项目路径拷贝**: 点击路径文本即可拷贝
+- **会话ID拷贝**: 点击会话ID即可拷贝
+- **拷贝反馈**: 视觉提示拷贝成功
+- **国际化支持**: 拷贝提示支持多语言
 
-## 🔄 核心工作流程
+## 🔄 内核工作流程
 
-### AI 助手調用流程（v2.4.3 增強）
+### AI 助手调用流程（v2.4.3 增强）
 ```mermaid
 sequenceDiagram
     participant AI as AI 助手
-    participant MCP as MCP 服務
+    participant MCP as MCP 服务
     participant WM as WebUIManager
     participant UI as Web UI
     participant AUDIO as 音效管理器
-    participant User as 用戶
+    participant User as 用户
 
     AI->>MCP: interactive_feedback()
-    MCP->>WM: 創建/更新會話
-    WM->>UI: 啟動 Web 服務
-    WM->>User: 智能開啟瀏覽器
+    MCP->>WM: 创建/更新会话
+    WM->>UI: 启动 Web 服务
+    WM->>User: 智能打开浏览器
 
-    Note over UI,AUDIO: v2.4.3 新增音效通知
-    UI->>AUDIO: 會話更新事件
+    Note over UI,AUDIO: v2.4.3 添加音效通知
+    UI->>AUDIO: 会话更新事件
     AUDIO->>User: 播放通知音效
 
-    User->>UI: 提交回饋
-    UI->>WM: WebSocket 傳送
-    WM->>MCP: 回饋完成
-    MCP->>AI: 返回結果
+    User->>UI: 提交回馈
+    UI->>WM: WebSocket 发送
+    WM->>MCP: 回馈完成
+    MCP->>AI: 返回结果
 ```
 
-### 多次循環調用
+### 多次循环调用
 ```mermaid
 graph LR
-    A[AI 首次調用] --> B[用戶回饋]
-    B --> C[AI 處理回饋]
-    C --> D[AI 再次調用]
-    D --> E[會話無縫更新]
-    E --> F[用戶再次回饋]
-    F --> G[持續循環...]
+    A[AI 首次调用] --> B[用户回馈]
+    B --> C[AI 处理回馈]
+    C --> D[AI 再次调用]
+    D --> E[会话无缝更新]
+    E --> F[用户再次回馈]
+    F --> G[持续循环...]
 
     style D fill:#e1f5fe
     style E fill:#e8f5e8
@@ -525,70 +525,70 @@ graph LR
 
 ## 🔍 安全性考量
 
-### 數據安全
+### 数据安全
 
-**輸入驗證**：
-- 嚴格的參數類型檢查
-- SQL 注入防護
-- XSS 攻擊防護
-- 文件上傳安全檢查
+**输入验证**：
+- 严格的参数类型检查
+- SQL 注入防护
+- XSS 攻击防护
+- 文档上传安全检查
 
-**網路安全**：
-- 本地綁定 (127.0.0.1) 減少攻擊面
-- WebSocket 連接驗證
+**网络安全**：
+- 本地绑定 (127.0.0.1) 减少攻击面
+- WebSocket 连接验证
 - CORS 政策控制
-- 安全標頭設定
+- 安全标头设置
 
-**資源保護**：
-- 文件系統訪問限制
-- 記憶體使用限制
-- 執行時間限制
-- 臨時文件安全清理
+**资源保护**：
+- 文档系统访问限制
+- 内存使用限制
+- 运行时间限制
+- 临时文档安全清理
 
-## 🚀 部署與維護
+## 🚀 部署与维护
 
-### 環境需求
+### 环境需求
 
-**最低系統需求**：
+**最低系统需求**：
 - Python 3.11 或更高版本
-- 512MB 可用記憶體
-- 現代瀏覽器 (Chrome 90+, Firefox 88+, Safari 14+)
-- 網路連接 (本地環境可離線運行)
+- 512MB 可用内存
+- 现代浏览器 (Chrome 90+, Firefox 88+, Safari 14+)
+- 网络连接 (本地环境可脱机运行)
 
-**推薦配置**：
+**推荐配置**：
 - Python 3.12
-- 1GB 可用記憶體
-- SSD 儲存
-- 穩定的網路連接
+- 1GB 可用内存
+- SSD 保存
+- 稳定的网络连接
 
-### 維護特性
+### 维护特性
 
-**自動化維護**：
-- 自動日誌輪轉
-- 定期資源清理
-- 健康狀態檢查
-- 性能指標收集
+**自动化维护**：
+- 自动日志轮转
+- 定期资源清理
+- 健康状态检查
+- 性能指针收集
 
-**監控與診斷**：
-- 詳細的調試日誌
-- 性能指標追蹤
-- 錯誤統計分析
-- 系統資源監控
+**监控与诊断**：
+- 详细的调试日志
+- 性能指针追踪
+- 错误统计分析
+- 系统资源监控
 
 ---
 
-## 📚 相關文檔
+## 📚 相关文档
 
-- **[組件詳細說明](./component-details.md)** - 深入了解各層組件的具體實現
-- **[交互流程文檔](./interaction-flows.md)** - 詳細的用戶交互和系統流程
-- **[API 參考文檔](./api-reference.md)** - 完整的 API 端點和參數說明
-- **[部署指南](./deployment-guide.md)** - 環境配置和部署最佳實踐
+- **[组件详细说明](./component-details.md)** - 深入了解各层组件的具体实现
+- **[交互流程文档](./interaction-flows.md)** - 详细的用户交互和系统流程
+- **[API 参考文档](./api-reference.md)** - 完整的 API 端点和参数说明
+- **[部署指南](./deployment-guide.md)** - 环境配置和部署最佳实践
 
 ---
 
 **版本**: 2.4.3
-**最後更新**: 2025年6月14日
-**維護者**: Minidoracat
-**架構類型**: Web-Only 四層架構
-**v2.4.3 新功能**: 音效通知系統、會話管理重構、智能記憶功能、一鍵複製
-**歷史功能**: 提示詞管理、自動提交、會話管理、語系切換優化
+**最后更新**: 2025年6月14日
+**维护者**: Minidoracat
+**架构类型**: Web-Only 四层架构
+**v2.4.3 新功能**: 音效通知系统、会话管理重构、智能记忆功能、一键拷贝
+**历史功能**: 提示词管理、自动提交、会话管理、语系切换优化

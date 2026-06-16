@@ -1,11 +1,11 @@
 """
-資源管理器測試模組
+资源管理器测试模块
 
-測試 ResourceManager 類的各項功能，包括：
-- 臨時文件和目錄管理
-- 進程註冊和清理
-- 自動清理機制
-- 資源統計和監控
+测试 ResourceManager 类的各项功能，包括：
+- 临时文档和目录管理
+- 进程注册和清理
+- 自动清理机制
+- 资源统计和监控
 """
 
 import os
@@ -15,7 +15,7 @@ from unittest.mock import patch
 
 import pytest
 
-# 移除手動路徑操作，讓 mypy 和 pytest 使用正確的模組解析
+# 移除手动路径操作，让 mypy 和 pytest 使用正确的模块解析
 from mcp_feedback_enhanced.utils.resource_manager import (
     ResourceManager,
     cleanup_all_resources,
@@ -26,20 +26,20 @@ from mcp_feedback_enhanced.utils.resource_manager import (
 
 
 class TestResourceManager:
-    """資源管理器測試類"""
+    """资源管理器测试类"""
 
     def setup_method(self):
-        """每個測試方法前的設置"""
-        # 重置單例實例
+        """每个测试方法前的设置"""
+        # 重置单例实例
         ResourceManager._instance = None
 
-        # 重置全局資源管理器實例
+        # 重置全局资源管理器实例
         import mcp_feedback_enhanced.utils.resource_manager as rm_module
 
         rm_module._resource_manager = None
 
     def test_singleton_pattern(self):
-        """測試單例模式"""
+        """测试单例模式"""
         rm1 = ResourceManager()
         rm2 = ResourceManager()
         rm3 = get_resource_manager()
@@ -49,10 +49,10 @@ class TestResourceManager:
         assert id(rm1) == id(rm2) == id(rm3)
 
     def test_create_temp_file(self):
-        """測試創建臨時文件"""
+        """测试创建临时文档"""
         rm = get_resource_manager()
 
-        # 測試基本創建
+        # 测试基本创建
         temp_file = rm.create_temp_file(suffix=".txt", prefix="test_")
 
         assert isinstance(temp_file, str)
@@ -65,10 +65,10 @@ class TestResourceManager:
         os.remove(temp_file)
 
     def test_create_temp_dir(self):
-        """測試創建臨時目錄"""
+        """测试创建临时目录"""
         rm = get_resource_manager()
 
-        # 測試基本創建
+        # 测试基本创建
         temp_dir = rm.create_temp_dir(suffix="_test", prefix="test_")
 
         assert isinstance(temp_dir, str)
@@ -82,14 +82,14 @@ class TestResourceManager:
         os.rmdir(temp_dir)
 
     def test_convenience_functions(self):
-        """測試便捷函數"""
-        # 測試 create_temp_file 便捷函數
+        """测试便捷函数"""
+        # 测试 create_temp_file 便捷函数
         temp_file = create_temp_file(suffix=".log", prefix="conv_")
         assert isinstance(temp_file, str)
         assert os.path.exists(temp_file)
         assert temp_file.endswith(".log")
 
-        # 測試 create_temp_dir 便捷函數
+        # 测试 create_temp_dir 便捷函数
         temp_dir = create_temp_dir(suffix="_conv", prefix="conv_")
         assert isinstance(temp_dir, str)
         assert os.path.exists(temp_dir)
@@ -100,56 +100,56 @@ class TestResourceManager:
         os.rmdir(temp_dir)
 
     def test_register_process_with_popen(self):
-        """測試註冊 Popen 進程"""
+        """测试注册 Popen 进程"""
         rm = get_resource_manager()
 
-        # 創建一個簡單的進程
+        # 创建一个简单的进程
         process = subprocess.Popen(
             ["python", "-c", "import time; time.sleep(0.1)"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
 
-        # 註冊進程
-        pid = rm.register_process(process, description="測試進程")
+        # 注册进程
+        pid = rm.register_process(process, description="测试进程")
 
         assert pid == process.pid
         assert pid in rm.processes
-        assert rm.processes[pid]["description"] == "測試進程"
+        assert rm.processes[pid]["description"] == "测试进程"
         assert rm.processes[pid]["process"] is process
 
-        # 等待進程結束
+        # 等待进程结束
         process.wait()
 
     def test_register_process_with_pid(self):
-        """測試註冊 PID"""
+        """测试注册 PID"""
         rm = get_resource_manager()
 
-        # 使用當前進程的 PID
+        # 使用当前进程的 PID
         current_pid = os.getpid()
 
-        # 註冊 PID
-        registered_pid = rm.register_process(current_pid, description="當前進程")
+        # 注册 PID
+        registered_pid = rm.register_process(current_pid, description="当前进程")
 
         assert registered_pid == current_pid
         assert current_pid in rm.processes
-        assert rm.processes[current_pid]["description"] == "當前進程"
+        assert rm.processes[current_pid]["description"] == "当前进程"
         assert rm.processes[current_pid]["process"] is None
 
     def test_unregister_temp_file(self):
-        """測試取消臨時文件追蹤"""
+        """测试取消临时文档追踪"""
         rm = get_resource_manager()
 
-        # 創建臨時文件
+        # 创建临时文档
         temp_file = rm.create_temp_file()
         assert temp_file in rm.temp_files
 
-        # 取消追蹤
+        # 取消追踪
         result = rm.unregister_temp_file(temp_file)
         assert result is True
         assert temp_file not in rm.temp_files
 
-        # 再次取消追蹤（應該返回 False）
+        # 再次取消追踪（应该返回 False）
         result = rm.unregister_temp_file(temp_file)
         assert result is False
 
@@ -158,42 +158,42 @@ class TestResourceManager:
             os.remove(temp_file)
 
     def test_unregister_process(self):
-        """測試取消進程追蹤"""
+        """测试取消进程追踪"""
         rm = get_resource_manager()
 
-        # 註冊進程
+        # 注册进程
         current_pid = os.getpid()
-        rm.register_process(current_pid, description="測試進程")
+        rm.register_process(current_pid, description="测试进程")
         assert current_pid in rm.processes
 
-        # 取消追蹤
+        # 取消追踪
         result = rm.unregister_process(current_pid)
         assert result is True
         assert current_pid not in rm.processes
 
-        # 再次取消追蹤（應該返回 False）
+        # 再次取消追踪（应该返回 False）
         result = rm.unregister_process(current_pid)
         assert result is False
 
     def test_cleanup_temp_files(self):
-        """測試清理臨時文件"""
+        """测试清理临时文档"""
         rm = get_resource_manager()
 
-        # 創建多個臨時文件
+        # 创建多个临时文档
         temp_files = []
         for i in range(3):
             temp_file = rm.create_temp_file(prefix=f"cleanup_test_{i}_")
             temp_files.append(temp_file)
 
-        # 確認文件都存在
+        # 确认文档都存在
         for temp_file in temp_files:
             assert os.path.exists(temp_file)
             assert temp_file in rm.temp_files
 
-        # 等待一小段時間讓文件有年齡
+        # 等待一小段时间让文档有年龄
         time.sleep(0.1)
 
-        # 執行清理（max_age=0 清理所有文件）
+        # 运行清理（max_age=0 清理所有文档）
         cleaned_count = rm.cleanup_temp_files(max_age=0)
 
         assert cleaned_count == 3
@@ -202,21 +202,21 @@ class TestResourceManager:
             assert temp_file not in rm.temp_files
 
     def test_cleanup_temp_dirs(self):
-        """測試清理臨時目錄"""
+        """测试清理临时目录"""
         rm = get_resource_manager()
 
-        # 創建多個臨時目錄
+        # 创建多个临时目录
         temp_dirs = []
         for i in range(2):
             temp_dir = rm.create_temp_dir(prefix=f"cleanup_test_{i}_")
             temp_dirs.append(temp_dir)
 
-        # 確認目錄都存在
+        # 确认目录都存在
         for temp_dir in temp_dirs:
             assert os.path.exists(temp_dir)
             assert temp_dir in rm.temp_dirs
 
-        # 執行清理
+        # 运行清理
         cleaned_count = rm.cleanup_temp_dirs()
 
         assert cleaned_count == 2
@@ -225,21 +225,21 @@ class TestResourceManager:
             assert temp_dir not in rm.temp_dirs
 
     def test_cleanup_all(self):
-        """測試全面清理"""
+        """测试全面清理"""
         rm = get_resource_manager()
 
-        # 創建各種資源
+        # 创建各种资源
         temp_file = rm.create_temp_file(prefix="cleanup_all_")
         temp_dir = rm.create_temp_dir(prefix="cleanup_all_")
 
-        # 註冊進程
+        # 注册进程
         current_pid = os.getpid()
-        rm.register_process(current_pid, description="測試進程", auto_cleanup=False)
+        rm.register_process(current_pid, description="测试进程", auto_cleanup=False)
 
-        # 等待一小段時間讓文件有年齡
+        # 等待一小段时间让文档有年龄
         time.sleep(0.1)
 
-        # 執行全面清理
+        # 运行全面清理
         results = rm.cleanup_all()
 
         assert isinstance(results, dict)
@@ -248,25 +248,25 @@ class TestResourceManager:
         assert "processes" in results
         assert "file_handles" in results
 
-        # 檢查文件和目錄是否被清理
+        # 检查文档和目录是否被清理
         assert not os.path.exists(temp_file)
         assert not os.path.exists(temp_dir)
         assert temp_file not in rm.temp_files
         assert temp_dir not in rm.temp_dirs
 
-        # 進程不應該被清理（auto_cleanup=False）
+        # 进程不应该被清理（auto_cleanup=False）
         assert current_pid in rm.processes
 
     def test_get_resource_stats(self):
-        """測試獲取資源統計"""
+        """测试获取资源统计"""
         rm = get_resource_manager()
 
-        # 創建一些資源
+        # 创建一些资源
         temp_file = rm.create_temp_file()
         temp_dir = rm.create_temp_dir()
-        rm.register_process(os.getpid(), description="統計測試")
+        rm.register_process(os.getpid(), description="统计测试")
 
-        # 獲取統計
+        # 获取统计
         stats = rm.get_resource_stats()
 
         assert isinstance(stats, dict)
@@ -286,14 +286,14 @@ class TestResourceManager:
         os.rmdir(temp_dir)
 
     def test_get_detailed_info(self):
-        """測試獲取詳細信息"""
+        """测试获取详细信息"""
         rm = get_resource_manager()
 
-        # 創建一些資源
+        # 创建一些资源
         temp_file = rm.create_temp_file(prefix="detail_test_")
-        rm.register_process(os.getpid(), description="詳細信息測試")
+        rm.register_process(os.getpid(), description="详细信息测试")
 
-        # 獲取詳細信息
+        # 获取详细信息
         info = rm.get_detailed_info()
 
         assert isinstance(info, dict)
@@ -304,16 +304,16 @@ class TestResourceManager:
 
         assert temp_file in info["temp_files"]
         assert os.getpid() in info["processes"]
-        assert info["processes"][os.getpid()]["description"] == "詳細信息測試"
+        assert info["processes"][os.getpid()]["description"] == "详细信息测试"
 
         # 清理
         os.remove(temp_file)
 
     def test_configure(self):
-        """測試配置功能"""
+        """测试配置功能"""
         rm = get_resource_manager()
 
-        # 測試配置更新
+        # 测试配置更新
         rm.configure(
             auto_cleanup_enabled=False, cleanup_interval=120, temp_file_max_age=1800
         )
@@ -322,22 +322,22 @@ class TestResourceManager:
         assert rm.cleanup_interval == 120
         assert rm.temp_file_max_age == 1800
 
-        # 測試最小值限制
+        # 测试最小值限制
         rm.configure(
-            cleanup_interval=30,  # 小於最小值 60
-            temp_file_max_age=100,  # 小於最小值 300
+            cleanup_interval=30,  # 小于最小值 60
+            temp_file_max_age=100,  # 小于最小值 300
         )
 
-        assert rm.cleanup_interval == 60  # 應該被限制為最小值
-        assert rm.temp_file_max_age == 300  # 應該被限制為最小值
+        assert rm.cleanup_interval == 60  # 应该被限制为最小值
+        assert rm.temp_file_max_age == 300  # 应该被限制为最小值
 
     def test_cleanup_all_convenience_function(self):
-        """測試全面清理便捷函數"""
-        # 創建一些資源
+        """测试全面清理便捷函数"""
+        # 创建一些资源
         temp_file = create_temp_file(prefix="conv_cleanup_")
         temp_dir = create_temp_dir(prefix="conv_cleanup_")
 
-        # 執行清理
+        # 运行清理
         results = cleanup_all_resources()
 
         assert isinstance(results, dict)
@@ -345,57 +345,57 @@ class TestResourceManager:
         assert not os.path.exists(temp_dir)
 
     def test_error_handling(self):
-        """測試錯誤處理"""
+        """测试错误处理"""
         rm = get_resource_manager()
 
-        # 測試創建臨時文件時的錯誤處理
+        # 测试创建临时文档时的错误处理
         with patch("tempfile.mkstemp", side_effect=OSError("Mock error")):
             with pytest.raises(OSError):
                 rm.create_temp_file()
 
-        # 測試創建臨時目錄時的錯誤處理
+        # 测试创建临时目录时的错误处理
         with patch("tempfile.mkdtemp", side_effect=OSError("Mock error")):
             with pytest.raises(OSError):
                 rm.create_temp_dir()
 
     def test_file_handle_registration(self):
-        """測試文件句柄註冊"""
+        """测试文档句柄注册"""
         rm = get_resource_manager()
 
-        # 創建一個文件句柄
+        # 创建一个文档句柄
         temp_file = rm.create_temp_file()
         with open(temp_file, "w") as f:
             f.write("test")
             rm.register_file_handle(f)
 
-            # 檢查是否註冊成功
+            # 检查是否注册成功
             assert len(rm.file_handles) > 0
 
         # 清理
         os.remove(temp_file)
 
     def test_auto_cleanup_thread(self):
-        """測試自動清理線程"""
+        """测试自动清理线程"""
         rm = get_resource_manager()
 
-        # 確保自動清理已啟動
+        # 确保自动清理已启动
         assert rm.auto_cleanup_enabled is True
         assert rm._cleanup_thread is not None
         assert rm._cleanup_thread.is_alive()
 
-        # 測試停止自動清理
-        # 修復 unreachable 錯誤 - 確保方法調用後的代碼可達
+        # 测试停止自动清理
+        # 修复 unreachable 错误 - 确保方法调用后的代码可达
         try:
             rm.stop_auto_cleanup()
         except Exception:
-            pass  # 忽略可能的異常
+            pass  # 忽略可能的异常
         assert rm._cleanup_thread is None
 
-        # 重新啟動
+        # 重新启动
         rm.configure(auto_cleanup_enabled=True)  # type: ignore[unreachable]
         assert rm._cleanup_thread is not None
 
 
 if __name__ == "__main__":
-    # 運行測試
+    # 运行测试
     pytest.main([__file__, "-v"])

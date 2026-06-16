@@ -10,21 +10,13 @@
 
 ## 🎯 核心概念
 
-這是一個 [MCP 伺服器](https://modelcontextprotocol.io/)，建立**回饋導向的開發工作流程**，提供**Web UI 和桌面應用程式**雙重選擇，完美適配本地、**SSH 遠端開發環境**與 **WSL (Windows Subsystem for Linux) 環境**。透過引導 AI 與用戶確認而非進行推測性操作，可將多次工具調用合併為單次回饋導向請求，大幅節省平台成本並提升開發效率。
-
-**🌐 雙重介面架構優勢：**
-- 🖥️ **桌面應用程式**：原生跨平台桌面體驗，支援 Windows、macOS、Linux
-- 🌐 **Web UI 介面**：無需 GUI 依賴，適合遠端和 WSL 環境
-- 🔧 **靈活部署**：根據環境需求選擇最適合的介面模式
-- 📦 **統一功能**：兩種介面提供完全相同的功能體驗
-
-**🖥️ 桌面應用程式：** v2.5.0 新增跨平台桌面應用程式支援，基於 Tauri 框架，支援 Windows、macOS、Linux 三大平台，提供原生桌面體驗。
+這是一個 [MCP 伺服器](https://modelcontextprotocol.io/)，建立**回饋導向的開發工作流程**，提供 **Web UI** 介面，完美適配本地、**SSH 遠端開發環境**與 **WSL (Windows Subsystem for Linux) 環境**。透過引導 AI 與用戶確認而非進行推測性操作，可將多次工具調用合併為單次回饋導向請求，大幅節省平台成本並提升開發效率。
 
 **支援平台：** [Cursor](https://www.cursor.com) | [Cline](https://cline.bot) | [Windsurf](https://windsurf.com) | [Augment](https://www.augmentcode.com) | [Trae](https://www.trae.ai)
 
 ### 🔄 工作流程
 1. **AI 調用** → `feedback-angel` 工具
-2. **介面啟動** → 自動開啟桌面應用程式或瀏覽器介面（根據配置）
+2. **介面啟動** → 自動開啟瀏覽器介面
 3. **智能互動** → 提示詞選擇、文字輸入、圖片上傳、自動提交
 4. **即時回饋** → WebSocket 連線即時傳遞資訊給 AI
 5. **會話追蹤** → 自動記錄會話歷史與統計
@@ -32,11 +24,9 @@
 
 ## 🌟 主要功能
 
-### 🖥️ 雙重介面支援
-- **桌面應用程式**：基於 Tauri 的跨平台原生應用，支援 Windows、macOS、Linux
-- **Web UI 介面**：輕量級瀏覽器介面，適合遠端和 WSL 環境
+### 🌐 Web UI 介面
+- **輕量級瀏覽器介面**：適合本地、遠端和 WSL 環境
 - **環境自動檢測**：智能識別 SSH Remote、WSL 等特殊環境
-- **統一功能體驗**：兩種介面提供完全相同的功能
 
 ### 📝 智能工作流程
 - **提示詞管理**：常用提示詞的 CRUD 操作、使用統計、智能排序
@@ -60,7 +50,7 @@
 
 ## 🌐 介面預覽
 
-### Web UI 介面（v2.5.0 - 支援桌面應用程式）
+### Web UI 介面
 
 <div align="center">
   <img src="docs/zh-TW/images/web1.png" width="400" alt="Web UI 主介面 - 提示詞管理與自動提交" />
@@ -75,15 +65,7 @@
 
 </details>
 
-*Web UI 介面 - 支援桌面應用程式和 Web 介面，提供提示詞管理、自動提交、會話追蹤等智能功能*
-
-### 桌面應用程式介面（v2.5.0 新功能）
-
-<div align="center">
-  <img src="docs/zh-TW/images/desktop1.png" width="600" alt="桌面應用程式 - 原生跨平台桌面體驗" />
-</div>
-
-*桌面應用程式 - 基於 Tauri 框架的原生跨平台桌面應用，支援 Windows、macOS、Linux，提供與 Web UI 完全相同的功能*
+*Web UI 介面 - 提供提示詞管理、自動提交、會話追蹤等智能功能*
 
 **快捷鍵支援**
 - `Ctrl+Enter`（Windows/Linux）/ `Cmd+Enter`（macOS）：提交回饋（主鍵盤與數字鍵盤皆支援）
@@ -133,29 +115,7 @@ pip install uv
 }
 ```
 
-**桌面應用程式配置**（v2.5.0 新功能 - 使用原生桌面應用程式）：
-```json
-{
-  "mcpServers": {
-    "feedback-angel": {
-      "command": "uvx",
-      "args": ["feedback-angel@latest"],
-      "timeout": 600,
-      "env": {
-        "MCP_DESKTOP_MODE": "true",
-        "MCP_WEB_HOST": "127.0.0.1",
-        "MCP_WEB_PORT": "8765",
-        "MCP_DEBUG": "false"
-      },
-      "autoApprove": ["interactive_feedback"]
-    }
-  }
-}
-```
-
-**配置檔案範例**：
-- 桌面模式：[examples/mcp-config-desktop.json](examples/mcp-config-desktop.json)
-- Web 模式：[examples/mcp-config-web.json](examples/mcp-config-web.json)
+**配置檔案範例**：[examples/mcp-config-web.json](examples/mcp-config-web.json)
 
 ### 3. 設定提示工程
 為了獲得最佳效果，請在 AI 助手中添加以下規則：
@@ -174,8 +134,9 @@ pip install uv
 | `MCP_DEBUG` | 調試模式 | `true`/`false` | `false` |
 | `MCP_WEB_HOST` | Web UI 主機綁定 | IP 地址或主機名 | `127.0.0.1` |
 | `MCP_WEB_PORT` | Web UI 端口 | `1024-65535` | `8765` |
-| `MCP_DESKTOP_MODE` | 桌面應用程式模式 | `true`/`false` | `false` |
 | `MCP_LANGUAGE` | 強制指定介面語言 | `zh-TW`/`zh-CN`/`en` | 自動偵測 |
+| `MCP_IMAGE_DIR` | 圖片檔案存儲目錄（啟用檔案模式） | 檔案路徑 | 未設定（base64 模式） |
+| `MCP_IMAGE_MODE` | AI 圖片引用方式（檔案模式下） | `filepath`/`url` | `filepath` |
 
 **`MCP_WEB_HOST` 說明**：
 - `127.0.0.1`（預設）：僅本地存取，安全性較高
@@ -185,7 +146,7 @@ pip install uv
 - 用於強制指定介面語言，覆蓋系統自動偵測
 - 支援的語言代碼：
   - `zh-TW`：繁體中文
-  - `zh-CN`：簡體中文  
+  - `zh-CN`：簡體中文
   - `en`：英文
 - 語言偵測優先順序：
   1. 用戶在介面中保存的語言設定（最高優先級）
@@ -194,6 +155,16 @@ pip install uv
   4. 系統預設語言
   5. 回退到預設語言（繁體中文）
 
+**`MCP_IMAGE_DIR` 說明**：
+- 未設定（預設）：圖片使用 base64 編碼處理（原始行為）
+- 設定為目錄路徑：啟用檔案存儲模式 - 圖片保存到磁碟而非 base64
+- 路徑無效時回退到系統暫存目錄
+- 新會話建立時自動清理舊會話圖片
+
+**`MCP_IMAGE_MODE` 說明**（僅在 `MCP_IMAGE_DIR` 設定時生效）：
+- `filepath`（預設）：AI 收到本地檔案路徑（使用 Read 工具查看圖片）
+- `url`：AI 收到 HTTP URL（使用 WebFetch 工具查看圖片）
+
 ### 測試選項
 ```bash
 # 版本查詢
@@ -201,7 +172,6 @@ uvx feedback-angel@latest version       # 檢查版本
 
 # 介面測試
 uvx feedback-angel@latest test --web    # 測試 Web UI (自動持續運行)
-uvx feedback-angel@latest test --desktop # 測試桌面應用程式 (v2.5.0 新功能)
 
 # 調試模式
 MCP_DEBUG=true uvx feedback-angel@latest test
@@ -224,18 +194,10 @@ uv sync
 # 功能測試
 make test-func                                           # 標準功能測試
 make test-web                                            # Web UI 測試 (持續運行)
-make test-desktop-func                                   # 桌面應用功能測試
 
 # 或直接使用指令
 uv run python -m mcp_feedback_enhanced test              # 標準功能測試
 uvx --no-cache --with-editable . feedback-angel test --web   # Web UI 測試 (持續運行)
-uvx --no-cache --with-editable . feedback-angel test --desktop # 桌面應用測試
-
-# 桌面應用構建 (v2.5.0 新功能)
-make build-desktop                                       # 構建桌面應用 (debug 模式)
-make build-desktop-release                               # 構建桌面應用 (release 模式)
-make test-desktop                                        # 測試桌面應用
-make clean-desktop                                       # 清理桌面構建產物
 
 # 單元測試
 make test                                                # 運行所有單元測試
@@ -252,7 +214,6 @@ make quick-check                                        # 快速檢查並自動�
 - **單元測試**：測試各個模組的獨立功能
 - **覆蓋率測試**：生成 HTML 覆蓋率報告到 `htmlcov/` 目錄
 - **品質檢查**：包含 linting、格式化、類型檢查
-
 
 ## 🆕 版本更新記錄
 
@@ -312,29 +273,9 @@ A: 請確認 MCP 工具狀態為綠燈。**解決方法**：反覆開關 MCP 工
 A: **解決方法**：完全關閉並重新啟動 VS Code 或 Cursor，重新開啟專案。
 
 ### 🔧 一般問題
-**Q: 如何使用桌面應用程式？**
-A: v2.5.0 新增跨平台桌面應用程式支援。在 MCP 配置中設定 `"MCP_DESKTOP_MODE": "true"` 即可啟用：
-```json
-{
-  "mcpServers": {
-    "feedback-angel": {
-      "command": "uvx",
-      "args": ["feedback-angel@latest"],
-      "timeout": 600,
-      "env": {
-        "MCP_DESKTOP_MODE": "true",
-        "MCP_WEB_PORT": "8765"
-      },
-      "autoApprove": ["interactive_feedback"]
-    }
-  }
-}
-```
-**配置檔案範例**：[examples/mcp-config-desktop.json](examples/mcp-config-desktop.json)
-
 **Q: 如何使用舊版 PyQt6 GUI 介面？**
 A: v2.4.0 版本已完全移除 PyQt6 GUI 依賴。如需使用舊版 GUI，請指定 v2.3.0 或更早版本：`uvx feedback-angel@2.3.0`
-**注意**：舊版本不包含新功能（提示詞管理、自動提交、會話管理、桌面應用程式等）。
+**注意**：舊版本不包含新功能（提示詞管理、自動提交、會話管理等）。
 
 **Q: 出現 "Unexpected token 'D'" 錯誤**
 A: 調試輸出干擾。設置 `MCP_DEBUG=false` 或移除該環境變數。

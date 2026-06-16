@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-訊息代碼驗證腳本
+消息代码验证脚本
 
-驗證後端訊息代碼、前端常量和翻譯文件的一致性。
-確保所有訊息代碼都有對應的定義和翻譯。
+验证后端消息代码、前端常量和翻译文档的一致性。
+确保所有消息代码都有对应的定义和翻译。
 
 使用方式：
     python scripts/validate_message_codes.py
@@ -16,10 +16,10 @@ from pathlib import Path
 
 
 def extract_backend_codes():
-    """從後端 Python 文件中提取所有訊息代碼"""
+    """从后端 Python 文档中提取所有消息代码"""
     codes = set()
 
-    # 讀取 MessageCodes 類別
+    # 读取 MessageCodes 类别
     message_codes_file = Path(
         "src/mcp_feedback_enhanced/web/constants/message_codes.py"
     )
@@ -35,10 +35,10 @@ def extract_backend_codes():
 
 
 def extract_frontend_codes():
-    """從前端 JavaScript 文件中提取所有訊息代碼"""
+    """从前端 JavaScript 文档中提取所有消息代码"""
     codes = set()
 
-    # 讀取 message-codes.js
+    # 读取 message-codes.js
     message_codes_js = Path(
         "src/mcp_feedback_enhanced/web/static/js/modules/constants/message-codes.js"
     )
@@ -49,11 +49,11 @@ def extract_frontend_codes():
         matches = re.findall(pattern, content)
         codes.update(matches)
 
-    # 讀取 utils.js 中的 fallback 訊息
+    # 读取 utils.js 中的 fallback 消息
     utils_js = Path("src/mcp_feedback_enhanced/web/static/js/modules/utils.js")
     if utils_js.exists():
         content = utils_js.read_text(encoding="utf-8")
-        # 匹配 fallbackMessages 物件中的 key
+        # 匹配 fallbackMessages 对象中的 key
         fallback_section = re.search(
             r"fallbackMessages\s*=\s*\{([^}]+)\}", content, re.DOTALL
         )
@@ -66,7 +66,7 @@ def extract_frontend_codes():
 
 
 def extract_translation_keys(locale="zh-TW"):
-    """從翻譯文件中提取所有 key"""
+    """从翻译文档中提取所有 key"""
     keys = set()
 
     translation_file = Path(
@@ -77,7 +77,7 @@ def extract_translation_keys(locale="zh-TW"):
             data = json.loads(translation_file.read_text(encoding="utf-8"))
 
             def extract_keys_recursive(obj, prefix=""):
-                """遞迴提取所有 key"""
+                """递归提取所有 key"""
                 if isinstance(obj, dict):
                     for key, value in obj.items():
                         full_key = f"{prefix}.{key}" if prefix else key
@@ -88,50 +88,50 @@ def extract_translation_keys(locale="zh-TW"):
 
             extract_keys_recursive(data)
         except json.JSONDecodeError as e:
-            print(f"❌ 無法解析翻譯文件 {translation_file}: {e}")
+            print(f"❌ 无法解析翻译文档 {translation_file}: {e}")
 
     return keys
 
 
 def validate_message_codes():
-    """執行驗證"""
-    print("🔍 開始驗證訊息代碼一致性...\n")
+    """运行验证"""
+    print("🔍 开始验证消息代码一致性...\n")
 
-    # 提取所有代碼
+    # 提取所有代码
     backend_codes = extract_backend_codes()
     frontend_codes = extract_frontend_codes()
 
-    # 提取所有語言的翻譯 key
+    # 提取所有语言的翻译 key
     locales = ["zh-TW", "en", "zh-CN"]
     translation_keys = {}
     for locale in locales:
         translation_keys[locale] = extract_translation_keys(locale)
 
-    # 統計資訊
-    print("📊 統計資訊：")
-    print(f"  - 後端訊息代碼數量: {len(backend_codes)}")
-    print(f"  - 前端訊息代碼數量: {len(frontend_codes)}")
+    # 统计信息
+    print("📊 统计信息：")
+    print(f"  - 后端消息代码数量: {len(backend_codes)}")
+    print(f"  - 前端消息代码数量: {len(frontend_codes)}")
     for locale in locales:
-        print(f"  - {locale} 翻譯 key 數量: {len(translation_keys[locale])}")
+        print(f"  - {locale} 翻译 key 数量: {len(translation_keys[locale])}")
     print()
 
-    # 驗證後端代碼是否都有前端定義
-    print("🔍 檢查後端代碼是否都有前端定義...")
+    # 验证后端代码是否都有前端定义
+    print("🔍 检查后端代码是否都有前端定义...")
     missing_in_frontend = backend_codes - frontend_codes
     if missing_in_frontend:
-        print("❌ 以下後端代碼在前端沒有定義:")
+        print("❌ 以下后端代码在前端没有定义:")
         for code in sorted(missing_in_frontend):
             print(f"   - {code}")
     else:
-        print("✅ 所有後端代碼都有前端定義")
+        print("✅ 所有后端代码都有前端定义")
     print()
 
-    # 驗證前端代碼是否都有翻譯
-    print("🔍 檢查前端代碼是否都有翻譯...")
+    # 验证前端代码是否都有翻译
+    print("🔍 检查前端代码是否都有翻译...")
     all_frontend_codes = backend_codes | frontend_codes
 
     for locale in locales:
-        print(f"\n  檢查 {locale} 翻譯:")
+        print(f"\n  检查 {locale} 翻译:")
         missing_translations = set()
 
         for code in all_frontend_codes:
@@ -139,16 +139,16 @@ def validate_message_codes():
                 missing_translations.add(code)
 
         if missing_translations:
-            print("  ❌ 缺少以下翻譯:")
+            print("  ❌ 缺少以下翻译:")
             for code in sorted(missing_translations):
                 print(f"     - {code}")
         else:
-            print("  ✅ 所有代碼都有翻譯")
+            print("  ✅ 所有代码都有翻译")
 
-    # 檢查是否有多餘的翻譯
-    print("\n🔍 檢查是否有多餘的翻譯...")
+    # 检查是否有多余的翻译
+    print("\n🔍 检查是否有多余的翻译...")
     for locale in locales:
-        # 過濾掉非訊息代碼的 key（如 buttons, labels 等）
+        # 过滤掉非消息代码的 key（如 buttons, labels 等）
         message_keys = {
             k
             for k in translation_keys[locale]
@@ -169,13 +169,13 @@ def validate_message_codes():
 
         extra_translations = message_keys - all_frontend_codes
         if extra_translations:
-            print(f"\n  {locale} 有多餘的翻譯:")
+            print(f"\n  {locale} 有多余的翻译:")
             for key in sorted(extra_translations):
                 print(f"     - {key}")
 
-    print("\n✅ 驗證完成！")
+    print("\n✅ 验证完成！")
 
-    # 返回是否有錯誤
+    # 返回是否有错误
     return len(missing_in_frontend) == 0 and all(
         len(
             [
@@ -190,13 +190,13 @@ def validate_message_codes():
 
 
 if __name__ == "__main__":
-    # 切換到專案根目錄
+    # 切换到项目根目录
     script_dir = Path(__file__).parent
     project_root = script_dir.parent
     import os
 
     os.chdir(project_root)
 
-    # 執行驗證
+    # 运行验证
     success = validate_message_codes()
     sys.exit(0 if success else 1)

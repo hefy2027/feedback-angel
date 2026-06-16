@@ -1,19 +1,19 @@
 /**
- * MCP Feedback Enhanced - 標籤頁管理模組
+ * MCP Feedback Enhanced - 标签页管理模块
  * ====================================
  * 
- * 處理多標籤頁狀態同步和智能瀏覽器管理
+ * 处理多标签页状态同步和智能浏览器管理
  */
 
 (function() {
     'use strict';
 
-    // 確保命名空間和依賴存在
+    // 确保命名空间和依赖存在
     window.MCPFeedback = window.MCPFeedback || {};
     const Utils = window.MCPFeedback.Utils;
 
     /**
-     * 標籤頁管理器建構函數
+     * 标签页管理器建构函数
      */
     function TabManager() {
         this.tabId = Utils.generateId('tab');
@@ -26,36 +26,36 @@
     }
 
     /**
-     * 初始化標籤頁管理器
+     * 初始化标签页管理器
      */
     TabManager.prototype.init = function() {
-        // 註冊當前標籤頁
+        // 注册当前标签页
         this.registerTab();
 
-        // 向服務器註冊標籤頁
+        // 向服务器注册标签页
         this.registerTabToServer();
 
-        // 開始心跳
+        // 开始心跳
         this.startHeartbeat();
 
-        // 監聽頁面關閉事件
+        // 监听页面关闭事件
         const self = this;
         window.addEventListener('beforeunload', function() {
             self.unregisterTab();
         });
 
-        // 監聽 localStorage 變化（其他標籤頁的狀態變化）
+        // 监听 localStorage 变化（其他标签页的状态变化）
         window.addEventListener('storage', function(e) {
             if (e.key === self.storageKey) {
                 self.handleTabsChange();
             }
         });
 
-        console.log('📋 TabManager 初始化完成，標籤頁 ID: ' + this.tabId);
+        console.log('📋 TabManager 初始化完成，标签页 ID: ' + this.tabId);
     };
 
     /**
-     * 註冊當前標籤頁
+     * 注册当前标签页
      */
     TabManager.prototype.registerTab = function() {
         const tabs = this.getActiveTabs();
@@ -70,11 +70,11 @@
         }
         
         this.updateLastActivity();
-        console.log('✅ 標籤頁已註冊: ' + this.tabId);
+        console.log('✅ 标签页已注册: ' + this.tabId);
     };
 
     /**
-     * 註銷當前標籤頁
+     * 注销当前标签页
      */
     TabManager.prototype.unregisterTab = function() {
         const tabs = this.getActiveTabs();
@@ -84,11 +84,11 @@
             localStorage.setItem(this.storageKey, JSON.stringify(tabs));
         }
         
-        console.log('❌ 標籤頁已註銷: ' + this.tabId);
+        console.log('❌ 标签页已注销: ' + this.tabId);
     };
 
     /**
-     * 開始心跳
+     * 开始心跳
      */
     TabManager.prototype.startHeartbeat = function() {
         const self = this;
@@ -98,7 +98,7 @@
     };
 
     /**
-     * 發送心跳
+     * 发送心跳
      */
     TabManager.prototype.sendHeartbeat = function() {
         const tabs = this.getActiveTabs();
@@ -114,7 +114,7 @@
     };
 
     /**
-     * 更新最後活動時間
+     * 更新最后活动时间
      */
     TabManager.prototype.updateLastActivity = function() {
         if (Utils.isLocalStorageSupported()) {
@@ -123,7 +123,7 @@
     };
 
     /**
-     * 獲取活躍標籤頁
+     * 获取活跃标签页
      */
     TabManager.prototype.getActiveTabs = function() {
         if (!Utils.isLocalStorageSupported()) {
@@ -134,7 +134,7 @@
             const stored = localStorage.getItem(this.storageKey);
             const tabs = stored ? Utils.safeJsonParse(stored, {}) : {};
 
-            // 清理過期的標籤頁
+            // 清理过期的标签页
             const now = Date.now();
             const expiredThreshold = Utils.CONSTANTS.TAB_EXPIRED_THRESHOLD;
 
@@ -148,13 +148,13 @@
 
             return tabs;
         } catch (error) {
-            console.error('獲取活躍標籤頁失敗:', error);
+            console.error('获取活跃标签页失败:', error);
             return {};
         }
     };
 
     /**
-     * 檢查是否有活躍標籤頁
+     * 检查是否有活跃标签页
      */
     TabManager.prototype.hasActiveTabs = function() {
         const tabs = this.getActiveTabs();
@@ -162,7 +162,7 @@
     };
 
     /**
-     * 檢查是否為唯一活躍標籤頁
+     * 检查是否为唯一活跃标签页
      */
     TabManager.prototype.isOnlyActiveTab = function() {
         const tabs = this.getActiveTabs();
@@ -170,15 +170,15 @@
     };
 
     /**
-     * 處理其他標籤頁狀態變化
+     * 处理其他标签页状态变化
      */
     TabManager.prototype.handleTabsChange = function() {
-        console.log('🔄 檢測到其他標籤頁狀態變化');
-        // 可以在這裡添加更多邏輯
+        console.log('🔄 检测到其他标签页状态变化');
+        // 可以在这里添加更多逻辑
     };
 
     /**
-     * 向服務器註冊標籤頁
+     * 向服务器注册标签页
      */
     TabManager.prototype.registerTabToServer = function() {
         const self = this;
@@ -196,21 +196,21 @@
             if (response.ok) {
                 return response.json();
             } else {
-                console.warn('⚠️ 標籤頁服務器註冊失敗: ' + response.status);
+                console.warn('⚠️ 标签页服务器注册失败: ' + response.status);
             }
         })
         .then(function(data) {
             if (data) {
-                console.log('✅ 標籤頁已向服務器註冊: ' + self.tabId);
+                console.log('✅ 标签页已向服务器注册: ' + self.tabId);
             }
         })
         .catch(function(error) {
-            console.warn('⚠️ 標籤頁服務器註冊錯誤: ' + error);
+            console.warn('⚠️ 标签页服务器注册错误: ' + error);
         });
     };
 
     /**
-     * 清理資源
+     * 清理资源
      */
     TabManager.prototype.cleanup = function() {
         if (this.heartbeatInterval) {
@@ -221,15 +221,15 @@
     };
 
     /**
-     * 獲取當前標籤頁 ID
+     * 获取当前标签页 ID
      */
     TabManager.prototype.getTabId = function() {
         return this.tabId;
     };
 
-    // 將 TabManager 加入命名空間
+    // 将 TabManager 加入命名空间
     window.MCPFeedback.TabManager = TabManager;
 
-    console.log('✅ TabManager 模組載入完成');
+    console.log('✅ TabManager 模块加载完成');
 
 })();

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-內存監控系統測試
+内存监控系统测试
 ================
 
-測試集成式內存監控系統的功能，包括：
-- 內存監控準確性
-- 警告機制
-- 清理觸發
-- 統計和分析功能
+测试集成式内存监控系统的功能，包括：
+- 内存监控准确性
+- 警告机制
+- 清理触发
+- 统计和分析功能
 """
 
 from datetime import datetime, timedelta
@@ -24,10 +24,10 @@ from mcp_feedback_enhanced.utils.memory_monitor import (
 
 
 class TestMemorySnapshot:
-    """測試內存快照數據類"""
+    """测试内存快照数据类"""
 
     def test_memory_snapshot_creation(self):
-        """測試內存快照創建"""
+        """测试内存快照创建"""
         snapshot = MemorySnapshot(
             timestamp=datetime.now(),
             system_total=8 * 1024**3,  # 8GB
@@ -47,16 +47,16 @@ class TestMemorySnapshot:
 
 
 class TestMemoryAlert:
-    """測試內存警告數據類"""
+    """测试内存警告数据类"""
 
     def test_memory_alert_creation(self):
-        """測試內存警告創建"""
+        """测试内存警告创建"""
         alert = MemoryAlert(
             level="warning",
-            message="內存使用率較高: 85.0%",
+            message="内存使用率较高: 85.0%",
             timestamp=datetime.now(),
             memory_percent=85.0,
-            recommended_action="考慮執行輕量級清理",
+            recommended_action="考虑运行轻量级清理",
         )
 
         assert alert.level == "warning"
@@ -65,10 +65,10 @@ class TestMemoryAlert:
 
 
 class TestMemoryMonitor:
-    """測試內存監控器"""
+    """测试内存监控器"""
 
     def test_monitor_initialization(self):
-        """測試監控器初始化"""
+        """测试监控器初始化"""
         monitor = MemoryMonitor(
             warning_threshold=0.7,
             critical_threshold=0.85,
@@ -86,8 +86,8 @@ class TestMemoryMonitor:
 
     @patch("mcp_feedback_enhanced.utils.memory_monitor.psutil")
     def test_collect_memory_snapshot(self, mock_psutil):
-        """測試內存快照收集"""
-        # 模擬 psutil 返回值
+        """测试内存快照收集"""
+        # 仿真 psutil 返回值
         mock_virtual_memory = Mock()
         mock_virtual_memory.total = 8 * 1024**3
         mock_virtual_memory.available = 4 * 1024**3
@@ -114,7 +114,7 @@ class TestMemoryMonitor:
         assert snapshot.process_percent == 1.25
 
     def test_memory_status_classification(self):
-        """測試內存狀態分類"""
+        """测试内存状态分类"""
         monitor = MemoryMonitor(
             warning_threshold=0.8, critical_threshold=0.9, emergency_threshold=0.95
         )
@@ -125,20 +125,20 @@ class TestMemoryMonitor:
         assert monitor._get_memory_status(0.97) == "emergency"
 
     def test_callback_management(self):
-        """測試回調函數管理"""
+        """测试回调函数管理"""
         monitor = MemoryMonitor()
 
         cleanup_callback = Mock()
         alert_callback = Mock()
 
-        # 添加回調
+        # 添加回调
         monitor.add_cleanup_callback(cleanup_callback)
         monitor.add_alert_callback(alert_callback)
 
         assert cleanup_callback in monitor.cleanup_callbacks
         assert alert_callback in monitor.alert_callbacks
 
-        # 移除回調
+        # 移除回调
         monitor.remove_cleanup_callback(cleanup_callback)
         monitor.remove_alert_callback(alert_callback)
 
@@ -147,32 +147,32 @@ class TestMemoryMonitor:
 
     @patch("mcp_feedback_enhanced.utils.memory_monitor.gc")
     def test_cleanup_triggering(self, mock_gc):
-        """測試清理觸發"""
+        """测试清理触发"""
         monitor = MemoryMonitor()
         cleanup_callback = Mock()
         monitor.add_cleanup_callback(cleanup_callback)
 
         mock_gc.collect.return_value = 42
 
-        # 測試普通清理
+        # 测试普通清理
         monitor._trigger_cleanup()
 
         assert monitor.cleanup_triggers_count == 1
         cleanup_callback.assert_called_once()
         mock_gc.collect.assert_called()
 
-        # 測試緊急清理
+        # 测试紧急清理
         cleanup_callback.reset_mock()
         mock_gc.collect.reset_mock()
 
         monitor._trigger_emergency_cleanup()
 
-        # 緊急清理會調用多次垃圾回收
+        # 紧急清理会调用多次垃圾回收
         assert mock_gc.collect.call_count == 3
 
     @patch("mcp_feedback_enhanced.utils.memory_monitor.psutil")
     def test_memory_usage_checking(self, mock_psutil):
-        """測試內存使用檢查和警告觸發"""
+        """测试内存使用检查和警告触发"""
         monitor = MemoryMonitor(
             warning_threshold=0.8, critical_threshold=0.9, emergency_threshold=0.95
         )
@@ -182,12 +182,12 @@ class TestMemoryMonitor:
         monitor.add_alert_callback(alert_callback)
         monitor.add_cleanup_callback(cleanup_callback)
 
-        # 模擬不同的內存使用情況
+        # 仿真不同的内存使用情况
         test_cases = [
-            (75.0, "normal", 0, 0),  # 正常情況
-            (85.0, "warning", 1, 0),  # 警告情況
-            (92.0, "critical", 1, 1),  # 危險情況
-            (97.0, "emergency", 1, 1),  # 緊急情況
+            (75.0, "normal", 0, 0),  # 正常情况
+            (85.0, "warning", 1, 0),  # 警告情况
+            (92.0, "critical", 1, 1),  # 危险情况
+            (97.0, "emergency", 1, 1),  # 紧急情况
         ]
 
         for (
@@ -196,13 +196,13 @@ class TestMemoryMonitor:
             expected_alerts,
             expected_cleanups,
         ) in test_cases:
-            # 重置計數器
+            # 重置计数器
             alert_callback.reset_mock()
             cleanup_callback.reset_mock()
             monitor.alerts.clear()
             monitor.cleanup_triggers_count = 0
 
-            # 創建模擬快照
+            # 创建仿真快照
             snapshot = MemorySnapshot(
                 timestamp=datetime.now(),
                 system_total=8 * 1024**3,
@@ -215,10 +215,10 @@ class TestMemoryMonitor:
                 gc_objects=10000,
             )
 
-            # 檢查內存使用
+            # 检查内存使用
             monitor._check_memory_usage(snapshot)
 
-            # 驗證結果
+            # 验证结果
             assert monitor._get_memory_status(memory_percent / 100.0) == expected_status
 
             if expected_alerts > 0:
@@ -229,13 +229,13 @@ class TestMemoryMonitor:
                 assert cleanup_callback.call_count == expected_cleanups
 
     def test_memory_trend_analysis(self):
-        """測試內存趨勢分析"""
+        """测试内存趋势分析"""
         monitor = MemoryMonitor()
 
-        # 測試數據不足的情況
+        # 测试数据不足的情况
         assert monitor._analyze_memory_trend() == "insufficient_data"
 
-        # 添加穩定趨勢的快照
+        # 添加稳定趋势的快照
         base_time = datetime.now()
         for i in range(10):
             snapshot = MemorySnapshot(
@@ -243,7 +243,7 @@ class TestMemoryMonitor:
                 system_total=8 * 1024**3,
                 system_available=4 * 1024**3,
                 system_used=4 * 1024**3,
-                system_percent=50.0 + (i % 2),  # 輕微波動
+                system_percent=50.0 + (i % 2),  # 轻微波动
                 process_rss=100 * 1024**2,
                 process_vms=200 * 1024**2,
                 process_percent=1.25,
@@ -253,7 +253,7 @@ class TestMemoryMonitor:
 
         assert monitor._analyze_memory_trend() == "stable"
 
-        # 清空並添加遞增趨勢的快照
+        # 清空并添加递增趋势的快照
         monitor.snapshots.clear()
         for i in range(10):
             snapshot = MemorySnapshot(
@@ -261,7 +261,7 @@ class TestMemoryMonitor:
                 system_total=8 * 1024**3,
                 system_available=4 * 1024**3,
                 system_used=4 * 1024**3,
-                system_percent=50.0 + i * 2,  # 遞增趨勢
+                system_percent=50.0 + i * 2,  # 递增趋势
                 process_rss=100 * 1024**2,
                 process_vms=200 * 1024**2,
                 process_percent=1.25,
@@ -273,8 +273,8 @@ class TestMemoryMonitor:
 
     @patch("mcp_feedback_enhanced.utils.memory_monitor.psutil")
     def test_get_current_memory_info(self, mock_psutil):
-        """測試獲取當前內存信息"""
-        # 模擬 psutil 返回值
+        """测试获取当前内存信息"""
+        # 仿真 psutil 返回值
         mock_virtual_memory = Mock()
         mock_virtual_memory.total = 8 * 1024**3
         mock_virtual_memory.available = 4 * 1024**3
@@ -303,11 +303,11 @@ class TestMemoryMonitor:
         assert info["status"] == "normal"
 
     def test_memory_stats_calculation(self):
-        """測試內存統計計算"""
+        """测试内存统计计算"""
         monitor = MemoryMonitor()
         monitor.start_time = datetime.now() - timedelta(minutes=5)
 
-        # 添加一些測試快照
+        # 添加一些测试快照
         base_time = datetime.now()
         for i in range(5):
             snapshot = MemorySnapshot(
@@ -348,10 +348,10 @@ class TestMemoryMonitor:
         assert stats.monitoring_duration > 0
 
     def test_export_memory_data(self):
-        """測試內存數據導出"""
+        """测试内存数据导出"""
         monitor = MemoryMonitor()
 
-        # 添加一些測試數據
+        # 添加一些测试数据
         monitor.alerts.append(
             MemoryAlert(
                 level="warning",
@@ -381,7 +381,7 @@ class TestMemoryMonitor:
 
 
 def test_global_memory_monitor_singleton():
-    """測試全域內存監控器單例模式"""
+    """测试全域内存监控器单例模式"""
     monitor1 = get_memory_monitor()
     monitor2 = get_memory_monitor()
 

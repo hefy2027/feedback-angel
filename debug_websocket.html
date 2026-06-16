@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket 診斷工具</title>
+    <title>WebSocket 诊断工具</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -58,23 +58,23 @@
 </head>
 <body>
     <div class="container">
-        <h1>🔧 WebSocket 診斷工具</h1>
+        <h1>🔧 WebSocket 诊断工具</h1>
 
         <div id="status" class="status info">
-            準備開始診斷...
+            准备开始诊断...
         </div>
 
         <div>
             <label>WebSocket URL:</label>
             <input type="text" id="wsUrl" value="ws://127.0.0.1:8767/ws" style="width: 300px;">
-            <button onclick="testConnection()">🔗 測試連接</button>
-            <button onclick="clearLog()">🗑️ 清除日誌</button>
+            <button onclick="testConnection()">🔗 测试连接</button>
+            <button onclick="clearLog()">🗑️ 清除日志</button>
         </div>
 
         <div>
-            <label>發送消息:</label>
+            <label>发送消息:</label>
             <input type="text" id="messageInput" placeholder='{"type": "get_status"}' style="width: 300px;">
-            <button onclick="sendMessage()">📤 發送</button>
+            <button onclick="sendMessage()">📤 发送</button>
         </div>
 
         <div id="log" class="log">等待操作...</div>
@@ -90,32 +90,32 @@
             logElement.textContent += `[${timestamp}] ${message}\n`;
             logElement.scrollTop = logElement.scrollHeight;
 
-            // 更新狀態
+            // 更新状态
             statusElement.textContent = message;
             statusElement.className = `status ${type}`;
         }
 
         function clearLog() {
             logElement.textContent = '';
-            log('日誌已清除');
+            log('日志已清除');
         }
 
         function testConnection() {
             const url = document.getElementById('wsUrl').value;
 
             if (websocket) {
-                log('關閉現有連接...', 'warning');
+                log('关闭现有连接...', 'warning');
                 websocket.close();
                 websocket = null;
             }
 
-            log(`嘗試連接到: ${url}`, 'info');
+            log(`尝试连接到: ${url}`, 'info');
 
             try {
                 websocket = new WebSocket(url);
 
                 websocket.onopen = function(event) {
-                    log('✅ WebSocket 連接成功！', 'success');
+                    log('✅ WebSocket 连接成功！', 'success');
                 };
 
                 websocket.onmessage = function(event) {
@@ -123,24 +123,24 @@
 
                     try {
                         const data = JSON.parse(event.data);
-                        log(`📋 解析後的數據: ${JSON.stringify(data, null, 2)}`, 'info');
+                        log(`📋 解析后的数据: ${JSON.stringify(data, null, 2)}`, 'info');
                     } catch (e) {
-                        log(`⚠️ JSON 解析失敗: ${e.message}`, 'warning');
+                        log(`⚠️ JSON 解析失败: ${e.message}`, 'warning');
                     }
                 };
 
                 websocket.onclose = function(event) {
-                    log(`🔌 連接已關閉 - Code: ${event.code}, Reason: ${event.reason}`, 'warning');
+                    log(`🔌 连接已关闭 - Code: ${event.code}, Reason: ${event.reason}`, 'warning');
                     websocket = null;
                 };
 
                 websocket.onerror = function(error) {
-                    log(`❌ WebSocket 錯誤: ${error}`, 'error');
+                    log(`❌ WebSocket 错误: ${error}`, 'error');
                     console.error('WebSocket error:', error);
                 };
 
             } catch (error) {
-                log(`❌ 連接失敗: ${error.message}`, 'error');
+                log(`❌ 连接失败: ${error.message}`, 'error');
             }
         }
 
@@ -149,31 +149,31 @@
             const message = messageInput.value.trim();
 
             if (!message) {
-                log('⚠️ 請輸入要發送的消息', 'warning');
+                log('⚠️ 请输入要发送的消息', 'warning');
                 return;
             }
 
             if (!websocket || websocket.readyState !== WebSocket.OPEN) {
-                log('❌ WebSocket 未連接', 'error');
+                log('❌ WebSocket 未连接', 'error');
                 return;
             }
 
             try {
                 websocket.send(message);
-                log(`📤 已發送: ${message}`, 'info');
+                log(`📤 已发送: ${message}`, 'info');
                 messageInput.value = '';
             } catch (error) {
-                log(`❌ 發送失敗: ${error.message}`, 'error');
+                log(`❌ 发送失败: ${error.message}`, 'error');
             }
         }
 
-        // 頁面加載時自動測試
+        // 页面加载时自动测试
         window.onload = function() {
-            log('🚀 WebSocket 診斷工具已載入');
-            log('💡 點擊 "測試連接" 開始診斷');
+            log('🚀 WebSocket 诊断工具已加载');
+            log('💡 点击 "测试连接" 开始诊断');
         };
 
-        // Enter 鍵發送消息
+        // Enter 键发送消息
         document.getElementById('messageInput').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 sendMessage();

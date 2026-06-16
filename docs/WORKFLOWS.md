@@ -1,53 +1,53 @@
-# GitHub Actions 工作流程說明
+# GitHub Actions 工作流程说明
 
-本項目使用 GitHub Actions 自動化發佈流程。
+本项目使用 GitHub Actions 自动化发布流程。
 
-## 🏗️ 工作流程架構
+## 🏗️ 工作流程架构
 
-### 發佈工作流程 (publish.yml)
+### 发布工作流程 (publish.yml)
 
-**用途**: 負責版本管理和 PyPI 發佈
+**用途**: 负责版本管理和 PyPI 发布
 
-**觸發條件**:
-- 手動觸發 (workflow_dispatch)
+**触发条件**:
+- 手动触发 (workflow_dispatch)
 
 **功能**:
-- 自動或手動版本號管理
-- 發佈到 PyPI
-- 創建 GitHub Release
+- 自动或手动版本号管理
+- 发布到 PyPI
+- 创建 GitHub Release
 
 ## 🚀 使用方式
 
-### 發佈新版本時
+### 发布新版本时
 
-1. **手動觸發發佈** - 在 GitHub Actions 頁面運行 "Auto Release to PyPI"
-2. **選擇發佈選項**:
+1. **手动触发发布** - 在 GitHub Actions 页面运行 "Auto Release to PyPI"
+2. **选择发布选项**:
    - `version_type`: patch/minor/major (或使用 custom_version)
 
-## 📋 最佳實踐
+## 📋 最佳实践
 
-### 發佈流程
+### 发布流程
 
-1. **準備發佈**:
-   - 更新 CHANGELOG 文件
-   - 測試本地功能
+1. **准备发布**:
+   - 更新 CHANGELOG 文档
+   - 测试本地功能
 
-2. **執行發佈**:
-   - 手動觸發 "Auto Release to PyPI" 工作流程
-   - 選擇適當的版本類型
+2. **运行发布**:
+   - 手动触发 "Auto Release to PyPI" 工作流程
+   - 选择适当的版本类型
 
-3. **發佈後驗證**:
-   - 檢查 PyPI 上的新版本
-   - 測試安裝: `uvx feedback-angel@latest`
+3. **发布后验证**:
+   - 检查 PyPI 上的新版本
+   - 测试安装: `uvx feedback-angel@latest`
 
 ## 🔧 故障排除
 
-### 發佈流程問題
+### 发布流程问题
 
-1. **版本衝突**:
-   - 檢查 PyPI 上是否已存在相同版本
-   - 確認版本號格式正確 (X.Y.Z)
+1. **版本冲突**:
+   - 检查 PyPI 上是否已存在相同版本
+   - 确认版本号格式正确 (X.Y.Z)
 
-2. **權限問題**:
-   - 確認 PYPI_API_TOKEN 密鑰已正確設置
-   - 檢查 GitHub Token 權限
+2. **权限问题**:
+   - 确认 PYPI_API_TOKEN 密钥已正确设置
+   - 检查 GitHub Token 权限

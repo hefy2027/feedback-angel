@@ -1,5 +1,5 @@
 /**
- * MCP Feedback Enhanced - DOM 操作工具模組
+ * MCP Feedback Enhanced - DOM 操作工具模块
  * ==========================================
  * 
  * 提供通用的 DOM 操作和元素管理功能
@@ -8,40 +8,40 @@
 (function() {
     'use strict';
 
-    // 確保命名空間存在
+    // 确保命名空间存在
     window.MCPFeedback = window.MCPFeedback || {};
     window.MCPFeedback.Utils = window.MCPFeedback.Utils || {};
 
     /**
-     * DOM 工具類
+     * DOM 工具类
      */
     const DOMUtils = {
         /**
-         * 安全查詢選擇器
+         * 安全查找选择器
          */
         safeQuerySelector: function(selector) {
             try {
                 return document.querySelector(selector);
             } catch (error) {
-                console.warn('查詢選擇器失敗:', selector, error);
+                console.warn('查找选择器失败:', selector, error);
                 return null;
             }
         },
 
         /**
-         * 安全查詢所有選擇器
+         * 安全查找所有选择器
          */
         safeQuerySelectorAll: function(selector) {
             try {
                 return document.querySelectorAll(selector);
             } catch (error) {
-                console.warn('查詢所有選擇器失敗:', selector, error);
+                console.warn('查找所有选择器失败:', selector, error);
                 return [];
             }
         },
 
         /**
-         * 安全設置文本內容
+         * 安全设置文本内容
          */
         safeSetTextContent: function(element, text) {
             if (element && typeof element.textContent !== 'undefined') {
@@ -52,7 +52,7 @@
         },
 
         /**
-         * 安全設置 HTML 內容
+         * 安全设置 HTML 内容
          */
         safeSetInnerHTML: function(element, html) {
             if (element && typeof element.innerHTML !== 'undefined') {
@@ -63,7 +63,7 @@
         },
 
         /**
-         * 安全添加 CSS 類
+         * 安全添加 CSS 类
          */
         safeAddClass: function(element, className) {
             if (element && element.classList && className) {
@@ -74,7 +74,7 @@
         },
 
         /**
-         * 安全移除 CSS 類
+         * 安全移除 CSS 类
          */
         safeRemoveClass: function(element, className) {
             if (element && element.classList && className) {
@@ -85,7 +85,7 @@
         },
 
         /**
-         * 安全切換 CSS 類
+         * 安全切换 CSS 类
          */
         safeToggleClass: function(element, className) {
             if (element && element.classList && className) {
@@ -96,14 +96,14 @@
         },
 
         /**
-         * 檢查元素是否包含指定類
+         * 检查元素是否包含指定类
          */
         hasClass: function(element, className) {
             return element && element.classList && element.classList.contains(className);
         },
 
         /**
-         * 創建元素
+         * 创建元素
          */
         createElement: function(tagName, options) {
             options = options || {};
@@ -152,7 +152,7 @@
         },
 
         /**
-         * 清空元素內容
+         * 清空元素内容
          */
         clearElement: function(element) {
             if (element) {
@@ -165,7 +165,7 @@
         },
 
         /**
-         * 顯示元素
+         * 显示元素
          */
         showElement: function(element) {
             if (element) {
@@ -176,7 +176,7 @@
         },
 
         /**
-         * 隱藏元素
+         * 隐藏元素
          */
         hideElement: function(element) {
             if (element) {
@@ -187,7 +187,7 @@
         },
 
         /**
-         * 切換元素顯示狀態
+         * 切换元素显示状态
          */
         toggleElement: function(element) {
             if (element) {
@@ -204,7 +204,7 @@
         },
 
         /**
-         * 設置元素屬性
+         * 设置元素属性
          */
         setAttribute: function(element, name, value) {
             if (element && name) {
@@ -215,7 +215,7 @@
         },
 
         /**
-         * 獲取元素屬性
+         * 获取元素属性
          */
         getAttribute: function(element, name) {
             if (element && name) {
@@ -225,7 +225,7 @@
         },
 
         /**
-         * 移除元素屬性
+         * 移除元素属性
          */
         removeAttribute: function(element, name) {
             if (element && name) {
@@ -236,7 +236,7 @@
         },
 
         /**
-         * 添加事件監聽器
+         * 添加事件监听器
          */
         addEventListener: function(element, event, handler, options) {
             if (element && event && typeof handler === 'function') {
@@ -247,7 +247,7 @@
         },
 
         /**
-         * 移除事件監聽器
+         * 移除事件监听器
          */
         removeEventListener: function(element, event, handler, options) {
             if (element && event && typeof handler === 'function') {
@@ -258,7 +258,7 @@
         },
 
         /**
-         * 獲取元素的邊界矩形
+         * 获取元素的边界矩形
          */
         getBoundingRect: function(element) {
             if (element && typeof element.getBoundingClientRect === 'function') {
@@ -268,7 +268,7 @@
         },
 
         /**
-         * 檢查元素是否在視窗內
+         * 检查元素是否在窗口内
          */
         isElementInViewport: function(element) {
             const rect = this.getBoundingRect(element);
@@ -283,7 +283,7 @@
         },
 
         /**
-         * 滾動到元素
+         * 滚动到元素
          */
         scrollToElement: function(element, options) {
             if (element && typeof element.scrollIntoView === 'function') {
@@ -294,11 +294,11 @@
         },
 
         /**
-         * 防抖函數 - 延遲執行，在指定時間內重複調用會重置計時器
-         * @param {Function} func - 要防抖的函數
-         * @param {number} delay - 延遲時間（毫秒）
-         * @param {boolean} immediate - 是否立即執行第一次調用
-         * @returns {Function} 防抖後的函數
+         * 防抖函数 - 延迟运行，在指定时间内重复调用会重置计时器
+         * @param {Function} func - 要防抖的函数
+         * @param {number} delay - 延迟时间（毫秒）
+         * @param {boolean} immediate - 是否立即运行第一次调用
+         * @returns {Function} 防抖后的函数
          */
         debounce: function(func, delay, immediate) {
             let timeoutId;
@@ -324,10 +324,10 @@
         },
 
         /**
-         * 節流函數 - 限制函數執行頻率，在指定時間內最多執行一次
-         * @param {Function} func - 要節流的函數
-         * @param {number} limit - 時間間隔（毫秒）
-         * @returns {Function} 節流後的函數
+         * 节流函数 - 限制函数运行频率，在指定时间内最多运行一次
+         * @param {Function} func - 要节流的函数
+         * @param {number} limit - 时间间隔（毫秒）
+         * @returns {Function} 节流后的函数
          */
         throttle: function(func, limit) {
             let inThrottle;
@@ -346,16 +346,16 @@
         },
 
         /**
-         * 創建帶有防抖的函數包裝器
-         * @param {Object} target - 目標對象
-         * @param {string} methodName - 方法名稱
-         * @param {number} delay - 防抖延遲時間
-         * @param {boolean} immediate - 是否立即執行
-         * @returns {Function} 原始函數的引用
+         * 创建带有防抖的函数包装器
+         * @param {Object} target - 目标对象
+         * @param {string} methodName - 方法名称
+         * @param {number} delay - 防抖延迟时间
+         * @param {boolean} immediate - 是否立即运行
+         * @returns {Function} 原始函数的引用
          */
         wrapWithDebounce: function(target, methodName, delay, immediate) {
             if (!target || typeof target[methodName] !== 'function') {
-                console.warn('無法為不存在的方法添加防抖:', methodName);
+                console.warn('无法为不存在的方法添加防抖:', methodName);
                 return null;
             }
 
@@ -365,15 +365,15 @@
         },
 
         /**
-         * 創建帶有節流的函數包裝器
-         * @param {Object} target - 目標對象
-         * @param {string} methodName - 方法名稱
-         * @param {number} limit - 節流時間間隔
-         * @returns {Function} 原始函數的引用
+         * 创建带有节流的函数包装器
+         * @param {Object} target - 目标对象
+         * @param {string} methodName - 方法名称
+         * @param {number} limit - 节流时间间隔
+         * @returns {Function} 原始函数的引用
          */
         wrapWithThrottle: function(target, methodName, limit) {
             if (!target || typeof target[methodName] !== 'function') {
-                console.warn('無法為不存在的方法添加節流:', methodName);
+                console.warn('无法为不存在的方法添加节流:', methodName);
                 return null;
             }
 
@@ -383,10 +383,10 @@
         }
     };
 
-    // 將 DOMUtils 加入命名空間
+    // 将 DOMUtils 加入命名空间
     window.MCPFeedback.DOMUtils = DOMUtils;
-    window.MCPFeedback.Utils.DOM = DOMUtils; // 保持向後相容
+    window.MCPFeedback.Utils.DOM = DOMUtils; // 保持向后兼容
 
-    console.log('✅ DOMUtils 模組載入完成');
+    console.log('✅ DOMUtils 模块加载完成');
 
 })();

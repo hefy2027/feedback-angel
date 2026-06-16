@@ -1,47 +1,47 @@
 /**
- * MCP Feedback Enhanced - 狀態處理工具模組
+ * MCP Feedback Enhanced - 状态处理工具模块
  * ========================================
  * 
- * 提供狀態映射、顏色管理和狀態轉換功能
+ * 提供状态映射、颜色管理和状态转换功能
  */
 
 (function() {
     'use strict';
 
-    // 確保命名空間存在
+    // 确保命名空间存在
     window.MCPFeedback = window.MCPFeedback || {};
     window.MCPFeedback.Utils = window.MCPFeedback.Utils || {};
 
     /**
-     * 狀態工具類
+     * 状态工具类
      */
     const StatusUtils = {
         /**
-         * 獲取會話狀態文字（使用 i18n）
+         * 获取会话状态文本（使用 i18n）
          */
         getSessionStatusText: function(status) {
             if (!window.i18nManager) {
-                // 回退到硬編碼文字
+                // 回退到硬编码文本
                 const fallbackMap = {
-                    'waiting': '等待回饋',
-                    'waiting_for_feedback': '等待回饋',
-                    'active': '進行中',
-                    'feedback_submitted': '已提交回饋',
+                    'waiting': '等待回馈',
+                    'waiting_for_feedback': '等待回馈',
+                    'active': '进行中',
+                    'feedback_submitted': '已提交回馈',
                     'completed': '已完成',
-                    'timeout': '已逾時',
-                    'error': '錯誤',
-                    'expired': '已過期',
-                    'connecting': '連接中',
-                    'connected': '已連接',
-                    'disconnected': '已斷開',
-                    'processing': '處理中',
-                    'ready': '就緒',
-                    'closed': '已關閉'
+                    'timeout': '已逾时',
+                    'error': '错误',
+                    'expired': '已过期',
+                    'connecting': '连接中',
+                    'connected': '已连接',
+                    'disconnected': '已断开',
+                    'processing': '处理中',
+                    'ready': '就绪',
+                    'closed': '已关闭'
                 };
                 return fallbackMap[status] || status;
             }
 
-            // 使用 i18n 翻譯
+            // 使用 i18n 翻译
             const i18nKeyMap = {
                 'waiting': 'connectionMonitor.waiting',
                 'waiting_for_feedback': 'connectionMonitor.waiting',
@@ -64,22 +64,22 @@
         },
 
         /**
-         * 獲取連線狀態文字（使用 i18n）
+         * 获取连接状态文本（使用 i18n）
          */
         getConnectionStatusText: function(status) {
             if (!window.i18nManager) {
-                // 回退到硬編碼文字
+                // 回退到硬编码文本
                 const fallbackMap = {
-                    'connecting': '連接中',
-                    'connected': '已連接',
-                    'disconnected': '已斷開',
-                    'reconnecting': '重連中',
-                    'error': '連接錯誤'
+                    'connecting': '连接中',
+                    'connected': '已连接',
+                    'disconnected': '已断开',
+                    'reconnecting': '重连中',
+                    'error': '连接错误'
                 };
                 return fallbackMap[status] || status;
             }
 
-            // 使用 i18n 翻譯
+            // 使用 i18n 翻译
             const i18nKeyMap = {
                 'connecting': 'connectionMonitor.connecting',
                 'connected': 'connectionMonitor.connected',
@@ -93,7 +93,7 @@
         },
 
         /**
-         * 狀態顏色映射
+         * 状态颜色映射
          */
         STATUS_COLOR_MAP: {
             'waiting': '#9c27b0',
@@ -114,16 +114,16 @@
         },
 
         /**
-         * 獲取連線品質標籤（使用 i18n）
+         * 获取连接品质标签（使用 i18n）
          */
         getConnectionQualityLabel: function(level) {
             if (!window.i18nManager) {
-                // 回退到硬編碼文字
+                // 回退到硬编码文本
                 const fallbackLabels = {
-                    'excellent': '優秀',
+                    'excellent': '优秀',
                     'good': '良好',
                     'fair': '一般',
-                    'poor': '較差',
+                    'poor': '较差',
                     'unknown': '未知'
                 };
                 return fallbackLabels[level] || level;
@@ -134,7 +134,7 @@
         },
 
         /**
-         * 連線品質等級
+         * 连接品质等级
          */
         CONNECTION_QUALITY_LEVELS: {
             'excellent': { threshold: 50, color: '#4caf50' },
@@ -144,20 +144,20 @@
         },
 
         /**
-         * 獲取狀態文字（統一入口，優先使用新方法）
+         * 获取状态文本（统一入口，优先使用新方法）
          */
         getStatusText: function(status) {
             if (!status) {
                 return window.i18nManager ? window.i18nManager.t('sessionManagement.sessionDetails.unknown') : '未知';
             }
 
-            // 優先嘗試會話狀態
+            // 优先尝试会话状态
             const sessionText = this.getSessionStatusText(status);
             if (sessionText !== status) {
                 return sessionText;
             }
 
-            // 然後嘗試連線狀態
+            // 然后尝试连接状态
             const connectionText = this.getConnectionStatusText(status);
             if (connectionText !== status) {
                 return connectionText;
@@ -167,7 +167,7 @@
         },
 
         /**
-         * 獲取狀態顏色
+         * 获取状态颜色
          */
         getStatusColor: function(status) {
             if (!status) return '#757575';
@@ -175,7 +175,7 @@
         },
 
         /**
-         * 根據延遲計算連線品質
+         * 根据延迟计算连接品质
          */
         calculateConnectionQuality: function(latency) {
             if (typeof latency !== 'number' || latency < 0) {
@@ -204,7 +204,7 @@
         },
 
         /**
-         * 獲取信號強度等級（基於連線品質）
+         * 获取信号强度等级（基于连接品质）
          */
         getSignalStrength: function(quality) {
             const strengthMap = {
@@ -219,7 +219,7 @@
         },
 
         /**
-         * 檢查狀態是否為已完成狀態
+         * 检查状态是否为已完成状态
          */
         isCompletedStatus: function(status) {
             const completedStatuses = [
@@ -234,7 +234,7 @@
         },
 
         /**
-         * 檢查狀態是否為活躍狀態
+         * 检查状态是否为活跃状态
          */
         isActiveStatus: function(status) {
             const activeStatuses = [
@@ -249,7 +249,7 @@
         },
 
         /**
-         * 檢查狀態是否為錯誤狀態
+         * 检查状态是否为错误状态
          */
         isErrorStatus: function(status) {
             const errorStatuses = ['error', 'timeout', 'disconnected'];
@@ -257,7 +257,7 @@
         },
 
         /**
-         * 檢查狀態是否為連接中狀態
+         * 检查状态是否为连接中状态
          */
         isConnectingStatus: function(status) {
             const connectingStatuses = ['connecting', 'reconnecting'];
@@ -265,7 +265,7 @@
         },
 
         /**
-         * 獲取狀態優先級（用於排序）
+         * 获取状态优先级（用于排序）
          */
         getStatusPriority: function(status) {
             const priorityMap = {
@@ -290,7 +290,7 @@
         },
 
         /**
-         * 創建狀態徽章 HTML
+         * 创建状态徽章 HTML
          */
         createStatusBadge: function(status, options) {
             options = options || {};
@@ -302,7 +302,7 @@
         },
 
         /**
-         * 更新狀態指示器
+         * 更新状态指示器
          */
         updateStatusIndicator: function(element, status, options) {
             if (!element) return false;
@@ -311,21 +311,21 @@
             const text = this.getStatusText(status);
             const color = this.getStatusColor(status);
 
-            // 更新文字
+            // 更新文本
             if (options.updateText !== false) {
                 element.textContent = text;
             }
 
-            // 更新顏色
+            // 更新颜色
             if (options.updateColor !== false) {
                 element.style.color = color;
             }
 
-            // 更新 CSS 類
+            // 更新 CSS 类
             if (options.updateClass !== false) {
-                // 移除舊的狀態類
+                // 移除旧的状态类
                 element.className = element.className.replace(/\b(waiting|active|completed|error|connecting|connected|disconnected|reconnecting|processing|ready|closed|expired|timeout|feedback_submitted)\b/g, '');
-                // 添加新的狀態類
+                // 添加新的状态类
                 element.classList.add(status);
             }
 
@@ -333,21 +333,21 @@
         },
 
         /**
-         * 格式化狀態變更日誌
+         * 格式化状态变更日志
          */
         formatStatusChangeLog: function(oldStatus, newStatus, timestamp) {
             const oldText = this.getStatusText(oldStatus);
             const newText = this.getStatusText(newStatus);
-            const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString() : '現在';
+            const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString() : '现在';
             
             return `${timeStr}: ${oldText} → ${newText}`;
         },
 
         /**
-         * 檢查狀態轉換是否有效
+         * 检查状态转换是否有效
          */
         isValidStatusTransition: function(fromStatus, toStatus) {
-            // 定義有效的狀態轉換規則
+            // 定义有效的状态转换规则
             const validTransitions = {
                 'waiting': ['active', 'processing', 'timeout', 'error', 'connected'],
                 'waiting_for_feedback': ['active', 'processing', 'timeout', 'error', 'feedback_submitted'],
@@ -369,35 +369,35 @@
         },
 
         /**
-         * 獲取狀態描述
+         * 获取状态描述
          */
         getStatusDescription: function(status) {
             const descriptions = {
-                'waiting': '系統正在等待用戶提供回饋',
-                'waiting_for_feedback': '系統正在等待用戶提供回饋',
-                'active': '會話正在進行中',
-                'processing': '系統正在處理用戶的回饋',
-                'feedback_submitted': '用戶已提交回饋',
-                'completed': '會話已成功完成',
-                'timeout': '會話因超時而結束',
-                'error': '會話遇到錯誤',
-                'expired': '會話已過期',
-                'connecting': '正在建立連接',
-                'connected': '連接已建立',
-                'disconnected': '連接已斷開',
-                'reconnecting': '正在嘗試重新連接',
-                'ready': '系統已就緒',
-                'closed': '會話已關閉'
+                'waiting': '系统正在等待用户提供回馈',
+                'waiting_for_feedback': '系统正在等待用户提供回馈',
+                'active': '会话正在进行中',
+                'processing': '系统正在处理用户的回馈',
+                'feedback_submitted': '用户已提交回馈',
+                'completed': '会话已成功完成',
+                'timeout': '会话因超时而结束',
+                'error': '会话遇到错误',
+                'expired': '会话已过期',
+                'connecting': '正在创建连接',
+                'connected': '连接已创建',
+                'disconnected': '连接已断开',
+                'reconnecting': '正在尝试重新连接',
+                'ready': '系统已就绪',
+                'closed': '会话已关闭'
             };
 
-            return descriptions[status] || '未知狀態';
+            return descriptions[status] || '未知状态';
         }
     };
 
-    // 將 StatusUtils 加入命名空間
+    // 将 StatusUtils 加入命名空间
     window.MCPFeedback.StatusUtils = StatusUtils;
-    window.MCPFeedback.Utils.Status = StatusUtils; // 保持向後相容
+    window.MCPFeedback.Utils.Status = StatusUtils; // 保持向后兼容
 
-    console.log('✅ StatusUtils 模組載入完成');
+    console.log('✅ StatusUtils 模块加载完成');
 
 })();
