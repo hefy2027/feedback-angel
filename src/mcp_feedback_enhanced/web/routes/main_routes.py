@@ -454,6 +454,30 @@ def setup_routes(manager: "WebUIManager"):
             }
         )
 
+    @manager.app.post("/api/image-config")
+    async def update_image_config(request: Request):
+        """更新图片模式配置"""
+        from ...utils.image_storage import ImageStorageManager
+
+        try:
+            data = await request.json()
+            mode = data.get("mode", "base64")
+            image_dir = data.get("image_dir")
+
+            storage = ImageStorageManager.get_instance()
+            result = storage.switch_mode(mode, image_dir)
+
+            return JSONResponse(content={
+                "success": True,
+                **result,
+                "upload_url": "/api/upload-image" if storage.is_file_mode() else None,
+            })
+        except Exception as e:
+            return JSONResponse(
+                status_code=500,
+                content={"error": str(e)},
+            )
+
     @manager.app.post("/api/upload-image")
     async def upload_image(image: UploadFile = File(...)):
         """上传图片文档（文档模式）"""
@@ -720,7 +744,8 @@ async def handle_websocket_message(manager: "WebUIManager", session, data: dict)
         feedback = data.get("feedback", "")
         images = data.get("images", [])
         settings = data.get("settings", {})
-        await session.submit_feedback(feedback, images, settings)
+        system_prompt = data.get("system_prompt", "")
+        await session.submit_feedback(feedback, images, settings, system_prompt)
 
     elif message_type == "run_command":
         # 运行命令

@@ -276,6 +276,12 @@ def create_feedback_text(feedback_data: dict) -> str:
     """
     text_parts = []
 
+    # 系统提示词
+    if feedback_data.get("system_prompt"):
+        text_parts.append(
+            f"=== 系统提示 ===\n{feedback_data['system_prompt']}"
+        )
+
     # 基本回馈内容
     if feedback_data.get("interactive_feedback"):
         text_parts.append(f"=== 用户回馈 ===\n{feedback_data['interactive_feedback']}")

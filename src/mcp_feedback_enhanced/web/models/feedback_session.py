@@ -495,12 +495,15 @@ class WebFeedbackSession:
                     raise TimeoutError("会话已因用户设置的超时而关闭")
 
                 debug_log(f"会话 {self.session_id} 收到用户回馈")
-                return {
+                result = {
                     "logs": "\n".join(self.command_logs),
                     "interactive_feedback": self.feedback_result or "",
                     "images": self.images,
                     "settings": self.settings,
                 }
+                if getattr(self, "system_prompt", ""):
+                    result["system_prompt"] = self.system_prompt
+                return result
             # 超时了，立即清理资源
             debug_log(
                 f"会话 {self.session_id} 在 {actual_timeout} 秒后超时，开始清理资源..."
@@ -521,6 +524,7 @@ class WebFeedbackSession:
         feedback: str,
         images: list[dict[str, Any]],
         settings: dict[str, Any] | None = None,
+        system_prompt: str = "",
     ):
         """
         提交回馈和图片
@@ -529,8 +533,10 @@ class WebFeedbackSession:
             feedback: 文本回馈
             images: 图片列表
             settings: 图片设置（可选）
+            system_prompt: 系统提示词（可选）
         """
         self.feedback_result = feedback
+        self.system_prompt = system_prompt
         # 先设置设置，再处理图片（因为处理图片时需要用到设置）
         self.settings = settings or {}
 

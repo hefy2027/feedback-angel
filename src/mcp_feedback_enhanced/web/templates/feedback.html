@@ -826,6 +826,27 @@
                     <div class="settings-card-body">
                         <div class="setting-item">
                             <div class="setting-info">
+                                <div class="setting-label" data-i18n="images.settings.storageMode">图片存储模式</div>
+                                <div class="setting-description" data-i18n="images.settings.storageModeDesc">
+                                    选择图片传输给 AI 的方式
+                                </div>
+                            </div>
+                            <div class="image-mode-selector">
+                                <select id="imageStorageMode" style="padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color, #444); background: var(--input-bg, #1e1e1e); color: var(--text-primary, #e0e0e0); font-size: 13px;">
+                                    <option value="file" data-i18n="images.settings.storageModeFile">文件模式（推荐）</option>
+                                    <option value="base64" data-i18n="images.settings.storageModeBase64">Base64 模式</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="setting-item" id="imageStorageModeInfo" style="border-bottom: none;">
+                            <div class="setting-info">
+                                <div class="setting-description" id="imageStorageModeDesc" data-i18n="images.settings.fileModeDesc" style="color: var(--text-secondary, #999); font-size: 12px;">
+                                    文件模式：图片保存到磁盘，AI 通过文件路径读取，适合大图片
+                                </div>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
                                 <div class="setting-label" data-i18n="images.settings.sizeLimit">图片大小限制</div>
                                 <div class="setting-description" data-i18n="images.settings.sizeLimitDesc">
                                     设置上传图片的最大文件大小限制
@@ -840,7 +861,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="setting-item">
+                        <div class="setting-item" id="base64DetailWrapper">
                             <div class="setting-info">
                                 <div class="setting-label" data-i18n="images.settings.base64Detail">Base64 兼容模式</div>
                                 <div class="setting-description" data-i18n="images.settings.base64DetailHelp">
@@ -854,6 +875,42 @@
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 系统提示词设置卡片 -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3 class="settings-card-title" data-i18n="systemPrompt.title">📌 系统提示词</h3>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-label" data-i18n="systemPrompt.enable">启用系统提示词</div>
+                                <div class="setting-description" data-i18n="systemPrompt.enableDesc">
+                                    启用后，每次提交反馈时会自动叠加系统提示词
+                                </div>
+                            </div>
+                            {% include 'components/toggle-switch.html' %}
+                            <label class="toggle-switch" for="systemPromptEnabled">
+                                <input type="checkbox" id="systemPromptEnabled">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item" id="systemPromptContentWrapper" style="display: none; flex-direction: column; align-items: stretch;">
+                            <div class="setting-info" style="margin-bottom: 8px;">
+                                <div class="setting-label" data-i18n="systemPrompt.content">提示词内容</div>
+                                <div class="setting-description" data-i18n="systemPrompt.contentDesc">
+                                    此内容将作为前缀自动添加到每次反馈中
+                                </div>
+                            </div>
+                            <textarea id="systemPromptContent"
+                                      class="system-prompt-textarea"
+                                      data-i18n-placeholder="systemPrompt.placeholder"
+                                      placeholder="输入系统提示词内容..."
+                                      rows="4"
+                                      style="width: 100%; padding: 10px; border: 1px solid var(--border-color, #444); border-radius: 8px; background: var(--input-bg, #1e1e1e); color: var(--text-primary, #e0e0e0); font-size: 13px; resize: vertical; font-family: inherit; line-height: 1.5;"></textarea>
                         </div>
                     </div>
                 </div>

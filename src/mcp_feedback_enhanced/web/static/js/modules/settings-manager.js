@@ -31,6 +31,7 @@
             layoutMode: 'combined-vertical',
             autoClose: false,
             language: defaultLanguage,  // 使用 i18nManager 的当前语言
+            imageStorageMode: 'file',
             imageSizeLimit: 0,
             enableBase64Detail: false,
             // 移除 activeTab - 页签切换无需持久化
@@ -46,6 +47,9 @@
             customAudios: [],
             // 会话历史设置
             sessionHistoryRetentionHours: 72,
+            // 系统提示词设置
+            systemPromptEnabled: false,
+            systemPromptContent: '',
             // 用户消息记录设置
             userMessageRecordingEnabled: true,
             userMessagePrivacyLevel: 'full', // 'full', 'basic', 'disabled'
@@ -416,6 +420,9 @@
         // 应用图片设置
         this.applyImageSettings();
 
+        // 应用系统提示词设置
+        this.applySystemPromptSettings();
+
         // 应用自动提交设置
         this.applyAutoSubmitSettingsToUI();
 
@@ -486,6 +493,13 @@
      * 应用图片设置
      */
     SettingsManager.prototype.applyImageSettings = function() {
+        // 更新图片存储模式选择器
+        const imageStorageModeSelect = Utils.safeQuerySelector('#imageStorageMode');
+        if (imageStorageModeSelect) {
+            imageStorageModeSelect.value = this.currentSettings.imageStorageMode;
+        }
+        this.updateImageModeUI(this.currentSettings.imageStorageMode);
+
         // 更新所有图片大小限制选择器（包括设置页签中的）
         const imageSizeLimitSelects = document.querySelectorAll('[id$="ImageSizeLimit"]');
         imageSizeLimitSelects.forEach(function(select) {
@@ -498,10 +512,81 @@
             checkbox.checked = this.currentSettings.enableBase64Detail;
         }.bind(this));
 
+        // 初始化时同步图片模式到后端
+        this.syncImageModeToBackend(this.currentSettings.imageStorageMode);
+
         console.log('图片设置已应用到 UI:', {
+            imageStorageMode: this.currentSettings.imageStorageMode,
             imageSizeLimit: this.currentSettings.imageSizeLimit,
             enableBase64Detail: this.currentSettings.enableBase64Detail
         });
+    };
+
+    /**
+     * 更新图片模式相关 UI 显示
+     */
+    SettingsManager.prototype.updateImageModeUI = function(mode) {
+        const descEl = Utils.safeQuerySelector('#imageStorageModeDesc');
+        const base64Wrapper = Utils.safeQuerySelector('#base64DetailWrapper');
+
+        if (descEl) {
+            if (mode === 'file') {
+                const fileDesc = window.i18nManager ?
+                    window.i18nManager.t('images.settings.fileModeDesc', '文件模式：图片保存到磁盘，AI 通过文件路径读取，适合大图片') :
+                    '文件模式：图片保存到磁盘，AI 通过文件路径读取，适合大图片';
+                descEl.textContent = fileDesc;
+            } else {
+                const base64Desc = window.i18nManager ?
+                    window.i18nManager.t('images.settings.base64ModeDesc', 'Base64 模式：图片编码为 Base64 直接传递给 AI，兼容性好') :
+                    'Base64 模式：图片编码为 Base64 直接传递给 AI，兼容性好';
+                descEl.textContent = base64Desc;
+            }
+        }
+
+        if (base64Wrapper) {
+            base64Wrapper.style.display = mode === 'base64' ? 'flex' : 'none';
+        }
+    };
+
+    /**
+     * 同步图片模式到后端
+     */
+    SettingsManager.prototype.syncImageModeToBackend = function(mode) {
+        fetch('/api/image-config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mode: mode })
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            if (data.success) {
+                console.log('图片模式已同步到后端:', data);
+            } else {
+                console.error('图片模式同步失败:', data);
+            }
+        }).catch(function(error) {
+            console.error('图片模式同步请求失败:', error);
+        });
+    };
+
+    /**
+     * 应用系统提示词设置到 UI
+     */
+    SettingsManager.prototype.applySystemPromptSettings = function() {
+        const enabledCheckbox = Utils.safeQuerySelector('#systemPromptEnabled');
+        if (enabledCheckbox) {
+            enabledCheckbox.checked = this.currentSettings.systemPromptEnabled;
+        }
+
+        const contentTextarea = Utils.safeQuerySelector('#systemPromptContent');
+        if (contentTextarea) {
+            contentTextarea.value = this.currentSettings.systemPromptContent || '';
+        }
+
+        const contentWrapper = Utils.safeQuerySelector('#systemPromptContentWrapper');
+        if (contentWrapper) {
+            contentWrapper.style.display = this.currentSettings.systemPromptEnabled ? 'flex' : 'none';
+        }
     };
 
     /**
@@ -844,6 +929,41 @@
                     e.target.value = self.get('autoSubmitPromptId') || '';
                 }
             });
+        }
+
+        // 图片存储模式切换
+        const imageStorageModeSelect = Utils.safeQuerySelector('#imageStorageMode');
+        if (imageStorageModeSelect) {
+            imageStorageModeSelect.addEventListener('change', function(e) {
+                const mode = e.target.value;
+                self.set('imageStorageMode', mode);
+                self.updateImageModeUI(mode);
+                self.syncImageModeToBackend(mode);
+                console.log('图片存储模式已切换:', mode);
+            });
+        }
+
+        // 系统提示词开关
+        const systemPromptEnabledCheckbox = Utils.safeQuerySelector('#systemPromptEnabled');
+        if (systemPromptEnabledCheckbox) {
+            systemPromptEnabledCheckbox.addEventListener('change', function(e) {
+                const enabled = e.target.checked;
+                self.set('systemPromptEnabled', enabled);
+                const contentWrapper = Utils.safeQuerySelector('#systemPromptContentWrapper');
+                if (contentWrapper) {
+                    contentWrapper.style.display = enabled ? 'flex' : 'none';
+                }
+                console.log('系统提示词:', enabled ? '启用' : '停用');
+            });
+        }
+
+        // 系统提示词内容
+        const systemPromptContentTextarea = Utils.safeQuerySelector('#systemPromptContent');
+        if (systemPromptContentTextarea) {
+            systemPromptContentTextarea.addEventListener('input', Utils.DOM.debounce(function(e) {
+                self.set('systemPromptContent', e.target.value);
+                console.log('系统提示词内容已更新');
+            }, 500));
         }
 
         // 会话历史保存期限设置

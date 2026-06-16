@@ -34,7 +34,7 @@ class ImageStorageManager:
             except Exception as e:
                 import tempfile
 
-                fallback = Path(tempfile.gettempdir()) / "mcp-feedback-images"
+                fallback = Path(tempfile.gettempdir()) / "mcp-images"
                 fallback.mkdir(parents=True, exist_ok=True)
                 self._base_dir = fallback
                 debug_log(
@@ -62,6 +62,52 @@ class ImageStorageManager:
     def is_file_mode(self) -> bool:
         """是否为文件存储模式"""
         return self._base_dir is not None
+
+    @staticmethod
+    def _get_default_image_dir() -> Path:
+        """获取默认图片存储目录：优先 MCP_IMAGE_DIR 环境变量，否则用 %TEMP%/mcp-images"""
+        env_dir = os.getenv("MCP_IMAGE_DIR")
+        if env_dir:
+            return Path(env_dir)
+        import tempfile
+        return Path(tempfile.gettempdir()) / "mcp-images"
+
+    def switch_mode(self, mode: str, image_dir: str | None = None) -> dict[str, Any]:
+        """运行时切换图片存储模式
+
+        Args:
+            mode: 'file' 或 'base64'
+            image_dir: 文件模式的存储目录（可选，默认使用环境变量或系统临时目录）
+
+        Returns:
+            包含当前模式信息的字典
+        """
+        if mode == "file":
+            if image_dir:
+                candidate = Path(image_dir)
+            else:
+                candidate = self._get_default_image_dir()
+
+            try:
+                candidate.mkdir(parents=True, exist_ok=True)
+                self._base_dir = candidate
+            except Exception as e:
+                fallback = self._get_default_image_dir()
+                fallback.mkdir(parents=True, exist_ok=True)
+                self._base_dir = fallback
+                debug_log(f"指定路径无效 ({image_dir}): {e}，回退到 {fallback}")
+        else:
+            self._base_dir = None
+
+        mode_str = "file" if self.is_file_mode() else "base64"
+        debug_log(
+            f"图片模式已切换: mode={mode_str}, dir={self._base_dir}"
+        )
+        return {
+            "mode": mode_str,
+            "image_mode": self.image_mode,
+            "base_dir": str(self._base_dir) if self._base_dir else None,
+        }
 
     @property
     def base_dir(self) -> Path | None:

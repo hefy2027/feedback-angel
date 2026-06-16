@@ -1137,8 +1137,19 @@
             return null;
         }
 
+        // 获取系统提示词
+        let systemPrompt = '';
+        if (this.settingsManager) {
+            const systemPromptEnabled = this.settingsManager.get('systemPromptEnabled');
+            const systemPromptContent = this.settingsManager.get('systemPromptContent');
+            if (systemPromptEnabled && systemPromptContent && systemPromptContent.trim()) {
+                systemPrompt = systemPromptContent.trim();
+            }
+        }
+
         return {
             feedback: feedback,
+            system_prompt: systemPrompt,
             images: images,
             settings: {
                 image_size_limit: this.imageHandler ? this.imageHandler.imageSizeLimit : 0,
@@ -1183,12 +1194,16 @@
                 return img;
             });
 
-            const success = this.webSocketManager.send({
+            const message = {
                 type: 'submit_feedback',
                 feedback: feedbackData.feedback,
                 images: imagesToSend,
                 settings: feedbackData.settings
-            });
+            };
+            if (feedbackData.system_prompt) {
+                message.system_prompt = feedbackData.system_prompt;
+            }
+            const success = this.webSocketManager.send(message);
 
             if (success) {
                 // 重置表单状态但保留文本内容

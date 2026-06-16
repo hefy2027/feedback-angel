@@ -438,6 +438,12 @@
     "images": {
         "settings": {
             "title": "🖼️ 图片设置",
+            "storageMode": "图片存储模式",
+            "storageModeDesc": "选择图片传输给 AI 的方式",
+            "storageModeFile": "文件模式（推荐）",
+            "storageModeBase64": "Base64 模式",
+            "fileModeDesc": "文件模式：图片保存到磁盘，AI 通过文件路径读取，适合大图片",
+            "base64ModeDesc": "Base64 模式：图片编码为 Base64 直接传递给 AI，兼容性好",
             "sizeLimit": "图片大小限制",
             "sizeLimitDesc": "设定上传图片的最大文档大小限制",
             "sizeLimitOptions": {
@@ -454,6 +460,14 @@
         },
         "sizeLimitExceeded": "图片 {filename} 大小为 {size}，超过 {limit} 限制！",
         "sizeLimitExceededAdvice": "建议使用图片编辑软件压缩后再上传，或调整图片大小限制设置。"
+    },
+    "systemPrompt": {
+        "title": "📌 系统提示词",
+        "enable": "启用系统提示词",
+        "enableDesc": "启用后，每次提交反馈时会自动叠加系统提示词",
+        "content": "提示词内容",
+        "contentDesc": "此内容将作为前缀自动添加到每次反馈中",
+        "placeholder": "输入系统提示词内容..."
     },
     "autoSubmit": {
         "title": "⏰ 自动定时提交",

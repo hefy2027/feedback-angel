@@ -441,6 +441,12 @@
     "images": {
         "settings": {
             "title": "🖼️ Image Settings",
+            "storageMode": "Image Storage Mode",
+            "storageModeDesc": "Choose how images are delivered to AI",
+            "storageModeFile": "File Mode (Recommended)",
+            "storageModeBase64": "Base64 Mode",
+            "fileModeDesc": "File Mode: Images saved to disk, AI reads via file path. Best for large images",
+            "base64ModeDesc": "Base64 Mode: Images encoded as Base64 and sent directly to AI. Better compatibility",
             "sizeLimit": "Image Size Limit",
             "sizeLimitDesc": "Set the maximum file size limit for uploaded images",
             "sizeLimitOptions": {
@@ -457,6 +463,14 @@
         },
         "sizeLimitExceeded": "Image {filename} size is {size}, exceeds {limit} limit!",
         "sizeLimitExceededAdvice": "Consider compressing the image with editing software before uploading, or adjust the image size limit settings."
+    },
+    "systemPrompt": {
+        "title": "📌 System Prompt",
+        "enable": "Enable System Prompt",
+        "enableDesc": "When enabled, the system prompt will be automatically prepended to every feedback submission",
+        "content": "Prompt Content",
+        "contentDesc": "This content will be automatically added as a prefix to every feedback",
+        "placeholder": "Enter system prompt content..."
     },
     "autoSubmit": {
         "title": "⏰ Auto Timed Submit",
