@@ -1,7 +1,9 @@
-# Release v2.6.8 - Latest Release
+# Release v2.6.9 - 2026-06-17 - Multi-Session Concurrent Support & UI Optimization
 
 ## 🌟 Key Highlights
-
+- 🔀 **Multi-Session Concurrent Feedback**: Support multiple AI agents waiting for feedback simultaneously, with a left panel showing pending sessions list
+- 📌 **System Prompt**: Support setting a global system prompt that auto-prepends to every feedback submission
+- 🔄 **Persistent Interface**: No redirect to waiting page when no sessions are active, maintains previous interface state
 
 ## 🌐 Detailed Release Notes
 
@@ -23,7 +25,7 @@
 uvx feedback-angel@latest
 
 # This specific version / 此特定版本
-uvx feedback-angel@v2.6.8
+uvx feedback-angel@v2.6.9
 ```
 
 ## 🔗 Links

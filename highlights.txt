@@ -1,1 +1,3 @@
-
+- 🔀 **Multi-Session Concurrent Feedback**: Support multiple AI agents waiting for feedback simultaneously, with a left panel showing pending sessions list
+- 📌 **System Prompt**: Support setting a global system prompt that auto-prepends to every feedback submission
+- 🔄 **Persistent Interface**: No redirect to waiting page when no sessions are active, maintains previous interface state
