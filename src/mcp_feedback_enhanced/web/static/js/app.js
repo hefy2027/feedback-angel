@@ -299,6 +299,12 @@
                         // 19. 创建 WebSocket 连接
                         self.webSocketManager.connect();
 
+                        // 20. 启动待回复会话轮询（作为 WebSocket 通知的后备方案）
+                        self._startSessionPolling();
+
+                        // 21. 立即执行一次轮询以获取当前等待会话
+                        self._pollWaitingSessions();
+
                         resolve();
                     })
                     .catch(reject);
@@ -728,6 +734,10 @@
                 console.log('📋 新会话到达:', data.session_info);
                 if (this.multiSessionManager && data.session_info) {
                     this.multiSessionManager.addSession(data.session_info);
+                    // 重置回馈状态，允许输入新回馈
+                    if (this.uiManager) {
+                        this.uiManager.setFeedbackState(window.MCPFeedback.Utils.CONSTANTS.FEEDBACK_WAITING);
+                    }
                     if (this.audioManager) {
                         this.audioManager.playNotification();
                     }
@@ -843,6 +853,11 @@
         }
 
         this.clearFeedback();
+
+        // 重置回馈状态为等待中
+        if (this.uiManager) {
+            this.uiManager.setFeedbackState(window.MCPFeedback.Utils.CONSTANTS.FEEDBACK_WAITING, sessionId);
+        }
     };
 
     /**
@@ -862,6 +877,65 @@
                 container.classList.remove('single-session');
             }
         }
+    };
+
+    /**
+     * 启动待回复会话轮询
+     */
+    FeedbackApp.prototype._startSessionPolling = function() {
+        var self = this;
+        this._sessionPollTimer = setInterval(function() {
+            self._pollWaitingSessions();
+        }, 3000);
+    };
+
+    /**
+     * 轮询待回复会话列表
+     */
+    FeedbackApp.prototype._pollWaitingSessions = function() {
+        var self = this;
+        if (!this.multiSessionManager) return;
+
+        fetch('/api/waiting-sessions')
+            .then(function(resp) { return resp.json(); })
+            .then(function(data) {
+                if (!data.sessions) {
+                    console.log('📋 轮询: 无 sessions 字段');
+                    return;
+                }
+
+                var serverSessions = data.sessions;
+                var currentSessions = self.multiSessionManager.getSessions();
+                var currentIds = currentSessions.map(function(s) { return s.session_id; });
+                var serverIds = serverSessions.map(function(s) { return s.session_id; });
+
+                if (serverSessions.length > 0 || currentSessions.length > 0) {
+                    console.log('📋 轮询: 服务器等待中=' + serverSessions.length + ', 本地跟踪=' + currentSessions.length);
+                }
+
+                // 添加服务器上有但本地没有的会话
+                serverSessions.forEach(function(sessionInfo) {
+                    if (currentIds.indexOf(sessionInfo.session_id) === -1) {
+                        console.log('📋 轮询发现新会话:', sessionInfo.session_id.substring(0, 8));
+                        self.multiSessionManager.addSession(sessionInfo);
+                        // 重置回馈状态，允许输入新回馈
+                        if (self.uiManager) {
+                            self.uiManager.setFeedbackState(window.MCPFeedback.Utils.CONSTANTS.FEEDBACK_WAITING);
+                        }
+                    }
+                });
+
+                // 移除本地有但服务器上没有的会话
+                currentSessions.forEach(function(session) {
+                    if (serverIds.indexOf(session.session_id) === -1) {
+                        console.log('📋 轮询发现会话已移除:', session.session_id.substring(0, 8));
+                        self.multiSessionManager.removeSession(session.session_id);
+                    }
+                });
+            })
+            .catch(function(err) {
+                console.warn('📋 轮询失败:', err);
+            });
     };
 
     /**

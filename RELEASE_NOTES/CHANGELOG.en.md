@@ -2,6 +2,37 @@
 
 This document records all version updates for **Feedback Angel** (formerly MCP Feedback Enhanced).
 
+## [v2.6.9] - 2026-06-17 - Multi-Session Concurrent Support & UI Optimization
+
+### 🌟 Version Highlights
+Support for multi-session concurrent feedback, new system prompt feature, optimized page layout to eliminate scrollbars and excess whitespace, and fixed multiple interaction issues.
+
+### ✨ New Features
+- 🔀 **Multi-Session Concurrent Feedback**: Support multiple AI agents waiting for feedback simultaneously, with a left panel showing pending sessions list
+  - Pending sessions panel (auto-displayed when 2+ sessions)
+  - Quick session switching with independent state tracking per session
+  - Frontend polling + WebSocket dual-channel for session synchronization
+- 📌 **System Prompt**: Support setting a global system prompt that auto-prepends to every feedback submission
+  - Enable/disable in settings
+  - Custom prompt content automatically attached as prefix to feedback
+- 🔄 **Persistent Interface**: No redirect to waiting page when no sessions are active, maintains previous interface state
+
+### 🚀 Improvements
+- 📐 **Page Layout Optimization**: Eliminated right-side scrollbar and excessive bottom whitespace
+  - body/container using `height: 100vh` + flexbox for precise layout
+  - Stats panel floating position optimization, reduced collapsed footprint
+  - Settings layout mode selector changed to horizontal to save vertical space
+- 🎨 **Settings Panel Fix**: Fixed flex compression causing settings items to become invisible
+- 🗑️ **Removed Desktop App**: Removed Tauri desktop app support, focused on Web UI approach
+
+### 🐛 Bug Fixes
+- Fixed text feedback input becoming disabled after submitting feedback
+- Fixed multi-session panel not appearing (cross-thread asyncio notification + frontend polling compensation)
+- Fixed `.combined-content` height not filling container
+- Refactored port manager implementation
+
+---
+
 ## [v2.6.6] - 2026-05-19 - Extended Timeout & Project Rename
 
 ### 🌟 Version Highlights

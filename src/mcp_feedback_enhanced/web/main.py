@@ -132,6 +132,7 @@ class WebUIManager:
 
         self.server_thread: threading.Thread | None = None
         self.server_process = None
+        self._server_loop: asyncio.AbstractEventLoop | None = None
 
         # 初始化标记，用于追踪异步初始化状态
         self._initialization_complete = False
@@ -339,9 +340,14 @@ class WebUIManager:
         # 通知浏览器新会话到达
         if self._browser_websocket:
             try:
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    asyncio.ensure_future(self._notify_new_session(session))
+                server_loop = getattr(self, '_server_loop', None)
+                if server_loop and server_loop.is_running():
+                    asyncio.run_coroutine_threadsafe(
+                        self._notify_new_session(session), server_loop
+                    )
+                    debug_log(f"已调度通知浏览器新会话: {session_id}")
+                else:
+                    debug_log(f"服务器事件循环未就绪, _server_loop={server_loop}")
             except Exception as e:
                 debug_log(f"通知浏览器新会话失败: {e}")
 
@@ -518,6 +524,9 @@ class WebUIManager:
 
                     # 创建事件循环并启动服务器
                     async def serve_with_async_init(server=server_instance):
+                        # 保存服务器事件循环引用，用于跨线程通知
+                        self._server_loop = asyncio.get_running_loop()
+
                         # 在服务器启动的同时进行异步初始化
                         server_task = asyncio.create_task(server.serve())
                         init_task = asyncio.create_task(self._init_async_components())

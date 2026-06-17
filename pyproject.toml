@@ -1,6 +1,6 @@
 [project]
 name = "feedback-angel"
-version = "2.6.8"
+version = "2.6.9"
 description = "Feedback Angel - Interactive MCP server for user feedback and command execution in AI-assisted development, featuring Web UI with intelligent environment detection and cross-platform compatibility."
 readme = "README.md"
 requires-python = ">=3.11"

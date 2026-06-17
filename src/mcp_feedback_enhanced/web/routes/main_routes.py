@@ -59,13 +59,19 @@ def setup_routes(manager: "WebUIManager"):
         waiting = manager.get_waiting_sessions()
 
         if not waiting:
+            # 没有等待中的会话时，仍然显示 feedback.html 保持上一次的界面
+            layout_mode = load_user_layout_settings()
             return manager.templates.TemplateResponse(
                 request,
-                "index.html",
+                "feedback.html",
                 context={
-                    "title": "MCP Feedback Enhanced",
-                    "has_session": False,
+                    "project_directory": ".",
+                    "summary": "",
+                    "title": "Interactive Feedback - 回馈收集",
                     "version": __version__,
+                    "has_session": False,
+                    "layout_mode": layout_mode,
+                    "session_id": "",
                 },
             )
 

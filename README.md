@@ -30,7 +30,9 @@ This is an [MCP server](https://modelcontextprotocol.io/) that establishes **fee
 
 ### 📝 Smart Workflow
 - **Prompt Management**: CRUD operations for common prompts, usage statistics, intelligent sorting
+- **System Prompt** (v2.6.9): Support setting a global system prompt that auto-prepends to every feedback submission, enable/disable in settings
 - **Auto-Timed Submit**: 1-86400 second flexible timer, supports pause, resume, cancel with new pause/resume button controls
+- **Multi-Session Concurrent Feedback** (v2.6.9): Support multiple AI agents waiting for feedback simultaneously, with pending sessions panel, quick switching, and frontend polling + WebSocket dual-channel sync
 - **Auto Command Execution** (v2.6.0): Automatically execute preset commands after creating new sessions or commits for improved development efficiency
 - **Session Management & Tracking**: Local file storage, privacy controls, history export (supports JSON, CSV, Markdown formats), real-time statistics, flexible timeout settings
 - **Connection Monitoring**: WebSocket status monitoring, auto-reconnection, quality indicators
