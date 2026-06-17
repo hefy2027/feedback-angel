@@ -114,7 +114,7 @@
 
 /* 收起状态 */
 .stats-panel-floating.collapsed {
-    transform: translateY(calc(100% - 40px));
+    transform: translateY(calc(100% - 32px));
 }
 
 /* 统计面板头部 */
@@ -122,7 +122,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 2px 20px;
     cursor: pointer;
     user-select: none;
     background: var(--bg-tertiary);
@@ -470,7 +470,8 @@ body {
     background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
-    min-height: 100vh;
+    height: 100vh;
+    padding-bottom: 28px;
     display: flex;
     flex-direction: column;
 }
@@ -482,7 +483,8 @@ body {
     padding: 12px;
     background: var(--bg-primary);
     color: var(--text-primary);
-    min-height: 100vh;
+    flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
 }
@@ -614,6 +616,7 @@ body {
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
+    flex-shrink: 0;
 }
 
 .settings-card:hover {
@@ -759,7 +762,7 @@ body {
 /* 布局模式选择器 */
 .layout-mode-selector {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 12px;
     margin-top: 8px;
 }
@@ -773,6 +776,7 @@ body {
     background: var(--bg-tertiary);
     transition: all 0.3s ease;
     cursor: pointer;
+    flex: 1;
 }
 
 .layout-option:hover {
@@ -903,6 +907,7 @@ body {
 .input-group {
     margin-bottom: 20px;
     width: 100%;
+    flex-shrink: 0;
 }
 
 .input-label {
@@ -1058,7 +1063,7 @@ body {
     flex-direction: column;
     min-width: 0;
     min-height: 0; /* 允许内容自然收缩 */
-    padding: 12px;
+    padding: 12px 12px 0 12px;
     overflow: hidden;
     transition: all 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
     background: var(--bg-primary);
@@ -1119,7 +1124,7 @@ body {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    padding: 20px;
+    padding: 10px;
     overflow-y: auto;
     width: 100%;
     max-width: 100%;
